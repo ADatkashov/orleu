@@ -89,6 +89,7 @@ public class BusinessService {
         if (r.minNoticeMinutes() != null) b.setMinNoticeMinutes(r.minNoticeMinutes());
         if (r.maxAdvanceDays() != null) b.setMaxAdvanceDays(r.maxAdvanceDays());
         if (r.paymentHoldMinutes() != null) b.setPaymentHoldMinutes(r.paymentHoldMinutes());
+        if (r.cancellationDeadlineHours() != null) b.setCancellationDeadlineHours(r.cancellationDeadlineHours());
         audit.log(businessId, CurrentUser.id(), "BUSINESS_SETTINGS_UPDATED", "BUSINESS", businessId, null);
         return BusinessView.of(b);
     }

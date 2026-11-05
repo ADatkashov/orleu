@@ -28,6 +28,8 @@ public class Booking {
     @Column(name = "hold_expires_at") private Instant holdExpiresAt;
     private String notes;
     private String source;
+    @Column(name = "manage_token_hash") private String manageTokenHash;
+    @Transient private String rawManageToken; // only available on the instance that created it
     @Version private long version;
     @Column(name = "created_at", updatable = false) private Instant createdAt;
     @Column(name = "updated_at") private Instant updatedAt;

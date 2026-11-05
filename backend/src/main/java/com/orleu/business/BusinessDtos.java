@@ -29,17 +29,19 @@ public final class BusinessDtos {
             Boolean autoConfirm,
             @Min(0) @Max(10080) Integer minNoticeMinutes,
             @Min(1) @Max(730) Integer maxAdvanceDays,
-            @Min(1) @Max(1440) Integer paymentHoldMinutes) {}
+            @Min(1) @Max(1440) Integer paymentHoldMinutes,
+            @Min(0) @Max(720) Integer cancellationDeadlineHours) {}
 
     public record BusinessView(UUID id, String slug, String name, String businessType, String description,
                                String country, String city, String address, String currency, String timezone,
                                String planCode, boolean published, int onboardingStep, BigDecimal depositPercent,
-                               boolean autoConfirm, int minNoticeMinutes, int maxAdvanceDays, int paymentHoldMinutes) {
+                               boolean autoConfirm, int minNoticeMinutes, int maxAdvanceDays, int paymentHoldMinutes,
+                               int cancellationDeadlineHours) {
         public static BusinessView of(Business b) {
             return new BusinessView(b.getId(), b.getSlug(), b.getName(), b.getBusinessType(), b.getDescription(),
                     b.getCountry(), b.getCity(), b.getAddress(), b.getCurrency(), b.getTimezone(), b.getPlanCode(),
                     b.isPublished(), b.getOnboardingStep(), b.getDepositPercent(), b.isAutoConfirm(),
-                    b.getMinNoticeMinutes(), b.getMaxAdvanceDays(), b.getPaymentHoldMinutes());
+                    b.getMinNoticeMinutes(), b.getMaxAdvanceDays(), b.getPaymentHoldMinutes(), b.getCancellationDeadlineHours());
         }
     }
 
