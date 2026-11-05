@@ -29,3 +29,26 @@ String weekdayLabel(BuildContext context, int isoDay) {
 String hhmm(TimeOfDay t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
 TimeOfDay parseHhmm(String s) => TimeOfDay(hour: int.parse(s.substring(0, 2)), minute: int.parse(s.substring(3, 5)));
+
+/// Like [guarded] but for MODAL forms: returns the localized error text (null on success) so the form can show it inline.
+/// A SnackBar would be drawn BEHIND a bottom sheet / dialog and the user would never see it.
+Future<String?> attempt(BuildContext context, Future<void> Function() action) async {
+  try {
+    await action();
+    return null;
+  } catch (e) {
+    return context.mounted ? errorText(context, e) : '';
+  }
+}
+
+class FormError extends StatelessWidget {
+  final String? message;
+  const FormError(this.message, {super.key});
+  @override
+  Widget build(BuildContext context) => message == null
+      ? const SizedBox.shrink()
+      : Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: Text(message!, key: const Key('formError'), style: TextStyle(color: Theme.of(context).colorScheme.error)),
+        );
+}

@@ -151,5 +151,14 @@
   "errBlockedCustomer": "Этот клиент заблокирован.",
   "setupFirst": "Сначала завершите настройку: филиал, услуга и специалист.",
   "bookingCreated": "Запись создана",
-  "bookingMoved": "Запись перенесена"
+  "bookingMoved": "Запись перенесена",
+  "recordPayment": "Принять оплату",
+  "paymentAmount": "Сумма",
+  "paymentMethod": "Способ",
+  "methodCash": "Наличные",
+  "methodBank": "Банковский перевод",
+  "methodCard": "Карта (вручную)",
+  "errOverpayment": "Сумма превышает остаток к оплате.",
+  "paymentRecorded": "Оплата записана",
+  "validationAmount": "Введите сумму не больше остатка"
 }

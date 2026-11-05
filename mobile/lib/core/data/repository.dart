@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'auth_controller.dart';
@@ -21,6 +24,12 @@ Future<Business> _biz(Ref ref) async {
   final b = await ref.watch(currentBusinessProvider.future);
   if (b == null) throw StateError('no business');
   return b;
+}
+
+/// Random 128-bit hex key. One key identifies ONE payment attempt: retrying the same attempt reuses it so the server never charges twice.
+String newIdempotencyKey() {
+  final r = Random.secure();
+  return List.generate(16, (_) => r.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
 }
 
 DateTime dayStart(DateTime d) => DateTime(d.year, d.month, d.day);
@@ -108,6 +117,15 @@ class BookingActions {
   }
 
   Future<String> _id() async => (await _biz(ref)).id;
+
+  Future<void> recordPayment({required String bookingId, required String amount, required String method, required String idempotencyKey}) async {
+    final id = await _id();
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/bookings/$bookingId/payments',
+        data: {'amount': amount, 'method': method}, options: Options(headers: {'Idempotency-Key': idempotencyKey})));
+    ref.invalidate(bookingsProvider);
+    ref.invalidate(todaySummaryProvider);
+    ref.invalidate(summaryProvider);
+  }
 
   Future<void> createBooking({required String branchId, required String serviceId, String? employeeId, required DateTime startsAt,
       required String name, required String phone, String? notes}) async {

@@ -40,6 +40,8 @@ class Booking {
         'IN_PROGRESS' => ['COMPLETED'],
         _ => const [],
       };
+  /// Money can be taken while something is owed and the booking is not closed without service.
+  bool get canTakePayment => financials.remaining > 0 && !const {'CANCELLED', 'NO_SHOW', 'EXPIRED'}.contains(status);
   bool get canReschedule => const {'PENDING', 'AWAITING_PAYMENT', 'CONFIRMED'}.contains(status);
   bool get needsAction => status == 'PENDING' || status == 'AWAITING_PAYMENT';
   bool get isLive => const {'PENDING', 'AWAITING_PAYMENT', 'CONFIRMED', 'CHECKED_IN', 'IN_PROGRESS'}.contains(status);

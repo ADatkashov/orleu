@@ -151,5 +151,14 @@
   "errBlockedCustomer": "Бұл клиент бұғатталған.",
   "setupFirst": "Алдымен баптауды аяқтаңыз: филиал, қызмет және маман.",
   "bookingCreated": "Жазылу жасалды",
-  "bookingMoved": "Жазылу көшірілді"
+  "bookingMoved": "Жазылу көшірілді",
+  "recordPayment": "Төлем қабылдау",
+  "paymentAmount": "Сома",
+  "paymentMethod": "Тәсіл",
+  "methodCash": "Қолма-қол",
+  "methodBank": "Банк аударымы",
+  "methodCard": "Карта (қолмен)",
+  "errOverpayment": "Сома төленетін қалдықтан асып кетті.",
+  "paymentRecorded": "Төлем тіркелді",
+  "validationAmount": "Қалдықтан аспайтын соманы енгізіңіз"
 }

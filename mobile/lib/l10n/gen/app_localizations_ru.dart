@@ -474,4 +474,31 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get bookingMoved => 'Запись перенесена';
+
+  @override
+  String get recordPayment => 'Принять оплату';
+
+  @override
+  String get paymentAmount => 'Сумма';
+
+  @override
+  String get paymentMethod => 'Способ';
+
+  @override
+  String get methodCash => 'Наличные';
+
+  @override
+  String get methodBank => 'Банковский перевод';
+
+  @override
+  String get methodCard => 'Карта (вручную)';
+
+  @override
+  String get errOverpayment => 'Сумма превышает остаток к оплате.';
+
+  @override
+  String get paymentRecorded => 'Оплата записана';
+
+  @override
+  String get validationAmount => 'Введите сумму не больше остатка';
 }

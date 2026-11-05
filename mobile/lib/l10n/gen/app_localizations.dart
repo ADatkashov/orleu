@@ -1011,6 +1011,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Booking moved'**
   String get bookingMoved;
+
+  /// No description provided for @recordPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Record payment'**
+  String get recordPayment;
+
+  /// No description provided for @paymentAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get paymentAmount;
+
+  /// No description provided for @paymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Method'**
+  String get paymentMethod;
+
+  /// No description provided for @methodCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get methodCash;
+
+  /// No description provided for @methodBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank transfer'**
+  String get methodBank;
+
+  /// No description provided for @methodCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Card (manual)'**
+  String get methodCard;
+
+  /// No description provided for @errOverpayment.
+  ///
+  /// In en, this message translates to:
+  /// **'The amount exceeds the remaining balance.'**
+  String get errOverpayment;
+
+  /// No description provided for @paymentRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment recorded'**
+  String get paymentRecorded;
+
+  /// No description provided for @validationAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount up to the remaining balance'**
+  String get validationAmount;
 }
 
 class _AppLocalizationsDelegate

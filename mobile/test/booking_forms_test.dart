@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:orleu_mobile/app.dart';
 import 'package:orleu_mobile/core/api/token_store.dart';
 import 'package:orleu_mobile/core/data/models.dart';
+import 'package:orleu_mobile/core/data/repository.dart' show newIdempotencyKey;
 
 import 'app_flow_test.dart' show booking;
 import 'support/fake_api.dart';
@@ -18,7 +19,7 @@ Map<String, Object?> slot(DateTime t) => {'start': t.toUtc().toIso8601String(), 
 class Env {
   late final FakeAdapter adapter;
   bool hasCatalog = true;
-  Handler? createOverride;
+  Handler? createOverride, payOverride;
   List<Map<String, Object?>> bookings = [];
 
   Env() {
@@ -31,6 +32,7 @@ class Env {
       'GET /api/v1/businesses/b1/availability': (_) => ok([slot(tomorrow10), slot(tomorrow10.add(const Duration(minutes: 15)))]),
       'POST /api/v1/businesses/b1/bookings': (o) => createOverride?.call(o) ?? (status: 201, body: booking),
       'POST /api/v1/businesses/b1/bookings/k1/reschedule': (_) => ok(booking),
+      'POST /api/v1/businesses/b1/bookings/k1/payments': (o) => payOverride?.call(o) ?? (status: 201, body: booking),
     });
   }
 }
@@ -109,6 +111,8 @@ void main() {
     await tester.tap(find.byKey(const Key('createBooking')));
     await tester.pumpAndSettle();
     expect(find.text('This time is no longer available. Pick another.'), findsOneWidget);
+    expect(find.byKey(const Key('formError')), findsOneWidget); // inline: a SnackBar would be hidden behind the sheet
+    expect(find.byType(SnackBar), findsNothing);
     expect(env.adapter.calls.where((c) => c.path.endsWith('/availability')).length, greaterThan(before));
     expect(find.text('Booking created'), findsNothing);
   });
@@ -139,6 +143,76 @@ void main() {
     final body = env.adapter.calls.firstWhere((c) => c.path.endsWith('/reschedule')).data as Map;
     expect(body, {'startsAt': tomorrow10.add(const Duration(minutes: 15)).toUtc().toIso8601String()});
     expect(find.text('Booking moved'), findsOneWidget);
+  });
+
+  Future<void> openPayment(WidgetTester tester, Env env) async {
+    env.bookings = [booking];
+    await openCalendar(tester, env);
+    await tester.tap(find.text('Haircut').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('recordPayment')));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('record payment: exact body, method and an idempotency header', (tester) async {
+    final env = Env();
+    await openPayment(tester, env);
+    expect((tester.widget(find.byKey(const Key('payAmount'))) as TextFormField).controller!.text, '20000'); // prefilled with the remaining balance
+    await tester.enterText(find.byKey(const Key('payAmount')), '6000');
+    await tester.tap(find.byKey(const Key('paySave')));
+    await tester.pumpAndSettle();
+    final call = env.adapter.calls.firstWhere((c) => c.path.endsWith('/payments'));
+    expect(call.data, {'amount': '6000', 'method': 'CASH'});
+    expect(call.headers['Idempotency-Key'], matches(RegExp(r'^[0-9a-f]{32}$')));
+    expect(find.text('Payment recorded'), findsOneWidget);
+  });
+
+  testWidgets('retrying after a failure reuses the SAME idempotency key (no double charge)', (tester) async {
+    var attempts = 0;
+    final env = Env()..payOverride = (_) => ++attempts == 1 ? err(500, 'INTERNAL_ERROR') : (status: 201, body: booking);
+    await openPayment(tester, env);
+    await tester.tap(find.byKey(const Key('paySave')));
+    await tester.pumpAndSettle();
+    expect(find.text('Something went wrong. Please try again.'), findsOneWidget);
+    expect(find.byKey(const Key('formError')), findsOneWidget);
+    expect(find.byType(SnackBar), findsNothing);
+    expect(find.text('Payment recorded'), findsNothing);
+    await tester.tap(find.byKey(const Key('paySave')));
+    await tester.pumpAndSettle();
+    final keys = env.adapter.calls.where((c) => c.path.endsWith('/payments')).map((c) => c.headers['Idempotency-Key']).toList();
+    expect(keys.length, 2);
+    expect(keys[0], keys[1]);
+    expect(find.text('Payment recorded'), findsOneWidget);
+  });
+
+  testWidgets('amount must be positive and not above the remaining balance', (tester) async {
+    final env = Env();
+    await openPayment(tester, env);
+    for (final bad in ['0', '-5', '20001', 'abc', '']) {
+      await tester.enterText(find.byKey(const Key('payAmount')), bad);
+      await tester.tap(find.byKey(const Key('paySave')));
+      await tester.pump();
+      expect(find.text('Enter an amount up to the remaining balance'), findsOneWidget, reason: 'input "$bad"');
+    }
+    expect(env.adapter.calls.where((c) => c.path.endsWith('/payments')), isEmpty);
+  });
+
+  testWidgets('a server-side overpayment rejection is explained in the user language', (tester) async {
+    final env = Env()..payOverride = (_) => err(409, 'OVERPAYMENT');
+    await openPayment(tester, env);
+    await tester.tap(find.byKey(const Key('paySave')));
+    await tester.pumpAndSettle();
+    expect(find.text('The amount exceeds the remaining balance.'), findsOneWidget);
+    expect(find.byKey(const Key('formError')), findsOneWidget);
+  });
+
+  test('payment is offered only while something is owed and the booking is not closed', () {
+    Booking b(String status, num remaining) => Booking.fromJson({...booking, 'status': status, 'financials': {...(booking['financials'] as Map<String, Object?>), 'remaining': remaining}});
+    expect(b('CONFIRMED', 100).canTakePayment, isTrue);
+    expect(b('COMPLETED', 100).canTakePayment, isTrue);   // balance can be settled after the visit
+    expect(b('CONFIRMED', 0).canTakePayment, isFalse);
+    for (final s in ['CANCELLED', 'NO_SHOW', 'EXPIRED']) { expect(b(s, 100).canTakePayment, isFalse, reason: s); }
+    expect(newIdempotencyKey(), isNot(newIdempotencyKey()));
   });
 
   test('phone normalisation covers common Kazakhstan inputs', () {

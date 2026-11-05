@@ -143,6 +143,19 @@ class _SheetState extends ConsumerState<BookingSheet> {
           row(l.paymentStatus, _pay(l, f.paymentStatus)),
           if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.sm), child: Text(_error!, style: TextStyle(color: t.colorScheme.error))),
           const SizedBox(height: AppSpacing.md),
+          if (b.canTakePayment) Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: FilledButton.icon(
+              key: const Key('recordPayment'),
+              icon: const Icon(Icons.payments_outlined),
+              label: Text(l.recordPayment),
+              onPressed: _busy ? null : () {
+                final nav = Navigator.of(context);
+                nav.pop();
+                showModalBottomSheet(context: nav.context, isScrollControlled: true, showDragHandle: true, builder: (_) => PaymentSheet(booking: b));
+              },
+            ),
+          ),
           if (b.canReschedule) Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: OutlinedButton.icon(
