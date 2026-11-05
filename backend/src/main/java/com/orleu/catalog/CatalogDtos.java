@@ -14,8 +14,10 @@ public final class CatalogDtos {
 
     public record CreateBranchRequest(@NotBlank @Size(max = 200) String name, @Size(max = 300) String address,
                                       @Pattern(regexp = "^\\+[1-9][0-9]{7,14}$") String phone, @Size(max = 64) String timezone) {}
-    public record BranchView(UUID id, String name, String address, String phone, String timezone, boolean active) {
-        public static BranchView of(Branch b) { return new BranchView(b.getId(), b.getName(), b.getAddress(), b.getPhone(), b.getTimezone(), b.isActive()); }
+    /** hours is null (omitted from JSON) where not loaded, e.g. the public profile. */
+    public record BranchView(UUID id, String name, String address, String phone, String timezone, boolean active, List<HourRange> hours) {
+        public static BranchView of(Branch b) { return new BranchView(b.getId(), b.getName(), b.getAddress(), b.getPhone(), b.getTimezone(), b.isActive(), null); }
+        public static BranchView of(Branch b, List<HourRange> hours) { return new BranchView(b.getId(), b.getName(), b.getAddress(), b.getPhone(), b.getTimezone(), b.isActive(), hours); }
     }
 
     public record HourRange(@Min(1) @Max(7) int dayOfWeek, @NotNull LocalTime open, @NotNull LocalTime close) {}

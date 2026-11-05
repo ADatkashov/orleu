@@ -65,6 +65,24 @@ final usageProvider = FutureProvider.autoDispose<PlanUsage>((ref) async {
   return PlanUsage.fromJson(r.data);
 });
 
+final branchesProvider = FutureProvider.autoDispose<List<Branch>>((ref) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/branches'));
+  return (r.data as List).map((e) => Branch.fromJson(e)).toList();
+});
+
+final servicesProvider = FutureProvider.autoDispose<List<ServiceItem>>((ref) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/services'));
+  return (r.data as List).map((e) => ServiceItem.fromJson(e)).toList();
+});
+
+final employeesProvider = FutureProvider.autoDispose<List<Employee>>((ref) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/employees'));
+  return (r.data as List).map((e) => Employee.fromJson(e)).toList();
+});
+
 class BookingActions {
   final Ref ref;
   BookingActions(this.ref);
@@ -76,6 +94,51 @@ class BookingActions {
     ref.invalidate(bookingsProvider);
     ref.invalidate(todaySummaryProvider);
     ref.invalidate(summaryProvider);
+  }
+
+  Future<String> _id() async => (await _biz(ref)).id;
+
+  Future<void> createBranch(String name, String? address) async {
+    final id = await _id();
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/branches', data: {'name': name, 'address': ?(address == null || address.isEmpty ? null : address)}));
+    ref.invalidate(branchesProvider);
+  }
+
+  /// hours: ISO weekday -> (open, close) as 'HH:mm'. Days not present are closed.
+  Future<void> setHours(String branchId, Map<int, (String, String)> hours) async {
+    final id = await _id();
+    await ref.read(apiClientProvider).run((d) => d.put('/api/v1/businesses/$id/branches/$branchId/hours', data: {
+          'hours': [for (final e in hours.entries) {'dayOfWeek': e.key, 'open': e.value.$1, 'close': e.value.$2}]
+        }));
+    ref.invalidate(branchesProvider);
+  }
+
+  Future<void> createService({required String name, required int durationMinutes, required String price, String? depositPercent, int? bufferMinutes}) async {
+    final id = await _id();
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/services', data: {
+          'name': name, 'durationMinutes': durationMinutes, 'price': price,
+          if (depositPercent != null && depositPercent.isNotEmpty) 'depositPercent': depositPercent,
+          'bufferMinutes': ?bufferMinutes,
+        }));
+    ref.invalidate(servicesProvider);
+  }
+
+  Future<void> createEmployee(String name) async {
+    final id = await _id();
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/employees', data: {'displayName': name}));
+    ref.invalidate(employeesProvider);
+  }
+
+  Future<void> setAssignments(String employeeId, List<String> branchIds, List<String> serviceIds) async {
+    final id = await _id();
+    await ref.read(apiClientProvider).run((d) => d.put('/api/v1/businesses/$id/employees/$employeeId/assignments', data: {'branchIds': branchIds, 'serviceIds': serviceIds}));
+    ref.invalidate(employeesProvider);
+  }
+
+  Future<void> setPublished(bool publish) async {
+    final id = await _id();
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/${publish ? 'publish' : 'unpublish'}'));
+    ref.invalidate(currentBusinessProvider);
   }
 
   Future<void> createBusiness(String name, String slug, String type) async {

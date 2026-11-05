@@ -68,3 +68,30 @@ class PlanUsage {
   const PlanUsage(this.planCode, this.employees, this.maxEmployees);
   factory PlanUsage.fromJson(Map<String, dynamic> j) => PlanUsage(j['planCode'], j['employees'], j['maxEmployees']);
 }
+
+class Branch {
+  final String id, name;
+  final String? address;
+  /// ISO weekday (1=Mon..7=Sun) -> ('HH:mm', 'HH:mm'). Missing day = closed.
+  final Map<int, (String, String)> hours;
+  const Branch({required this.id, required this.name, this.address, required this.hours});
+  factory Branch.fromJson(Map<String, dynamic> j) => Branch(
+      id: j['id'], name: j['name'], address: j['address'],
+      hours: {for (final h in (j['hours'] as List? ?? const [])) h['dayOfWeek'] as int: ((h['open'] as String).substring(0, 5), (h['close'] as String).substring(0, 5))});
+}
+
+class ServiceItem {
+  final String id, name;
+  final int durationMinutes;
+  final double price;
+  const ServiceItem({required this.id, required this.name, required this.durationMinutes, required this.price});
+  factory ServiceItem.fromJson(Map<String, dynamic> j) => ServiceItem(id: j['id'], name: j['name'], durationMinutes: j['durationMinutes'], price: _num(j['price']));
+}
+
+class Employee {
+  final String id, displayName;
+  final List<String> branchIds, serviceIds;
+  const Employee({required this.id, required this.displayName, required this.branchIds, required this.serviceIds});
+  factory Employee.fromJson(Map<String, dynamic> j) => Employee(
+      id: j['id'], displayName: j['displayName'], branchIds: List<String>.from(j['branchIds'] ?? const []), serviceIds: List<String>.from(j['serviceIds'] ?? const []));
+}

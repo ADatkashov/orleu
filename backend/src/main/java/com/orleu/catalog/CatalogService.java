@@ -53,12 +53,22 @@ public class CatalogService {
         b.setTimezone(r.timezone() == null ? biz.getTimezone() : zone(r.timezone()));
         branches.save(b);
         audit.log(businessId, CurrentUser.id(), "BRANCH_CREATED", "BRANCH", b.getId(), null);
-        return BranchView.of(b);
+        return BranchView.of(b, List.of());
     }
 
     public List<BranchView> listBranches(UUID businessId) {
         access.require(businessId, Permission.BOOKINGS_VIEW);
-        return branches.findByBusinessIdOrderByName(businessId).stream().map(BranchView::of).toList();
+        var hours = new java.util.HashMap<UUID, List<HourRange>>();
+        jdbc.sql("""
+            select h.branch_id, h.day_of_week, h.open_time, h.close_time from branch_hours h
+            join branches b on b.id = h.branch_id where b.business_id = :b order by h.day_of_week
+            """).param("b", businessId).query((rs, i) -> {
+                hours.computeIfAbsent(rs.getObject(1, UUID.class), k -> new java.util.ArrayList<>())
+                        .add(new HourRange(rs.getInt(2), rs.getObject(3, java.time.LocalTime.class), rs.getObject(4, java.time.LocalTime.class)));
+                return 0;
+            }).list();
+        return branches.findByBusinessIdOrderByName(businessId).stream()
+                .map(b -> BranchView.of(b, hours.getOrDefault(b.getId(), List.of()))).toList();
     }
 
     @Transactional

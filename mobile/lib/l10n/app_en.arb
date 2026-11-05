@@ -28,7 +28,13 @@
   "navFinance": "Finance",
   "navMore": "More",
   "greeting": "Hello, {name}",
-  "@greeting": {"placeholders": {"name": {"type": "String"}}},
+  "@greeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "todayCollected": "Collected today",
   "todayBookings": "Bookings today",
   "pendingBookings": "Awaiting action",
@@ -91,5 +97,55 @@
   "themeDark": "Dark",
   "plan": "Plan",
   "planUsage": "{used} of {limit} employees",
-  "@planUsage": {"placeholders": {"used": {"type": "int"}, "limit": {"type": "int"}}}
+  "@planUsage": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "setupTitle": "Business setup",
+  "setupIntro": "Complete these steps to open online booking.",
+  "stepBranch": "Add a location",
+  "stepHours": "Set working hours",
+  "stepService": "Add a service",
+  "stepEmployee": "Add a specialist and assign services",
+  "stepPublish": "Publish your booking page",
+  "branches": "Locations & hours",
+  "addBranch": "Add location",
+  "branchName": "Location name",
+  "address": "Address (optional)",
+  "workingHours": "Working hours",
+  "closed": "Closed",
+  "applyDefaultHours": "Mon–Sun 09:00–18:00",
+  "save": "Save",
+  "saved": "Saved",
+  "cancel": "Cancel",
+  "services": "Services",
+  "addService": "Add service",
+  "serviceName": "Service name",
+  "durationMin": "Duration, minutes",
+  "priceField": "Price",
+  "depositPercentOptional": "Deposit % (optional)",
+  "bufferMin": "Cleanup buffer, minutes (optional)",
+  "noneYet": "Nothing here yet",
+  "employees": "Specialists",
+  "addEmployee": "Add specialist",
+  "employeeName": "Specialist name",
+  "assignLocations": "Works at",
+  "assignServices": "Performs",
+  "publish": "Publish booking page",
+  "unpublish": "Take offline",
+  "publishedHint": "Your booking page is live",
+  "bookingLink": "Booking link",
+  "copyLink": "Copy link",
+  "copied": "Copied",
+  "errLimit": "Your plan limit is reached. Contact ORLEU to upgrade.",
+  "errNotReady": "Finish the setup steps first: location with hours, a service and an assigned specialist.",
+  "errSuspended": "This business is suspended. Please contact ORLEU support.",
+  "setupNav": "Business setup",
+  "minutesShort": "min"
 }

@@ -283,4 +283,130 @@ class AppLocalizationsKk extends AppLocalizations {
   String planUsage(int used, int limit) {
     return '$used / $limit қызметкер';
   }
+
+  @override
+  String get setupTitle => 'Бизнесті баптау';
+
+  @override
+  String get setupIntro => 'Онлайн жазылуды ашу үшін осы қадамдарды орындаңыз.';
+
+  @override
+  String get stepBranch => 'Филиал қосыңыз';
+
+  @override
+  String get stepHours => 'Жұмыс уақытын көрсетіңіз';
+
+  @override
+  String get stepService => 'Қызмет қосыңыз';
+
+  @override
+  String get stepEmployee => 'Маман қосып, қызметтерді тағайындаңыз';
+
+  @override
+  String get stepPublish => 'Жазылу бетін жариялаңыз';
+
+  @override
+  String get branches => 'Филиалдар және уақыт';
+
+  @override
+  String get addBranch => 'Филиал қосу';
+
+  @override
+  String get branchName => 'Филиал атауы';
+
+  @override
+  String get address => 'Мекенжай (міндетті емес)';
+
+  @override
+  String get workingHours => 'Жұмыс уақыты';
+
+  @override
+  String get closed => 'Демалыс';
+
+  @override
+  String get applyDefaultHours => 'Дс–Жс 09:00–18:00';
+
+  @override
+  String get save => 'Сақтау';
+
+  @override
+  String get saved => 'Сақталды';
+
+  @override
+  String get cancel => 'Болдырмау';
+
+  @override
+  String get services => 'Қызметтер';
+
+  @override
+  String get addService => 'Қызмет қосу';
+
+  @override
+  String get serviceName => 'Қызмет атауы';
+
+  @override
+  String get durationMin => 'Ұзақтығы, минут';
+
+  @override
+  String get priceField => 'Бағасы';
+
+  @override
+  String get depositPercentOptional => 'Депозит, % (міндетті емес)';
+
+  @override
+  String get bufferMin => 'Қызметтен кейінгі үзіліс, минут (міндетті емес)';
+
+  @override
+  String get noneYet => 'Әзірге ештеңе жоқ';
+
+  @override
+  String get employees => 'Мамандар';
+
+  @override
+  String get addEmployee => 'Маман қосу';
+
+  @override
+  String get employeeName => 'Маман аты';
+
+  @override
+  String get assignLocations => 'Жұмыс істейтін жері';
+
+  @override
+  String get assignServices => 'Орындайтын қызметтері';
+
+  @override
+  String get publish => 'Жазылу бетін жариялау';
+
+  @override
+  String get unpublish => 'Жарияланымнан алу';
+
+  @override
+  String get publishedHint => 'Жазылу бетіңіз жұмыс істеп тұр';
+
+  @override
+  String get bookingLink => 'Жазылу сілтемесі';
+
+  @override
+  String get copyLink => 'Сілтемені көшіру';
+
+  @override
+  String get copied => 'Көшірілді';
+
+  @override
+  String get errLimit =>
+      'Тарифіңіздің шегіне жеттіңіз. Жаңарту үшін ORLEU-мен байланысыңыз.';
+
+  @override
+  String get errNotReady =>
+      'Алдымен баптауды аяқтаңыз: жұмыс уақыты бар филиал, қызмет және тағайындалған маман.';
+
+  @override
+  String get errSuspended =>
+      'Бизнес тоқтатылған. ORLEU қолдауына хабарласыңыз.';
+
+  @override
+  String get setupNav => 'Бизнесті баптау';
+
+  @override
+  String get minutesShort => 'мин';
 }

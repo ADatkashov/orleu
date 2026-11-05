@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/data/auth_controller.dart';
 import '../../core/data/repository.dart';
@@ -28,6 +29,16 @@ class MoreScreen extends ConsumerWidget {
             title: Text('${l.plan}: ${usage.planCode}'),
             subtitle: Text(l.planUsage(usage.employees, usage.maxEmployees)),
           ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        for (final e in [
+          (Icons.rocket_launch_outlined, l.setupNav, '/more/setup'),
+          (Icons.storefront_outlined, l.branches, '/more/branches'),
+          (Icons.content_cut, l.services, '/more/services'),
+          (Icons.badge_outlined, l.employees, '/more/employees'),
+        ]) Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+          child: Card(child: ListTile(leading: Icon(e.$1), title: Text(e.$2), trailing: const Icon(Icons.chevron_right), onTap: () => context.push(e.$3))),
         ),
         const SizedBox(height: AppSpacing.md),
         Text(l.language, style: t.textTheme.titleMedium),
