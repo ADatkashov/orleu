@@ -409,4 +409,68 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get minutesShort => 'мин';
+
+  @override
+  String get newBooking => 'Жаңа жазылу';
+
+  @override
+  String get selectService => 'Қызмет';
+
+  @override
+  String get selectLocation => 'Филиал';
+
+  @override
+  String get selectSpecialist => 'Маман';
+
+  @override
+  String get anySpecialist => 'Кез келген бос';
+
+  @override
+  String get pickDate => 'Күні';
+
+  @override
+  String get pickTime => 'Уақыты';
+
+  @override
+  String get noSlots => 'Бұл күні бос уақыт жоқ';
+
+  @override
+  String get clientName => 'Клиент аты';
+
+  @override
+  String get clientPhone => 'Клиент телефоны';
+
+  @override
+  String get validationPhone => 'Халықаралық формат, мысалы +7 701 123 45 67';
+
+  @override
+  String get notesOptional => 'Ескертпе (міндетті емес)';
+
+  @override
+  String get bookAction => 'Жазылу жасау';
+
+  @override
+  String get rescheduleAction => 'Көшіру';
+
+  @override
+  String get rescheduleTitle => 'Жазылуды көшіру';
+
+  @override
+  String get moveHere => 'Көшіру';
+
+  @override
+  String get errSlot => 'Бұл уақыт енді қолжетімсіз. Басқасын таңдаңыз.';
+
+  @override
+  String get errBlockedCustomer => 'Бұл клиент бұғатталған.';
+
+  @override
+  String get setupFirst =>
+      'Алдымен баптауды аяқтаңыз: филиал, қызмет және маман.';
+
+  @override
+  String get bookingCreated => 'Жазылу жасалды';
+
+  @override
+  String get bookingMoved => 'Жазылу көшірілді';
 }

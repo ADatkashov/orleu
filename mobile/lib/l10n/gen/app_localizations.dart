@@ -885,6 +885,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'min'**
   String get minutesShort;
+
+  /// No description provided for @newBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'New booking'**
+  String get newBooking;
+
+  /// No description provided for @selectService.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get selectService;
+
+  /// No description provided for @selectLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get selectLocation;
+
+  /// No description provided for @selectSpecialist.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialist'**
+  String get selectSpecialist;
+
+  /// No description provided for @anySpecialist.
+  ///
+  /// In en, this message translates to:
+  /// **'Any available'**
+  String get anySpecialist;
+
+  /// No description provided for @pickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get pickDate;
+
+  /// No description provided for @pickTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get pickTime;
+
+  /// No description provided for @noSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'No free times on this day'**
+  String get noSlots;
+
+  /// No description provided for @clientName.
+  ///
+  /// In en, this message translates to:
+  /// **'Client name'**
+  String get clientName;
+
+  /// No description provided for @clientPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Client phone'**
+  String get clientPhone;
+
+  /// No description provided for @validationPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Use international format, e.g. +7 701 123 45 67'**
+  String get validationPhone;
+
+  /// No description provided for @notesOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get notesOptional;
+
+  /// No description provided for @bookAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create booking'**
+  String get bookAction;
+
+  /// No description provided for @rescheduleAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reschedule'**
+  String get rescheduleAction;
+
+  /// No description provided for @rescheduleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Move booking'**
+  String get rescheduleTitle;
+
+  /// No description provided for @moveHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Move'**
+  String get moveHere;
+
+  /// No description provided for @errSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'This time is no longer available. Pick another.'**
+  String get errSlot;
+
+  /// No description provided for @errBlockedCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'This client is blocked.'**
+  String get errBlockedCustomer;
+
+  /// No description provided for @setupFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish business setup first: a location, a service and a specialist.'**
+  String get setupFirst;
+
+  /// No description provided for @bookingCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking created'**
+  String get bookingCreated;
+
+  /// No description provided for @bookingMoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking moved'**
+  String get bookingMoved;
 }
 
 class _AppLocalizationsDelegate

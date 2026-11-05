@@ -26,9 +26,11 @@ public class BookingController {
 
     @GetMapping("/availability")
     public List<AvailabilityService.Slot> availability(@PathVariable UUID businessId, @RequestParam UUID branchId,
-            @RequestParam UUID serviceId, @RequestParam(required = false) UUID employeeId, @RequestParam LocalDate date) {
+            @RequestParam UUID serviceId, @RequestParam(required = false) UUID employeeId, @RequestParam LocalDate date,
+            @RequestParam(required = false) UUID excludeBookingId) {
         access.require(businessId, Permission.BOOKINGS_VIEW);
-        return availability.slots(businessId, branchId, serviceId, employeeId, date, Instant.now(), null, false);
+        // excludeBookingId lets staff reschedule a booking into overlapping time of its own (only filters out that booking)
+        return availability.slots(businessId, branchId, serviceId, employeeId, date, Instant.now(), excludeBookingId, false);
     }
 
     @PostMapping("/bookings") @ResponseStatus(HttpStatus.CREATED)

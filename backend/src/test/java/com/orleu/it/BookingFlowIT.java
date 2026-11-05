@@ -161,6 +161,18 @@ class BookingFlowIT extends AbstractIT {
         assertEquals(409, post(f.ownerToken, "/api/v1/businesses/%s/bookings/%s/reschedule", Map.of("startsAt", at(bookingDate(), 19, 0).toString()), f.businessId, a).status()); // after closing
     }
 
+    @Test void excludeBookingIdFreesOwnTimeForRescheduling() {
+        Fixture f = Fixture.create(this, 1, false);
+        UUID id = book(f, 12, 0, null, "+77010000030").id();
+        String base = "/api/v1/businesses/%s/availability?branchId=%s&serviceId=%s&date=%s";
+        Res without = get(f.ownerToken, base, f.businessId, f.branchId, f.serviceId, bookingDate());
+        Res with = get(f.ownerToken, base + "&excludeBookingId=%s", f.businessId, f.branchId, f.serviceId, bookingDate(), id);
+        String own = at(bookingDate(), 12, 30).toString();
+        assertFalse(without.body().findValuesAsText("start").contains(own));
+        assertTrue(with.body().findValuesAsText("start").contains(own));
+        assertEquals(33, with.body().size());
+    }
+
     @Test void timeOffRemovesAvailability() {
         Fixture f = Fixture.create(this, 1, false);
         assertEquals(204, post(f.ownerToken, "/api/v1/businesses/%s/employees/%s/time-off", Map.of(
