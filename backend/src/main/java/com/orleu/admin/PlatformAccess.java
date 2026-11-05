@@ -28,6 +28,14 @@ public class PlatformAccess {
         return user;
     }
 
+    /** The caller's platform role; 403 for users without one. */
+    public PlatformRole currentRole() {
+        String role = jdbc.sql("select platform_role from users where id = :id and status = 'ACTIVE'")
+                .param("id", CurrentUser.id()).query(String.class).optional().orElse(null);
+        if (role == null) throw ApiException.forbidden();
+        return PlatformRole.valueOf(role);
+    }
+
     /** Any platform role (read access). */
     public UUID requireAny() { return require(PlatformRole.values()); }
 }

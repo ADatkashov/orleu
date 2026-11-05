@@ -51,6 +51,16 @@ class AdminIT extends AbstractIT {
         assertEquals(200, setPlan(root, f.businessId, "PRO", null, "sales deal").status());
     }
 
+    @Test void adminMeReportsTheRoleAndWhetherMutationsAreAllowed() {
+        Fixture f = Fixture.create(this, 0, false);
+        assertEquals(403, get(f.ownerToken, "/api/v1/admin/me").status());
+        assertEquals(401, get(null, "/api/v1/admin/me").status());
+        Res support = get(platformUser("PLATFORM_SUPPORT"), "/api/v1/admin/me");
+        assertEquals("PLATFORM_SUPPORT", support.text("role"));
+        assertFalse(support.body().path("canModify").asBoolean());
+        assertTrue(get(platformUser("SUPER_ADMIN"), "/api/v1/admin/me").body().path("canModify").asBoolean());
+    }
+
     @Test void revokingAPlatformRoleTakesEffectImmediately() {
         String root = platformUser("SUPER_ADMIN");
         assertEquals(200, get(root, "/api/v1/admin/plans").status());
