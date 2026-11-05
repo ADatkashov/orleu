@@ -44,7 +44,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info   # metrics are NOT exposed over HTTP: any signed-in tenant user could read them. Add a scraper-only, authenticated path first.
   endpoint:
     health:
       probes:

@@ -105,6 +105,16 @@ class AuthIT extends AbstractIT {
         assertEquals(401, get(null, "/api/v1/businesses").status());
     }
 
+    @Test void actuatorInternalsAreNotExposedToSignedInUsers() {
+        String token = newUser("act");
+        for (String path : new String[]{"/actuator/metrics", "/actuator/env", "/actuator/beans", "/actuator/heapdump", "/actuator/loggers"}) {
+            int status = get(token, path).status();
+            assertTrue(status == 404 || status == 401 || status == 403, path + " must not be readable, got " + status);
+        }
+        assertEquals(200, get(null, "/actuator/health").status());           // health stays public for probes
+        assertFalse(get(null, "/actuator/health").body().toString().contains("jdbc"), "no component details for anonymous callers");
+    }
+
     @Test void errorsCarryCorrelationIdAndNoStackTrace() {
         Res r = post(null, "/api/v1/auth/login", Map.of("email", "", "password", ""));
         assertEquals(400, r.status());
