@@ -1,4 +1,4 @@
-# Local development only. NOT YET RUN in the authoring environment (no Docker daemon) - verify locally.
+# Local development only. Smoke-tested in CI (.github/workflows/docker.yml).
 services:
   db:
     image: postgres:16-alpine
