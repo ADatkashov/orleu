@@ -34,6 +34,7 @@ public class Business {
     @Column(name = "min_notice_minutes") private int minNoticeMinutes = 60;
     @Column(name = "max_advance_days") private int maxAdvanceDays = 60;
     @Column(name = "payment_hold_minutes") private int paymentHoldMinutes = 15;
+    @Column(name = "cancellation_deadline_hours") private int cancellationDeadlineHours = 24;
     @Column(name = "created_at", updatable = false) private Instant createdAt;
     @Column(name = "updated_at") private Instant updatedAt;
 

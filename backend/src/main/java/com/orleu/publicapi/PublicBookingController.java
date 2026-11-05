@@ -40,7 +40,8 @@ public class PublicBookingController {
     public record PublicBookingRequest(@NotNull UUID branchId, @NotNull UUID serviceId, UUID employeeId, @NotNull Instant startsAt,
                                        @Valid @NotNull CustomerInput customer) {}
     public record PublicBookingConfirmation(UUID bookingId, String status, Instant startsAt, BigDecimal price, BigDecimal depositAmount,
-                                            BigDecimal remainingBalance, String currency, Instant holdExpiresAt) {}
+                                            BigDecimal remainingBalance, String currency, Instant holdExpiresAt,
+                                            String manageToken) {}
 
     private final BusinessRepository businesses;
     private final BranchRepository branches;
@@ -90,7 +91,8 @@ public class PublicBookingController {
         Booking booking = bookingService.place(b.getId(), r.branchId(), r.serviceId(), r.employeeId(), customer, r.startsAt(),
                 null, "PUBLIC", true);
         return new PublicBookingConfirmation(booking.getId(), booking.getStatus().name(), booking.getStartsAt(), booking.getPrice(),
-                booking.getDepositAmount(), booking.getPrice(), booking.getCurrency(), booking.getHoldExpiresAt());
+                booking.getDepositAmount(), booking.getPrice(), booking.getCurrency(), booking.getHoldExpiresAt(),
+                booking.getRawManageToken());
     }
 
     private Business published(String slug) {

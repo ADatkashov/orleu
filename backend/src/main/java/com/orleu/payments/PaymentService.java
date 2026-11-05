@@ -6,6 +6,7 @@ import com.orleu.bookings.*;
 import com.orleu.bookings.BookingDtos.BookingView;
 import com.orleu.common.ApiException;
 import com.orleu.common.Money;
+import com.orleu.notifications.OutboxService;
 import com.orleu.payments.PaymentDtos.MoneyRequest;
 import com.orleu.tenancy.Permission;
 import com.orleu.tenancy.TenantAccess;
@@ -31,11 +32,12 @@ public class PaymentService {
     private final BookingQueries queries;
     private final AuditService audit;
     private final JdbcClient jdbc;
+    private final OutboxService outbox;
 
     public PaymentService(TenantAccess access, BookingRepository bookings, BookingService bookingService,
-                          BookingQueries queries, AuditService audit, JdbcClient jdbc) {
+                          BookingQueries queries, AuditService audit, JdbcClient jdbc, OutboxService outbox) {
         this.access = access; this.bookings = bookings; this.bookingService = bookingService;
-        this.queries = queries; this.audit = audit; this.jdbc = jdbc;
+        this.queries = queries; this.audit = audit; this.jdbc = jdbc; this.outbox = outbox;
     }
 
     @Transactional
@@ -59,6 +61,7 @@ public class PaymentService {
             throw ApiException.conflict("OVERPAYMENT", "Amount exceeds the remaining balance of " + Money.scale(remaining));
         }
         insert(businessId, bookingId, "PAYMENT", amount, b.getCurrency(), r, idempotencyKey);
+        outbox.publish(businessId, "PAYMENT_RECEIVED", bookingId, "PAYMENT_RECEIVED:" + idempotencyKey);
 
         BigDecimal net = paid.subtract(refunded).add(amount);
         if (b.getStatus() == BookingStatus.AWAITING_PAYMENT && net.compareTo(b.getDepositAmount()) >= 0) {

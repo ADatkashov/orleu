@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface BookingRepository extends JpaRepository<Booking, UUID> {
     Optional<Booking> findByIdAndBusinessId(UUID id, UUID businessId);
+    Optional<Booking> findByManageTokenHash(String manageTokenHash);
 }

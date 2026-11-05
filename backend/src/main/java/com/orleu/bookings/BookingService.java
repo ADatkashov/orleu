@@ -14,6 +14,7 @@ import com.orleu.common.Money;
 import com.orleu.customers.Customer;
 import com.orleu.customers.CustomerRepository;
 import com.orleu.customers.CustomerService;
+import com.orleu.notifications.OutboxService;
 import com.orleu.scheduling.AvailabilityService;
 import com.orleu.tenancy.Permission;
 import com.orleu.tenancy.TenantAccess;
@@ -40,14 +41,15 @@ public class BookingService {
     private final BookingQueries queries;
     private final AuditService audit;
     private final JdbcClient jdbc;
+    private final OutboxService outbox;
 
     public BookingService(TenantAccess access, BookingRepository bookings, BusinessRepository businesses,
                           ServiceRepository services, BranchRepository branches, CustomerRepository customers,
                           CustomerService customerService, AvailabilityService availability, BookingQueries queries,
-                          AuditService audit, JdbcClient jdbc) {
+                          AuditService audit, JdbcClient jdbc, OutboxService outbox) {
         this.access = access; this.bookings = bookings; this.businesses = businesses; this.services = services;
         this.branches = branches; this.customers = customers; this.customerService = customerService;
-        this.availability = availability; this.queries = queries; this.audit = audit; this.jdbc = jdbc;
+        this.availability = availability; this.queries = queries; this.audit = audit; this.jdbc = jdbc; this.outbox = outbox;
     }
 
     // ---------- staff-facing ----------
@@ -116,6 +118,7 @@ public class BookingService {
             throw slotTaken();
         }
         audit.log(businessId, CurrentUser.id(), "BOOKING_RESCHEDULED", "BOOKING", bookingId, null);
+        outbox.publish(businessId, "BOOKING_RESCHEDULED", bookingId, "BOOKING_RESCHEDULED:" + bookingId + ":" + r.startsAt().toEpochMilli());
         return queries.find(businessId, bookingId).orElseThrow();
     }
 
@@ -155,6 +158,8 @@ public class BookingService {
         b.setCurrency(biz.getCurrency());
         b.setNotes(notes);
         b.setSource(source);
+        String rawToken = newToken();
+        b.setManageTokenHash(hashToken(rawToken));
         if (deposit.signum() > 0) {
             b.setStatus(BookingStatus.AWAITING_PAYMENT);
             b.setHoldExpiresAt(Instant.now().plus(Duration.ofMinutes(biz.getPaymentHoldMinutes())));
@@ -166,7 +171,9 @@ public class BookingService {
         } catch (DataIntegrityViolationException e) {
             throw slotTaken();
         }
+        b.setRawManageToken(rawToken);
         history(businessId, b.getId(), null, b.getStatus(), "PUBLIC".equals(source) ? null : CurrentUser.id(), null);
+        outbox.publish(businessId, "BOOKING_CREATED", b.getId(), "BOOKING_CREATED:" + b.getId());
         audit.log(businessId, "PUBLIC".equals(source) ? null : CurrentUser.id(), "BOOKING_CREATED", "BOOKING", b.getId(), null);
         return b;
     }
@@ -194,6 +201,7 @@ public class BookingService {
         if (target != BookingStatus.AWAITING_PAYMENT) b.setHoldExpiresAt(null);
         bookings.saveAndFlush(b);
         history(b.getBusinessId(), b.getId(), from, target, actor, reason);
+        outbox.publish(b.getBusinessId(), "BOOKING_" + target, b.getId(), "BOOKING_" + target + ":" + b.getId());
         audit.log(b.getBusinessId(), actor, "BOOKING_" + target, "BOOKING", b.getId(), null);
     }
 
@@ -205,8 +213,69 @@ public class BookingService {
                 where status = 'AWAITING_PAYMENT' and hold_expires_at < now()
                 returning id, business_id
                 """).query((rs, i) -> new UUID[]{rs.getObject(1, UUID.class), rs.getObject(2, UUID.class)}).list();
-        for (UUID[] e : expired) history(e[1], e[0], BookingStatus.AWAITING_PAYMENT, BookingStatus.EXPIRED, null, "payment hold expired");
+        for (UUID[] e : expired) {
+            history(e[1], e[0], BookingStatus.AWAITING_PAYMENT, BookingStatus.EXPIRED, null, "payment hold expired");
+            outbox.publish(e[1], "BOOKING_EXPIRED", e[0], "BOOKING_EXPIRED:" + e[0]);
+        }
         return expired.size();
+    }
+
+    // ---------- customer self-service (secret link) ----------
+
+    public record ManageView(String businessName, String serviceName, java.time.Instant startsAt, BookingStatus status,
+                             BigDecimal price, BigDecimal depositAmount, BigDecimal remainingBalance, String currency,
+                             boolean canCancel, Instant cancelUntil) {}
+
+    @Transactional(readOnly = true)
+    public ManageView manageView(String rawToken) {
+        Booking b = byToken(rawToken);
+        return view(b);
+    }
+
+    /** The customer cancels via the secret link. Allowed until the business's cancellation deadline. */
+    @Transactional
+    public ManageView cancelByCustomer(String rawToken) {
+        Booking b = byToken(rawToken);
+        ManageView v = view(b);
+        if (b.getStatus() == BookingStatus.CANCELLED) return v; // idempotent
+        if (!v.canCancel()) {
+            throw ApiException.conflict("CANCELLATION_NOT_ALLOWED", b.getStatus().isActive()
+                    ? "The free-cancellation window has passed; please contact the business" : "This booking can no longer be cancelled");
+        }
+        applyTransition(b, BookingStatus.CANCELLED, null, "cancelled by customer");
+        return view(b);
+    }
+
+    private ManageView view(Booking b) {
+        Business biz = businesses.findById(b.getBusinessId()).orElseThrow();
+        String svc = services.findByIdAndBusinessId(b.getServiceId(), b.getBusinessId()).map(ServiceOffering::getName).orElse("");
+        BigDecimal paid = jdbc.sql("select coalesce(sum(case when entry_type='PAYMENT' then amount else -amount end),0) from ledger_entries where booking_id = :id")
+                .param("id", b.getId()).query(BigDecimal.class).single();
+        Instant cancelUntil = b.getStartsAt().minus(Duration.ofHours(biz.getCancellationDeadlineHours()));
+        boolean open = b.getStatus() == BookingStatus.PENDING || b.getStatus() == BookingStatus.AWAITING_PAYMENT || b.getStatus() == BookingStatus.CONFIRMED;
+        boolean canCancel = open && (b.getStatus() == BookingStatus.AWAITING_PAYMENT || Instant.now().isBefore(cancelUntil));
+        return new ManageView(biz.getName(), svc, b.getStartsAt(), b.getStatus(), b.getPrice(), b.getDepositAmount(),
+                Money.scale(b.getPrice().subtract(paid).max(BigDecimal.ZERO)), b.getCurrency(), canCancel, cancelUntil);
+    }
+
+    private Booking byToken(String raw) {
+        if (raw == null || raw.length() < 20 || raw.length() > 100) throw ApiException.notFound("Booking");
+        return bookings.findByManageTokenHash(hashToken(raw)).orElseThrow(() -> ApiException.notFound("Booking"));
+    }
+
+    private static final java.security.SecureRandom RANDOM = new java.security.SecureRandom();
+
+    private static String newToken() {
+        byte[] raw = new byte[32];
+        RANDOM.nextBytes(raw);
+        return java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(raw);
+    }
+
+    static String hashToken(String token) {
+        try {
+            return java.util.HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256")
+                    .digest(token.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        } catch (java.security.NoSuchAlgorithmException e) { throw new IllegalStateException(e); }
     }
 
     private void history(UUID businessId, UUID bookingId, BookingStatus from, BookingStatus to, UUID actor, String reason) {
