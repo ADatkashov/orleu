@@ -1,0 +1,84 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import 'core/data/auth_controller.dart';
+import 'core/design/theme.dart';
+import 'core/settings/settings.dart';
+import 'features/auth/auth_screens.dart';
+import 'features/calendar/calendar_screen.dart';
+import 'features/customers/customers_screen.dart';
+import 'features/finance/finance_screen.dart';
+import 'features/home/home_screen.dart';
+import 'features/more/more_screen.dart';
+import 'features/shell/shell.dart';
+import 'l10n/gen/app_localizations.dart';
+
+class _AuthRefresh extends ChangeNotifier {
+  void ping() => notifyListeners();
+}
+
+final routerProvider = Provider<GoRouter>((ref) {
+  final refresh = _AuthRefresh();
+  ref.listen(authControllerProvider, (_, _) => refresh.ping());
+  ref.onDispose(refresh.dispose);
+
+  return GoRouter(
+    initialLocation: '/home',
+    refreshListenable: refresh,
+    redirect: (context, state) {
+      final auth = ref.read(authControllerProvider);
+      final loc = state.matchedLocation;
+      final onAuth = loc == '/login' || loc == '/register';
+      switch (auth) {
+        case AuthStatus.unknown:
+          return loc == '/splash' ? null : '/splash';
+        case AuthStatus.unauthenticated:
+          return onAuth ? null : '/login';
+        case AuthStatus.authenticated:
+          return onAuth || loc == '/splash' ? '/home' : null;
+      }
+    },
+    routes: [
+      GoRoute(path: '/splash', builder: (_, _) => const Scaffold(body: Center(child: CircularProgressIndicator()))),
+      GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+      GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, shell) => AppShell(shell: shell),
+        branches: [
+          StatefulShellBranch(routes: [GoRoute(path: '/home', builder: (_, _) => const HomeScreen())]),
+          StatefulShellBranch(routes: [GoRoute(path: '/calendar', builder: (_, _) => const CalendarScreen())]),
+          StatefulShellBranch(routes: [GoRoute(path: '/customers', builder: (_, _) => const CustomersScreen())]),
+          StatefulShellBranch(routes: [GoRoute(path: '/finance', builder: (_, _) => const FinanceScreen())]),
+          StatefulShellBranch(routes: [GoRoute(path: '/more', builder: (_, _) => const MoreScreen())]),
+        ],
+      ),
+    ],
+  );
+});
+
+class OrleuApp extends ConsumerWidget {
+  const OrleuApp({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    return MaterialApp.router(
+      title: 'ORLEU',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: settings.themeMode,
+      locale: settings.locale,
+      supportedLocales: supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      routerConfig: ref.watch(routerProvider),
+    );
+  }
+}

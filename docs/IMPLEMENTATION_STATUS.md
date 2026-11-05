@@ -3,7 +3,7 @@
 _Last updated: 2026-11-05. Everything below marked TESTED was actually executed: `./gradlew test` → 49 tests, 0 failures, against a real PostgreSQL 16 (local server; CI uses Testcontainers)._
 
 ## What this increment is
-Phase 1 backend foundation (modular Spring Boot 3.5 / Java 21 / PostgreSQL / Flyway). **No Flutter app, admin UI or public booking web page exists yet.** The product is NOT production-ready.
+Backend foundation (modular Spring Boot 3.5 / Java 21 / PostgreSQL / Flyway) plus a first Flutter business app (`mobile/`). **No admin UI or public booking web page exists yet.** The product is NOT production-ready.
 
 ## IMPLEMENTED AND TESTED
 | Area | Details |
@@ -18,6 +18,7 @@ Phase 1 backend foundation (modular Spring Boot 3.5 / Java 21 / PostgreSQL / Fly
 | Deposits & ledger | Decimal-safe deposit math (20,000 @ 30% = 6,000.00), append-only ledger (DB trigger), idempotency keys (concurrent retries charge once), overpayment/refund-limit checks, payment confirms booking when deposit reached, unpaid holds expire. Manual methods only (CASH, BANK_TRANSFER, CARD_MANUAL). |
 | Analytics | Summary keeps booked value, collected, refunded, net, outstanding separate; cancellation/no-show rates. |
 | Public API | Profile, availability, guest booking for published businesses; no PII in responses; existing customers not overwritten. |
+| Flutter business app (`mobile/`) | Design tokens + light/dark themes (brand palette; secondary text darkened to pass WCAG AA — spec value was 4.1:1), kk/ru/en localization (identical key sets enforced by a test), Riverpod + GoRouter, Dio client with single-flight token refresh and secure token storage, adaptive navigation (bottom bar / rail). Screens wired to the real API: login, register, create business (first-run onboarding step), home (today's collected cash, bookings, pending, upcoming), calendar day view + booking details with backend-validated status actions, customers search, finance summary (booked value vs collected vs outstanding), more (language, theme, plan usage, sign out). Tested with an in-memory HTTP adapter plus a manual contract check against the running backend; **not run on a device/emulator.** |
 | Ops basics | Request-ID correlation, uniform error envelope (no stack traces), actuator health/readiness, OpenAPI, in-memory per-IP rate limit on auth/public POST, audit log table. App boot smoke-tested (health UP). |
 
 ## IMPLEMENTED BUT NOT TESTED
@@ -25,7 +26,7 @@ Phase 1 backend foundation (modular Spring Boot 3.5 / Java 21 / PostgreSQL / Fly
 - ECS JSON logging profile (`prod`) — enabled, output format not inspected.
 
 ## NOT IMPLEMENTED
-Flutter mobile app and design system; Flutter Web admin; server-rendered public booking page / QR / widget; OTP / phone login / password reset / MFA / invitations by e-mail; device-session UI; calendar views (API list endpoint only); employee-only visibility restriction for STAFF; CRM extras (tags, import/export, segments, duplicate merge, consent history); employee commissions/payouts; cash shifts/closing; refund approval workflow; invoices; subscription billing lifecycle (trial/grace/renewal/proration); notifications (push/SMS/e-mail/in-app) and outbox; marketing, loyalty, referrals, gift cards, packages, memberships; reviews; support tickets; platform admin module and platform roles; AI module; forecasting; recurring/group bookings, waitlists, resources/rooms; localization (kk/ru/en) resources; file storage (Cloudflare R2); Kubernetes manifests; load tests; backup/restore procedures; remaining docs from the original list.
+Flutter: create-booking and reschedule UI, drag-and-drop, week/month calendar, service/employee/branch management screens, full onboarding (branch, hours, services, staff, publish), push notifications, deep links, offline cache, bundled Manrope/Inter font, Android/iOS builds and store release; Flutter Web admin; server-rendered public booking page / QR / widget; OTP / phone login / password reset / MFA / invitations by e-mail; device-session UI; calendar views (API list endpoint only); employee-only visibility restriction for STAFF; CRM extras (tags, import/export, segments, duplicate merge, consent history); employee commissions/payouts; cash shifts/closing; refund approval workflow; invoices; subscription billing lifecycle (trial/grace/renewal/proration); notifications (push/SMS/e-mail/in-app) and outbox; marketing, loyalty, referrals, gift cards, packages, memberships; reviews; support tickets; platform admin module and platform roles; AI module; forecasting; recurring/group bookings, waitlists, resources/rooms; localization (kk/ru/en) resources; file storage (Cloudflare R2); Kubernetes manifests; load tests; backup/restore procedures; remaining docs from the original list.
 
 ## BLOCKED BY EXTERNAL DEPENDENCY
 Real payment providers (FreedomPay, Kaspi, cards) need merchant accounts, official API docs and webhook secrets — no provider code or mock was written, to avoid presenting fake payments. SMS/e-mail/WhatsApp/push providers, Neon and R2 credentials likewise.
@@ -43,4 +44,4 @@ Real payment providers (FreedomPay, Kaspi, cards) need merchant accounts, offici
 `ORLEU_DB_URL`, `ORLEU_DB_USER`, `ORLEU_DB_PASSWORD`, `ORLEU_JWT_SECRET` (≥32 bytes, required), `ORLEU_ALLOWED_ORIGINS`, `ORLEU_RATE_LIMIT_PER_MINUTE`, `ORLEU_API_DOCS_ENABLED`, `ORLEU_DB_POOL_SIZE`. Tests: `ORLEU_TEST_DB_URL/_USER/_PASSWORD`.
 
 ## Suggested next increments
-1. Customer self-service links + notifications with transactional outbox. 2. Flutter foundation (design tokens, auth, localization) — requires installing the Flutter SDK. 3. Server-rendered public booking page. 4. Subscription lifecycle + platform admin API. 5. Payment-provider adapter once credentials exist.
+1. Customer self-service links + notifications with transactional outbox. 2. Flutter management screens (services, employees, branches, create/reschedule booking) and full onboarding. 3. Server-rendered public booking page. 4. Subscription lifecycle + platform admin API. 5. Payment-provider adapter once credentials exist.
