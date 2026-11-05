@@ -74,6 +74,16 @@ class AuthIT extends AbstractIT {
         assertEquals(401, post(null, "/api/v1/auth/refresh", Map.of("refreshToken", r2)).status());
     }
 
+    @Test void replayingALoggedOutTokenIsRejectedWithoutKillingOtherSessions() {
+        String email = unique("lo") + "@example.com";
+        post(null, "/api/v1/auth/register", reg(email));
+        Res a = post(null, "/api/v1/auth/login", Map.of("email", email, "password", "correct-horse-battery"));
+        Res b = post(null, "/api/v1/auth/login", Map.of("email", email, "password", "correct-horse-battery"));
+        post(null, "/api/v1/auth/logout", Map.of("refreshToken", a.text("refreshToken")));
+        assertEquals(401, post(null, "/api/v1/auth/refresh", Map.of("refreshToken", a.text("refreshToken"))).status());
+        assertEquals(200, post(null, "/api/v1/auth/refresh", Map.of("refreshToken", b.text("refreshToken"))).status()); // other device unaffected
+    }
+
     @Test void logoutRevokesRefreshToken() {
         String email = unique("o") + "@example.com";
         post(null, "/api/v1/auth/register", reg(email));
