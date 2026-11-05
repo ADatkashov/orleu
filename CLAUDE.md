@@ -1,5 +1,9 @@
 # Project notes for Claude
 
+## READ FIRST: the owner's specification and roadmap
+- `docs/roadmap/PROMPT_1_MASTER.md` and `docs/roadmap/PROMPT_2_ADDENDUM.md` are the owner's original prompts, saved **verbatim**. They are the specification; do not edit them.
+- `docs/ROADMAP.md` maps every requirement to its status and lists the "Next up" order. Pick the next work item from there, and update it (and `docs/IMPLEMENTATION_STATUS.md`) after every merged increment.
+
 ## Standing authorization (from the repository owner, ADatkashov, 2026-11-05)
 The owner told Claude to work autonomously, choose the next work items itself, and **merge finished, CI-green pull requests into `main` without asking**. Still never skip/disable tests to get green, never force-push `main`, and keep `docs/IMPLEMENTATION_STATUS.md` honest.
 
