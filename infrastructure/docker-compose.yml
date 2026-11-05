@@ -1,0 +1,26 @@
+# Local development only. NOT YET RUN in the authoring environment (no Docker daemon) - verify locally.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: orleu
+      POSTGRES_USER: orleu
+      POSTGRES_PASSWORD: ${ORLEU_DB_PASSWORD:?set ORLEU_DB_PASSWORD in .env}
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orleu"]
+      interval: 5s
+      retries: 10
+  backend:
+    build: ../backend
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      ORLEU_DB_URL: jdbc:postgresql://db:5432/orleu
+      ORLEU_DB_USER: orleu
+      ORLEU_DB_PASSWORD: ${ORLEU_DB_PASSWORD}
+      ORLEU_JWT_SECRET: ${ORLEU_JWT_SECRET:?set ORLEU_JWT_SECRET (>=32 bytes) in .env}
+    ports: ["8080:8080"]
+volumes:
+  pgdata:

@@ -1,0 +1,5 @@
+# Structured JSON logs (ECS format) for production
+logging:
+  structured:
+    format:
+      console: ecs
