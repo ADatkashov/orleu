@@ -7,7 +7,7 @@ No penetration test, formal security review or legal/privacy assessment has been
 |---|---|
 | Cross-tenant data access | `TenantAccess` on every business endpoint; tenant-scoped finders; composite `(id, business_id)` FKs; non-members get 404. `TenantIsolationIT` |
 | Privilege escalation | Per-business RBAC; owner cannot be assigned/removed via API; no self-service plan change; platform roles read from DB per request. `PlatformRulesIT`, `AdminIT` |
-| Account takeover | Argon2id, lockout after 5 failures, uniform login errors, rotating refresh tokens with reuse detection (revoke-all), tokens hashed at rest. `AuthIT`. **No MFA, OTP or password reset yet.** |
+| Account takeover | Argon2id, lockout after 5 failures, uniform login errors, rotating refresh tokens with reuse detection (revoke-all), tokens hashed at rest. `AuthIT`. Password reset/change and session revocation exist (reset delivery needs a mail provider). **No MFA or OTP yet.** |
 | Double booking / booking manipulation | DB exclusion constraint; server computes price, deposit and status; state machine. `BookingFlowIT`, `ConcurrencyIT` |
 | Payment replay / double charge | Idempotency keys (per business), per-booking row lock, append-only ledger trigger. `ConcurrencyIT`, `PlatformRulesIT` |
 | XSS on public pages | `textContent`-only DOM building, escaped SEO meta, strict CSP (no inline script). `PublicPagesIT` + Chromium E2E |

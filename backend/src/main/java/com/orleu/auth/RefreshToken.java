@@ -19,6 +19,7 @@ public class RefreshToken {
     @Column(name = "user_agent") private String userAgent;
     @Column(name = "expires_at") private Instant expiresAt;
     @Column(name = "revoked_at") private Instant revokedAt;
+    @Column(name = "revoked_reason") private String revokedReason;
     @Column(name = "created_at", updatable = false) private Instant createdAt;
 
     @PrePersist void onCreate() { createdAt = Instant.now(); }

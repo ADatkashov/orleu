@@ -16,8 +16,10 @@ public class AuthController {
     private final UserRepository users;
     private final MembershipRepository memberships;
     private final BusinessRepository businesses;
+    private final PasswordService passwords;
 
-    public AuthController(AuthService auth, UserRepository users, MembershipRepository memberships, BusinessRepository businesses) {
+    public AuthController(AuthService auth, UserRepository users, MembershipRepository memberships, BusinessRepository businesses, PasswordService passwords) {
+        this.passwords = passwords;
         this.auth = auth;
         this.users = users;
         this.memberships = memberships;
@@ -51,6 +53,26 @@ public class AuthController {
     public void logoutAll() {
         auth.logoutEverywhere(CurrentUser.id());
     }
+
+    @PostMapping("/auth/password-reset/request")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void requestReset(@Valid @RequestBody PasswordResetRequest r) { passwords.requestReset(r.email()); }
+
+    @PostMapping("/auth/password-reset/confirm")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void confirmReset(@Valid @RequestBody PasswordResetConfirm r) { passwords.confirmReset(r.token(), r.newPassword()); }
+
+    @PostMapping("/auth/change-password")
+    public TokenResponse changePassword(@Valid @RequestBody ChangePasswordRequest r, HttpServletRequest req) {
+        return passwords.changePassword(CurrentUser.id(), r.currentPassword(), r.newPassword(), req.getHeader("User-Agent"));
+    }
+
+    @GetMapping("/auth/sessions")
+    public java.util.List<PasswordService.SessionView> sessions() { return passwords.sessions(CurrentUser.id()); }
+
+    @DeleteMapping("/auth/sessions/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void revokeSession(@PathVariable java.util.UUID id) { passwords.revokeSession(CurrentUser.id(), id); }
 
     @GetMapping("/me")
     public MeResponse me() {

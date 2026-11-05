@@ -98,8 +98,12 @@ public class AuthService {
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_REFRESH_TOKEN", "Invalid refresh token"));
         Instant now = Instant.now();
         if (t.getRevokedAt() != null) {
-            refreshTokens.revokeAllForUser(t.getUserId(), now); // token reuse detected
-            audit.log(null, t.getUserId(), "REFRESH_TOKEN_REUSE", "USER", t.getUserId(), null);
+            // Only a token that was already ROTATED (null = legacy rows) is evidence of theft. Tokens revoked by logout,
+            // password change or session revocation are just rejected; otherwise a stale device would sign out the user everywhere.
+            if (t.getRevokedReason() == null || "ROTATED".equals(t.getRevokedReason())) {
+                refreshTokens.revokeAllForUser(t.getUserId(), now, "REUSE");
+                audit.log(null, t.getUserId(), "REFRESH_TOKEN_REUSE", "USER", t.getUserId(), null);
+            }
             throw new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_REFRESH_TOKEN", "Invalid refresh token");
         }
         if (t.getExpiresAt().isBefore(now)) {
@@ -109,6 +113,7 @@ public class AuthService {
                 .filter(x -> "ACTIVE".equals(x.getStatus()))
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_REFRESH_TOKEN", "Invalid refresh token"));
         t.setRevokedAt(now);
+        t.setRevokedReason("ROTATED");
         refreshTokens.save(t);
         return issue(u, userAgent);
     }
@@ -118,6 +123,7 @@ public class AuthService {
         refreshTokens.findByTokenHash(hash(rawToken)).ifPresent(t -> {
             if (t.getRevokedAt() == null) {
                 t.setRevokedAt(Instant.now());
+                t.setRevokedReason("LOGOUT");
                 refreshTokens.save(t);
             }
         });
@@ -125,8 +131,11 @@ public class AuthService {
 
     @Transactional
     public void logoutEverywhere(UUID userId) {
-        refreshTokens.revokeAllForUser(userId, Instant.now());
+        refreshTokens.revokeAllForUser(userId, Instant.now(), "LOGOUT");
     }
+
+    /** Issues a fresh access/refresh pair (used by login, register, refresh and password change). */
+    TokenResponse issueTokens(User u, String userAgent) { return issue(u, userAgent); }
 
     private TokenResponse issue(User u, String userAgent) {
         Instant now = Instant.now();
