@@ -12,6 +12,10 @@ import 'features/customers/customers_screen.dart';
 import 'features/finance/finance_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/more/more_screen.dart';
+import 'features/setup/branches_screen.dart';
+import 'features/setup/employees_screen.dart';
+import 'features/setup/services_screen.dart';
+import 'features/setup/setup_screen.dart';
 import 'features/shell/shell.dart';
 import 'l10n/gen/app_localizations.dart';
 
@@ -51,7 +55,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(routes: [GoRoute(path: '/calendar', builder: (_, _) => const CalendarScreen())]),
           StatefulShellBranch(routes: [GoRoute(path: '/customers', builder: (_, _) => const CustomersScreen())]),
           StatefulShellBranch(routes: [GoRoute(path: '/finance', builder: (_, _) => const FinanceScreen())]),
-          StatefulShellBranch(routes: [GoRoute(path: '/more', builder: (_, _) => const MoreScreen())]),
+          StatefulShellBranch(routes: [
+            GoRoute(path: '/more', builder: (_, _) => const MoreScreen(), routes: [
+              GoRoute(path: 'setup', builder: (_, _) => const SetupScreen()),
+              GoRoute(path: 'branches', builder: (_, _) => const BranchesScreen()),
+              GoRoute(path: 'services', builder: (_, _) => const ServicesScreen()),
+              GoRoute(path: 'employees', builder: (_, _) => const EmployeesScreen()),
+            ]),
+          ]),
         ],
       ),
     ],

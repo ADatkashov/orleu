@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:orleu_mobile/core/api/api_client.dart';
@@ -52,3 +55,11 @@ Map<String, Handler> businessRoutes({List<Map<String, Object?>> bookings = const
       'GET /api/v1/businesses/b1/subscription': (_) => ok({'planCode': 'FREE', 'employees': 1, 'maxEmployees': 3}),
       'GET /api/v1/businesses/b1/customers': (_) => ok({'items': [], 'page': 0, 'size': 50, 'total': 0}),
     };
+
+/// Logical phone size. NOTE: setSurfaceSize takes PHYSICAL pixels and flutter_test defaults to devicePixelRatio 3,
+/// so tests must pin the ratio to 1 to get the intended logical width.
+void setPhone(WidgetTester tester, double width, double height) {
+  tester.view.devicePixelRatio = 1.0;
+  tester.view.physicalSize = Size(width, height);
+  addTearDown(tester.view.reset);
+}

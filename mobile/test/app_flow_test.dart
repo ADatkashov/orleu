@@ -10,8 +10,7 @@ import 'package:orleu_mobile/core/data/models.dart';
 import 'support/fake_api.dart';
 
 Future<void> pumpApp(WidgetTester tester, FakeAdapter adapter, MemoryTokenStore store) async {
-  await tester.binding.setSurfaceSize(const Size(420, 900));
-  addTearDown(() => tester.binding.setSurfaceSize(null));
+  setPhone(tester, 420, 900);
   await tester.pumpWidget(ProviderScope(overrides: overridesFor(adapter, store), child: const OrleuApp()));
   await tester.pumpAndSettle();
 }

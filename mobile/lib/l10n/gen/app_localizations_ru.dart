@@ -283,4 +283,130 @@ class AppLocalizationsRu extends AppLocalizations {
   String planUsage(int used, int limit) {
     return '$used из $limit сотрудников';
   }
+
+  @override
+  String get setupTitle => 'Настройка бизнеса';
+
+  @override
+  String get setupIntro => 'Выполните эти шаги, чтобы открыть онлайн-запись.';
+
+  @override
+  String get stepBranch => 'Добавьте филиал';
+
+  @override
+  String get stepHours => 'Укажите часы работы';
+
+  @override
+  String get stepService => 'Добавьте услугу';
+
+  @override
+  String get stepEmployee => 'Добавьте специалиста и назначьте услуги';
+
+  @override
+  String get stepPublish => 'Опубликуйте страницу записи';
+
+  @override
+  String get branches => 'Филиалы и часы';
+
+  @override
+  String get addBranch => 'Добавить филиал';
+
+  @override
+  String get branchName => 'Название филиала';
+
+  @override
+  String get address => 'Адрес (необязательно)';
+
+  @override
+  String get workingHours => 'Часы работы';
+
+  @override
+  String get closed => 'Выходной';
+
+  @override
+  String get applyDefaultHours => 'Пн–Вс 09:00–18:00';
+
+  @override
+  String get save => 'Сохранить';
+
+  @override
+  String get saved => 'Сохранено';
+
+  @override
+  String get cancel => 'Отмена';
+
+  @override
+  String get services => 'Услуги';
+
+  @override
+  String get addService => 'Добавить услугу';
+
+  @override
+  String get serviceName => 'Название услуги';
+
+  @override
+  String get durationMin => 'Длительность, минут';
+
+  @override
+  String get priceField => 'Цена';
+
+  @override
+  String get depositPercentOptional => 'Депозит, % (необязательно)';
+
+  @override
+  String get bufferMin => 'Перерыв после услуги, минут (необязательно)';
+
+  @override
+  String get noneYet => 'Пока ничего нет';
+
+  @override
+  String get employees => 'Специалисты';
+
+  @override
+  String get addEmployee => 'Добавить специалиста';
+
+  @override
+  String get employeeName => 'Имя специалиста';
+
+  @override
+  String get assignLocations => 'Работает в';
+
+  @override
+  String get assignServices => 'Выполняет';
+
+  @override
+  String get publish => 'Опубликовать страницу записи';
+
+  @override
+  String get unpublish => 'Снять с публикации';
+
+  @override
+  String get publishedHint => 'Ваша страница записи работает';
+
+  @override
+  String get bookingLink => 'Ссылка для записи';
+
+  @override
+  String get copyLink => 'Скопировать ссылку';
+
+  @override
+  String get copied => 'Скопировано';
+
+  @override
+  String get errLimit =>
+      'Достигнут лимит вашего тарифа. Свяжитесь с ORLEU для повышения.';
+
+  @override
+  String get errNotReady =>
+      'Сначала завершите настройку: филиал с часами работы, услуга и назначенный специалист.';
+
+  @override
+  String get errSuspended =>
+      'Бизнес приостановлен. Обратитесь в поддержку ORLEU.';
+
+  @override
+  String get setupNav => 'Настройка бизнеса';
+
+  @override
+  String get minutesShort => 'мин';
 }

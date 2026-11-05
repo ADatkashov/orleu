@@ -285,4 +285,130 @@ class AppLocalizationsEn extends AppLocalizations {
   String planUsage(int used, int limit) {
     return '$used of $limit employees';
   }
+
+  @override
+  String get setupTitle => 'Business setup';
+
+  @override
+  String get setupIntro => 'Complete these steps to open online booking.';
+
+  @override
+  String get stepBranch => 'Add a location';
+
+  @override
+  String get stepHours => 'Set working hours';
+
+  @override
+  String get stepService => 'Add a service';
+
+  @override
+  String get stepEmployee => 'Add a specialist and assign services';
+
+  @override
+  String get stepPublish => 'Publish your booking page';
+
+  @override
+  String get branches => 'Locations & hours';
+
+  @override
+  String get addBranch => 'Add location';
+
+  @override
+  String get branchName => 'Location name';
+
+  @override
+  String get address => 'Address (optional)';
+
+  @override
+  String get workingHours => 'Working hours';
+
+  @override
+  String get closed => 'Closed';
+
+  @override
+  String get applyDefaultHours => 'Mon–Sun 09:00–18:00';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get saved => 'Saved';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get services => 'Services';
+
+  @override
+  String get addService => 'Add service';
+
+  @override
+  String get serviceName => 'Service name';
+
+  @override
+  String get durationMin => 'Duration, minutes';
+
+  @override
+  String get priceField => 'Price';
+
+  @override
+  String get depositPercentOptional => 'Deposit % (optional)';
+
+  @override
+  String get bufferMin => 'Cleanup buffer, minutes (optional)';
+
+  @override
+  String get noneYet => 'Nothing here yet';
+
+  @override
+  String get employees => 'Specialists';
+
+  @override
+  String get addEmployee => 'Add specialist';
+
+  @override
+  String get employeeName => 'Specialist name';
+
+  @override
+  String get assignLocations => 'Works at';
+
+  @override
+  String get assignServices => 'Performs';
+
+  @override
+  String get publish => 'Publish booking page';
+
+  @override
+  String get unpublish => 'Take offline';
+
+  @override
+  String get publishedHint => 'Your booking page is live';
+
+  @override
+  String get bookingLink => 'Booking link';
+
+  @override
+  String get copyLink => 'Copy link';
+
+  @override
+  String get copied => 'Copied';
+
+  @override
+  String get errLimit =>
+      'Your plan limit is reached. Contact ORLEU to upgrade.';
+
+  @override
+  String get errNotReady =>
+      'Finish the setup steps first: location with hours, a service and an assigned specialist.';
+
+  @override
+  String get errSuspended =>
+      'This business is suspended. Please contact ORLEU support.';
+
+  @override
+  String get setupNav => 'Business setup';
+
+  @override
+  String get minutesShort => 'min';
 }

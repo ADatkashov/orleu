@@ -169,6 +169,14 @@ class BookingFlowIT extends AbstractIT {
         assertEquals(201, book(f, 13, 0, null, "+77010000026").status());
     }
 
+    @Test void branchListIncludesWorkingHoursButPublicProfileDoesNot() {
+        Fixture f = Fixture.create(this, 1, true);
+        Res list = get(f.ownerToken, "/api/v1/businesses/%s/branches", f.businessId);
+        assertEquals(7, list.body().get(0).path("hours").size());
+        assertEquals("09:00:00", list.body().get(0).path("hours").get(0).path("open").asText());
+        assertTrue(get(null, "/api/v1/public/businesses/%s", f.slug).body().path("branches").get(0).path("hours").isMissingNode());
+    }
+
     @Test void blockedCustomerCannotBook() {
         Fixture f = Fixture.create(this, 1, true);
         Res c = post(f.ownerToken, "/api/v1/businesses/%s/customers", f.customer("+77010000027"), f.businessId);

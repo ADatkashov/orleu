@@ -639,6 +639,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{used} of {limit} employees'**
   String planUsage(int used, int limit);
+
+  /// No description provided for @setupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Business setup'**
+  String get setupTitle;
+
+  /// No description provided for @setupIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete these steps to open online booking.'**
+  String get setupIntro;
+
+  /// No description provided for @stepBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a location'**
+  String get stepBranch;
+
+  /// No description provided for @stepHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Set working hours'**
+  String get stepHours;
+
+  /// No description provided for @stepService.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a service'**
+  String get stepService;
+
+  /// No description provided for @stepEmployee.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a specialist and assign services'**
+  String get stepEmployee;
+
+  /// No description provided for @stepPublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish your booking page'**
+  String get stepPublish;
+
+  /// No description provided for @branches.
+  ///
+  /// In en, this message translates to:
+  /// **'Locations & hours'**
+  String get branches;
+
+  /// No description provided for @addBranch.
+  ///
+  /// In en, this message translates to:
+  /// **'Add location'**
+  String get addBranch;
+
+  /// No description provided for @branchName.
+  ///
+  /// In en, this message translates to:
+  /// **'Location name'**
+  String get branchName;
+
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address (optional)'**
+  String get address;
+
+  /// No description provided for @workingHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours'**
+  String get workingHours;
+
+  /// No description provided for @closed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get closed;
+
+  /// No description provided for @applyDefaultHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon–Sun 09:00–18:00'**
+  String get applyDefaultHours;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get saved;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @services.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get services;
+
+  /// No description provided for @addService.
+  ///
+  /// In en, this message translates to:
+  /// **'Add service'**
+  String get addService;
+
+  /// No description provided for @serviceName.
+  ///
+  /// In en, this message translates to:
+  /// **'Service name'**
+  String get serviceName;
+
+  /// No description provided for @durationMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration, minutes'**
+  String get durationMin;
+
+  /// No description provided for @priceField.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get priceField;
+
+  /// No description provided for @depositPercentOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit % (optional)'**
+  String get depositPercentOptional;
+
+  /// No description provided for @bufferMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Cleanup buffer, minutes (optional)'**
+  String get bufferMin;
+
+  /// No description provided for @noneYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet'**
+  String get noneYet;
+
+  /// No description provided for @employees.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialists'**
+  String get employees;
+
+  /// No description provided for @addEmployee.
+  ///
+  /// In en, this message translates to:
+  /// **'Add specialist'**
+  String get addEmployee;
+
+  /// No description provided for @employeeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialist name'**
+  String get employeeName;
+
+  /// No description provided for @assignLocations.
+  ///
+  /// In en, this message translates to:
+  /// **'Works at'**
+  String get assignLocations;
+
+  /// No description provided for @assignServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Performs'**
+  String get assignServices;
+
+  /// No description provided for @publish.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish booking page'**
+  String get publish;
+
+  /// No description provided for @unpublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Take offline'**
+  String get unpublish;
+
+  /// No description provided for @publishedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your booking page is live'**
+  String get publishedHint;
+
+  /// No description provided for @bookingLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking link'**
+  String get bookingLink;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get copyLink;
+
+  /// No description provided for @copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get copied;
+
+  /// No description provided for @errLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Your plan limit is reached. Contact ORLEU to upgrade.'**
+  String get errLimit;
+
+  /// No description provided for @errNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish the setup steps first: location with hours, a service and an assigned specialist.'**
+  String get errNotReady;
+
+  /// No description provided for @errSuspended.
+  ///
+  /// In en, this message translates to:
+  /// **'This business is suspended. Please contact ORLEU support.'**
+  String get errSuspended;
+
+  /// No description provided for @setupNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Business setup'**
+  String get setupNav;
+
+  /// No description provided for @minutesShort.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get minutesShort;
 }
 
 class _AppLocalizationsDelegate

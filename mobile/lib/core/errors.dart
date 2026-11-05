@@ -14,6 +14,9 @@ String errorText(BuildContext context, Object error) {
     'ACCOUNT_LOCKED' => l.errAccountLocked,
     'SLUG_TAKEN' => l.errSlugTaken,
     'INVALID_TRANSITION' || 'PAYMENT_REQUIRED' => l.errInvalidTransition,
+    'BRANCH_LIMIT_REACHED' || 'EMPLOYEE_LIMIT_REACHED' => l.errLimit,
+    'NOT_READY_TO_PUBLISH' => l.errNotReady,
+    'BUSINESS_SUSPENDED' => l.errSuspended,
     _ => l.errGeneric,
   };
 }
