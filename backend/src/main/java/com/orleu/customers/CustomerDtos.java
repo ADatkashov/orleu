@@ -21,5 +21,18 @@ public final class CustomerDtos {
         }
     }
 
+    /** All fields optional: null = leave unchanged. The phone number is the customer's identity and cannot be edited. */
+    public record UpdateCustomerRequest(@Size(min = 1, max = 200) String fullName, @Email @Size(max = 254) String email,
+                                        @Size(max = 2000) String notes, Boolean marketingOptIn) {}
+
+    public record BookingLine(UUID id, java.time.Instant startsAt, String serviceName, String employeeName, String status,
+                              java.math.BigDecimal price, java.math.BigDecimal netPaid) {}
+
+    /** Measured figures only. totalSpent is cash actually collected (payments minus refunds), not booked value. */
+    public record CustomerStats(long totalBookings, long completedVisits, long cancelled, long noShows, long upcoming,
+                                java.time.Instant lastVisit, java.math.BigDecimal totalSpent, java.math.BigDecimal averageSpendPerVisit) {}
+
+    public record CustomerProfile(CustomerView customer, CustomerStats stats, java.util.List<BookingLine> bookings) {}
+
     public record PageView<T>(java.util.List<T> items, int page, int size, long total) {}
 }

@@ -25,7 +25,7 @@ _Last updated: 2026-11-05._
 | F | Confirm, reschedule, cancel, complete | DONE | staff in app; customer cancel by link |
 | G | Deposit through a provider or an identified sandbox | **BLOCKED / PARTIAL** | manual payments only; provider adapters need FreedomPay/Kaspi accounts + official docs |
 | H | Remaining balance visible | DONE | |
-| I | Manage customers and employees | PARTIAL | customer list/search/block; employee create/assign; no edit/delete, no CRM profile screens |
+| I | Manage customers and employees | PARTIAL | backend DONE (customer profile + stats, edit; branch/service/specialist edit + deactivate); app screens for them are the next step; no tags/import/export/segments |
 | J | Meaningful financial/booking analytics | PARTIAL | summary + finance screen; no charts, per-employee/service/branch breakdowns |
 | K | Subscription entitlements enforced by backend | DONE | limits; billing lifecycle is TODO |
 | L | Tenant isolation covered by tests | DONE | |

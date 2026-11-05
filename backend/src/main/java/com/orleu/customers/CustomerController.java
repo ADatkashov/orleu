@@ -25,6 +25,12 @@ public class CustomerController {
     @GetMapping("/{id}")
     public CustomerView get(@PathVariable UUID businessId, @PathVariable UUID id) { return service.get(businessId, id); }
 
+    @PatchMapping("/{id}")
+    public CustomerView update(@PathVariable UUID businessId, @PathVariable UUID id, @Valid @RequestBody UpdateCustomerRequest r) { return service.update(businessId, id, r); }
+
+    @GetMapping("/{id}/profile")
+    public CustomerProfile profile(@PathVariable UUID businessId, @PathVariable UUID id) { return service.profile(businessId, id); }
+
     @PostMapping("/{id}/block")
     public CustomerView block(@PathVariable UUID businessId, @PathVariable UUID id) { return service.setBlocked(businessId, id, true); }
 

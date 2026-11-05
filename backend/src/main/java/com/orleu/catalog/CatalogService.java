@@ -88,6 +88,19 @@ public class CatalogService {
         audit.log(businessId, CurrentUser.id(), "BRANCH_HOURS_SET", "BRANCH", branchId, null);
     }
 
+    @Transactional
+    public BranchView updateBranch(UUID businessId, UUID branchId, UpdateBranchRequest r) {
+        access.require(businessId, Permission.CATALOG_MANAGE);
+        Branch b = branches.findByIdAndBusinessId(branchId, businessId).orElseThrow(() -> ApiException.notFound("Branch"));
+        if (Boolean.TRUE.equals(r.active()) && !b.isActive()) entitlements.assertCanAddBranch(businessId); // reactivation counts against the plan
+        if (r.name() != null) { if (r.name().isBlank()) throw ApiException.badRequest("INVALID_NAME", "Name cannot be blank"); b.setName(r.name().trim()); }
+        if (r.address() != null) b.setAddress(r.address());
+        if (r.phone() != null) b.setPhone(r.phone());
+        if (r.active() != null) b.setActive(r.active());
+        audit.log(businessId, CurrentUser.id(), r.active() != null && !r.active() ? "BRANCH_DEACTIVATED" : "BRANCH_UPDATED", "BRANCH", branchId, null);
+        return BranchView.of(b);
+    }
+
     // ---- services ----
     @Transactional
     public ServiceView createService(UUID businessId, CreateServiceRequest r) {
@@ -107,6 +120,25 @@ public class CatalogService {
         return ServiceView.of(s);
     }
 
+    /** Existing bookings keep the price/duration they were made with; changes apply to new bookings only. */
+    @Transactional
+    public ServiceView updateService(UUID businessId, UUID serviceId, UpdateServiceRequest r) {
+        access.require(businessId, Permission.CATALOG_MANAGE);
+        ServiceOffering s = services.findByIdAndBusinessId(serviceId, businessId).orElseThrow(() -> ApiException.notFound("Service"));
+        if (r.name() != null) { if (r.name().isBlank()) throw ApiException.badRequest("INVALID_NAME", "Name cannot be blank"); s.setName(r.name().trim()); }
+        if (r.description() != null) s.setDescription(r.description());
+        if (r.category() != null) s.setCategory(r.category());
+        if (r.durationMinutes() != null) s.setDurationMinutes(r.durationMinutes());
+        if (r.bufferMinutes() != null) s.setBufferMinutes(r.bufferMinutes());
+        if (r.price() != null) s.setPrice(com.orleu.common.Money.scale(r.price()));
+        if (Boolean.TRUE.equals(r.useBusinessDeposit())) s.setDepositPercent(null);
+        else if (r.depositPercent() != null) s.setDepositPercent(r.depositPercent());
+        if (r.onlineBookable() != null) s.setOnlineBookable(r.onlineBookable());
+        if (r.active() != null) s.setActive(r.active());
+        audit.log(businessId, CurrentUser.id(), r.active() != null && !r.active() ? "SERVICE_DEACTIVATED" : "SERVICE_UPDATED", "SERVICE", serviceId, null);
+        return ServiceView.of(s);
+    }
+
     public List<ServiceView> listServices(UUID businessId) {
         access.require(businessId, Permission.BOOKINGS_VIEW);
         return services.findByBusinessIdOrderByName(businessId).stream().map(ServiceView::of).toList();
@@ -122,6 +154,18 @@ public class CatalogService {
         e.setDisplayName(r.displayName().trim());
         employees.save(e);
         audit.log(businessId, CurrentUser.id(), "EMPLOYEE_CREATED", "EMPLOYEE", e.getId(), null);
+        return view(e);
+    }
+
+    /** Deactivation removes the specialist from availability immediately; their existing bookings stay and must be handled by staff. */
+    @Transactional
+    public EmployeeView updateEmployee(UUID businessId, UUID employeeId, UpdateEmployeeRequest r) {
+        access.require(businessId, Permission.STAFF_MANAGE);
+        Employee e = employees.findByIdAndBusinessId(employeeId, businessId).orElseThrow(() -> ApiException.notFound("Employee"));
+        if (Boolean.TRUE.equals(r.active()) && !e.isActive()) entitlements.assertCanAddEmployee(businessId);
+        if (r.displayName() != null) { if (r.displayName().isBlank()) throw ApiException.badRequest("INVALID_NAME", "Name cannot be blank"); e.setDisplayName(r.displayName().trim()); }
+        if (r.active() != null) e.setActive(r.active());
+        audit.log(businessId, CurrentUser.id(), r.active() != null && !r.active() ? "EMPLOYEE_DEACTIVATED" : "EMPLOYEE_UPDATED", "EMPLOYEE", employeeId, null);
         return view(e);
     }
 
