@@ -34,7 +34,7 @@ public class PublicPagesController {
 
     @GetMapping(value = "/b/{slug}", produces = MediaType.TEXT_HTML_VALUE)
     public ResponseEntity<String> booking(@PathVariable String slug) {
-        Optional<Business> b = businesses.findBySlug(slug).filter(Business::isPublished);
+        Optional<Business> b = businesses.findBySlug(slug).filter(x -> x.isPublished() && !"SUSPENDED".equals(x.getStatus()));
         if (b.isEmpty()) return page(HttpStatus.NOT_FOUND, notFound(), false);
         Business biz = b.get();
         String desc = biz.getDescription() == null || biz.getDescription().isBlank()

@@ -2,6 +2,7 @@ package com.orleu.tenancy;
 
 import com.orleu.auth.CurrentUser;
 import com.orleu.common.ApiException;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -16,8 +17,9 @@ import java.util.UUID;
 @Component
 public class TenantAccess {
     private final MembershipRepository memberships;
+    private final JdbcClient jdbc;
 
-    public TenantAccess(MembershipRepository memberships) { this.memberships = memberships; }
+    public TenantAccess(MembershipRepository memberships, JdbcClient jdbc) { this.memberships = memberships; this.jdbc = jdbc; }
 
     public Membership require(UUID businessId, Permission permission) {
         UUID userId = CurrentUser.id();
@@ -25,6 +27,12 @@ public class TenantAccess {
                 .orElseThrow(() -> ApiException.notFound("Business"));
         if (!m.getRole().allows(permission)) {
             throw ApiException.forbidden();
+        }
+        boolean suspended = jdbc.sql("select status = 'SUSPENDED' from businesses where id = :id").param("id", businessId)
+                .query(Boolean.class).optional().orElse(false);
+        if (suspended) {
+            throw new ApiException(org.springframework.http.HttpStatus.FORBIDDEN, "BUSINESS_SUSPENDED",
+                    "This business is suspended. Please contact ORLEU support.");
         }
         return m;
     }
