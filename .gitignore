@@ -4,3 +4,4 @@
 .vscode/
 build/
 .gradle/
+node_modules/

@@ -69,6 +69,17 @@ class NotificationsIT extends AbstractIT {
         assertEquals(1, count("select count(*) from outbox_events where business_id = ? and event_type = 'PAYMENT_RECEIVED'", f.businessId));
     }
 
+    @Test void sameIdempotencyKeyInTwoBusinessesDoesNotSuppressEachOthersEvents() {
+        Fixture a = Fixture.create(this, 1, false), b = Fixture.create(this, 1, false);
+        for (Fixture f : new Fixture[]{a, b}) {
+            UUID id = book(f, 12).id();
+            call(MockMvcRequestBuilders.post("/api/v1/businesses/" + f.businessId + "/bookings/" + id + "/payments"),
+                    f.ownerToken, Map.of("amount", "500", "method", "CASH"), "Idempotency-Key", "shared-client-key");
+        }
+        assertEquals(1, count("select count(*) from outbox_events where business_id = ? and event_type = 'PAYMENT_RECEIVED'", a.businessId));
+        assertEquals(1, count("select count(*) from outbox_events where business_id = ? and event_type = 'PAYMENT_RECEIVED'", b.businessId));
+    }
+
     @Test void notificationsAreTenantIsolated() {
         Fixture a = Fixture.create(this, 1, false), b = Fixture.create(this, 1, false);
         UUID booking = book(a, 10).id();

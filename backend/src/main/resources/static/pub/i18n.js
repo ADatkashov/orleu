@@ -1,0 +1,58 @@
+/* Shared strings (kk / ru / en) for the public pages. */
+window.ORLEU_I18N = {
+  en: {
+    book: 'Book online', step: 'Step', back: 'Back', next: 'Continue', chooseService: 'Choose a service', chooseBranch: 'Choose a location',
+    chooseMaster: 'Choose a specialist', anyMaster: 'Any available specialist', chooseDate: 'Choose a date', chooseTime: 'Choose a time',
+    noSlots: 'No free times on this day. Try another date.', yourDetails: 'Your details', name: 'Your name', phone: 'Phone (e.g. +7 701 123 45 67)',
+    email: 'E-mail (optional)', marketing: 'I agree to receive offers from this business (optional)', review: 'Review your booking',
+    service: 'Service', where: 'Location', who: 'Specialist', when: 'When', price: 'Price', deposit: 'Deposit', remaining: 'Remaining to pay',
+    confirm: 'Confirm booking', booked: 'Booking received', status_CONFIRMED: 'Your booking is confirmed.', status_PENDING: 'Your booking is waiting for confirmation from the business.',
+    status_AWAITING_PAYMENT: 'Your time is reserved, but the deposit is required to confirm it.',
+    depositNote: 'Online payment is not available yet. The business will contact you to arrange the deposit. Your time is held until',
+    manageLink: 'Save this link to view or cancel your booking', copy: 'Copy link', copied: 'Copied',
+    errSlot: 'Sorry, this time was just taken. Please choose another.', errPhone: 'Enter a valid phone number, e.g. +7 701 123 45 67', errName: 'Enter your name',
+    errEmail: 'Enter a valid e-mail', errGeneric: 'Something went wrong. Please try again.', errNotFound: 'This page is not available.', errRate: 'Too many requests. Please wait a minute.',
+    errBlocked: 'Online booking is not available for this contact. Please call the business.',
+    mTitle: 'Your booking', mCancel: 'Cancel booking', mCancelConfirm: 'Cancel this booking?', mCancelled: 'Your booking was cancelled.',
+    mTooLate: 'Free cancellation is no longer available. Please contact the business.', mCancelUntil: 'Free cancellation until', status: 'Status',
+    st_PENDING: 'Pending', st_AWAITING_PAYMENT: 'Awaiting payment', st_CONFIRMED: 'Confirmed', st_CHECKED_IN: 'Checked in', st_IN_PROGRESS: 'In progress',
+    st_COMPLETED: 'Completed', st_CANCELLED: 'Cancelled', st_NO_SHOW: 'No-show', st_EXPIRED: 'Expired', mNoPayNote: 'Powered by'
+  },
+  ru: {
+    book: 'Онлайн-запись', step: 'Шаг', back: 'Назад', next: 'Далее', chooseService: 'Выберите услугу', chooseBranch: 'Выберите филиал',
+    chooseMaster: 'Выберите специалиста', anyMaster: 'Любой свободный специалист', chooseDate: 'Выберите дату', chooseTime: 'Выберите время',
+    noSlots: 'На этот день нет свободного времени. Выберите другую дату.', yourDetails: 'Ваши данные', name: 'Ваше имя', phone: 'Телефон (например, +7 701 123 45 67)',
+    email: 'E-mail (необязательно)', marketing: 'Согласен получать предложения от этого бизнеса (необязательно)', review: 'Проверьте запись',
+    service: 'Услуга', where: 'Филиал', who: 'Специалист', when: 'Когда', price: 'Стоимость', deposit: 'Депозит', remaining: 'Осталось оплатить',
+    confirm: 'Подтвердить запись', booked: 'Запись принята', status_CONFIRMED: 'Ваша запись подтверждена.', status_PENDING: 'Ваша запись ожидает подтверждения бизнесом.',
+    status_AWAITING_PAYMENT: 'Время зарезервировано, но для подтверждения нужен депозит.',
+    depositNote: 'Онлайн-оплата пока недоступна. Бизнес свяжется с вами для внесения депозита. Время удерживается до',
+    manageLink: 'Сохраните ссылку, чтобы посмотреть или отменить запись', copy: 'Скопировать ссылку', copied: 'Скопировано',
+    errSlot: 'К сожалению, это время только что заняли. Выберите другое.', errPhone: 'Введите корректный номер, например +7 701 123 45 67', errName: 'Введите имя',
+    errEmail: 'Введите корректный e-mail', errGeneric: 'Что-то пошло не так. Попробуйте ещё раз.', errNotFound: 'Страница недоступна.', errRate: 'Слишком много запросов. Подождите минуту.',
+    errBlocked: 'Онлайн-запись для этого контакта недоступна. Позвоните в бизнес.',
+    mTitle: 'Ваша запись', mCancel: 'Отменить запись', mCancelConfirm: 'Отменить эту запись?', mCancelled: 'Запись отменена.',
+    mTooLate: 'Бесплатная отмена уже недоступна. Свяжитесь с бизнесом.', mCancelUntil: 'Бесплатная отмена до', status: 'Статус',
+    st_PENDING: 'Ожидает', st_AWAITING_PAYMENT: 'Ждёт оплаты', st_CONFIRMED: 'Подтверждена', st_CHECKED_IN: 'Клиент пришёл', st_IN_PROGRESS: 'В процессе',
+    st_COMPLETED: 'Завершена', st_CANCELLED: 'Отменена', st_NO_SHOW: 'Не пришёл', st_EXPIRED: 'Истекла', mNoPayNote: 'Работает на'
+  },
+  kk: {
+    book: 'Онлайн жазылу', step: 'Қадам', back: 'Артқа', next: 'Жалғастыру', chooseService: 'Қызметті таңдаңыз', chooseBranch: 'Филиалды таңдаңыз',
+    chooseMaster: 'Маманды таңдаңыз', anyMaster: 'Кез келген бос маман', chooseDate: 'Күнді таңдаңыз', chooseTime: 'Уақытты таңдаңыз',
+    noSlots: 'Бұл күні бос уақыт жоқ. Басқа күнді таңдаңыз.', yourDetails: 'Сіздің деректеріңіз', name: 'Атыңыз', phone: 'Телефон (мысалы, +7 701 123 45 67)',
+    email: 'E-mail (міндетті емес)', marketing: 'Осы бизнестен ұсыныстар алуға келісемін (міндетті емес)', review: 'Жазылуды тексеріңіз',
+    service: 'Қызмет', where: 'Филиал', who: 'Маман', when: 'Қашан', price: 'Бағасы', deposit: 'Депозит', remaining: 'Төлеуге қалды',
+    confirm: 'Жазылуды растау', booked: 'Жазылу қабылданды', status_CONFIRMED: 'Жазылуыңыз расталды.', status_PENDING: 'Жазылуыңыз бизнестің растауын күтуде.',
+    status_AWAITING_PAYMENT: 'Уақыт брондалды, бірақ растау үшін депозит қажет.',
+    depositNote: 'Онлайн төлем әзірге қолжетімсіз. Бизнес депозит бойынша сізбен байланысады. Уақыт мына мерзімге дейін ұсталады:',
+    manageLink: 'Жазылуды көру немесе болдырмау үшін сілтемені сақтаңыз', copy: 'Сілтемені көшіру', copied: 'Көшірілді',
+    errSlot: 'Өкінішке орай, бұл уақыт жаңа ғана алынды. Басқасын таңдаңыз.', errPhone: 'Дұрыс нөмір енгізіңіз, мысалы +7 701 123 45 67', errName: 'Атыңызды енгізіңіз',
+    errEmail: 'Дұрыс e-mail енгізіңіз', errGeneric: 'Бір нәрсе дұрыс болмады. Қайталап көріңіз.', errNotFound: 'Бет қолжетімсіз.', errRate: 'Сұраныс тым көп. Бір минут күтіңіз.',
+    errBlocked: 'Бұл байланыс үшін онлайн жазылу қолжетімсіз. Бизнеске қоңырау шалыңыз.',
+    mTitle: 'Сіздің жазылуыңыз', mCancel: 'Жазылудан бас тарту', mCancelConfirm: 'Осы жазылудан бас тарту керек пе?', mCancelled: 'Жазылу болдырылмады.',
+    mTooLate: 'Тегін бас тарту мерзімі өтті. Бизнеспен байланысыңыз.', mCancelUntil: 'Тегін бас тарту мерзімі', status: 'Мәртебесі',
+    st_PENDING: 'Күтуде', st_AWAITING_PAYMENT: 'Төлем күтілуде', st_CONFIRMED: 'Расталды', st_CHECKED_IN: 'Клиент келді', st_IN_PROGRESS: 'Орындалуда',
+    st_COMPLETED: 'Аяқталды', st_CANCELLED: 'Бас тартылды', st_NO_SHOW: 'Келмеді', st_EXPIRED: 'Мерзімі өтті', mNoPayNote: 'Қуат көзі'
+  }
+};
+window.ORLEU_I18N.kk.mCancelled = 'Жазылудан бас тартылды.';

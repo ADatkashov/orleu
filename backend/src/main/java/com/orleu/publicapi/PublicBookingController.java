@@ -36,7 +36,7 @@ import java.util.UUID;
 public class PublicBookingController {
     public record PublicEmployee(UUID id, String displayName, List<UUID> branchIds, List<UUID> serviceIds) {}
     public record PublicProfile(String slug, String name, String description, String city, String address, String currency,
-                                String timezone, List<BranchView> branches, List<ServiceView> services, List<PublicEmployee> employees) {}
+                                String timezone, BigDecimal depositPercent, List<BranchView> branches, List<ServiceView> services, List<PublicEmployee> employees) {}
     public record PublicBookingRequest(@NotNull UUID branchId, @NotNull UUID serviceId, UUID employeeId, @NotNull Instant startsAt,
                                        @Valid @NotNull CustomerInput customer) {}
     public record PublicBookingConfirmation(UUID bookingId, String status, Instant startsAt, BigDecimal price, BigDecimal depositAmount,
@@ -70,7 +70,7 @@ public class PublicBookingController {
                             jdbc.sql("select branch_id from employee_branches where employee_id = :e").param("e", id).query(UUID.class).list(),
                             jdbc.sql("select service_id from employee_services where employee_id = :e").param("e", id).query(UUID.class).list());
                 }).list();
-        return new PublicProfile(b.getSlug(), b.getName(), b.getDescription(), b.getCity(), b.getAddress(), b.getCurrency(), b.getTimezone(),
+        return new PublicProfile(b.getSlug(), b.getName(), b.getDescription(), b.getCity(), b.getAddress(), b.getCurrency(), b.getTimezone(), b.getDepositPercent(),
                 branches.findByBusinessIdOrderByName(b.getId()).stream().filter(x -> x.isActive()).map(BranchView::of).toList(),
                 services.findByBusinessIdAndActiveTrueAndOnlineBookableTrueOrderByName(b.getId()).stream().map(ServiceView::of).toList(),
                 emps);
