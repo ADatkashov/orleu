@@ -476,4 +476,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookingMoved => 'Booking moved';
+
+  @override
+  String get recordPayment => 'Record payment';
+
+  @override
+  String get paymentAmount => 'Amount';
+
+  @override
+  String get paymentMethod => 'Method';
+
+  @override
+  String get methodCash => 'Cash';
+
+  @override
+  String get methodBank => 'Bank transfer';
+
+  @override
+  String get methodCard => 'Card (manual)';
+
+  @override
+  String get errOverpayment => 'The amount exceeds the remaining balance.';
+
+  @override
+  String get paymentRecorded => 'Payment recorded';
+
+  @override
+  String get validationAmount => 'Enter an amount up to the remaining balance';
 }

@@ -58,6 +58,7 @@ class _AddBranchState extends ConsumerState<_AddBranchDialog> {
   final _form = GlobalKey<FormState>();
   final _name = TextEditingController(), _address = TextEditingController();
   bool _busy = false;
+  String? _error;
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +71,7 @@ class _AddBranchState extends ConsumerState<_AddBranchDialog> {
           TextFormField(controller: _name, decoration: InputDecoration(labelText: l.branchName), validator: (v) => v == null || v.trim().isEmpty ? l.validationRequired : null),
           const SizedBox(height: AppSpacing.md),
           TextFormField(controller: _address, decoration: InputDecoration(labelText: l.address)),
+          FormError(_error),
         ]),
       ),
       actions: [
@@ -79,9 +81,9 @@ class _AddBranchState extends ConsumerState<_AddBranchDialog> {
           onPressed: _busy ? null : () async {
             if (!_form.currentState!.validate()) return;
             setState(() => _busy = true);
-            final ok = await guarded(context, () => ref.read(bookingActionsProvider).createBranch(_name.text.trim(), _address.text.trim()));
+            final err = await attempt(context, () => ref.read(bookingActionsProvider).createBranch(_name.text.trim(), _address.text.trim()));
             if (!context.mounted) return;
-            if (ok) { Navigator.pop(context); } else { setState(() => _busy = false); }
+            if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
           },
           child: Text(l.save),
         ),

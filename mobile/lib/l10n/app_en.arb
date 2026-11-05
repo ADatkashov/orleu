@@ -168,5 +168,14 @@
   "errBlockedCustomer": "This client is blocked.",
   "setupFirst": "Finish business setup first: a location, a service and a specialist.",
   "bookingCreated": "Booking created",
-  "bookingMoved": "Booking moved"
+  "bookingMoved": "Booking moved",
+  "recordPayment": "Record payment",
+  "paymentAmount": "Amount",
+  "paymentMethod": "Method",
+  "methodCash": "Cash",
+  "methodBank": "Bank transfer",
+  "methodCard": "Card (manual)",
+  "errOverpayment": "The amount exceeds the remaining balance.",
+  "paymentRecorded": "Payment recorded",
+  "validationAmount": "Enter an amount up to the remaining balance"
 }

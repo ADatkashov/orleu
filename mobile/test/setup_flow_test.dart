@@ -181,6 +181,9 @@ void main() {
     await tester.tap(find.widgetWithText(FilledButton, 'Save'));
     await tester.pumpAndSettle();
     expect(find.text('Your plan limit is reached. Contact ORLEU to upgrade.'), findsOneWidget);
+    expect(find.byKey(const Key('formError')), findsOneWidget); // inline in the dialog, not behind it
+    expect(find.byType(SnackBar), findsNothing);
+    expect(find.byKey(const Key('empName')), findsOneWidget);    // the dialog stays open so the user can react
   });
 
   test('branch model parses backend time strings and treats missing days as closed', () {

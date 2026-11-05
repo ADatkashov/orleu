@@ -54,6 +54,7 @@ class _ServiceFormState extends ConsumerState<_ServiceForm> {
   final _name = TextEditingController(), _duration = TextEditingController(text: '60'), _price = TextEditingController(),
       _deposit = TextEditingController(), _buffer = TextEditingController();
   bool _busy = false;
+  String? _error;
 
   static final _money = RegExp(r'^\d{1,12}([.,]\d{1,2})?$');
 
@@ -88,17 +89,18 @@ class _ServiceFormState extends ConsumerState<_ServiceForm> {
               const SizedBox(width: AppSpacing.sm),
               Expanded(child: TextFormField(key: const Key('svcBuffer'), controller: _buffer, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: l.bufferMin), validator: (v) => _intIn(v, l, 0, 240, optional: true))),
             ]),
+            FormError(_error),
             const SizedBox(height: AppSpacing.lg),
             FilledButton(
               key: const Key('svcSave'),
               onPressed: _busy ? null : () async {
                 if (!_form.currentState!.validate()) return;
                 setState(() => _busy = true);
-                final ok = await guarded(context, () => ref.read(bookingActionsProvider).createService(
+                final err = await attempt(context, () => ref.read(bookingActionsProvider).createService(
                       name: _name.text.trim(), durationMinutes: int.parse(_duration.text), price: _price.text.trim().replaceAll(',', '.'),
                       depositPercent: _deposit.text.isEmpty ? null : _deposit.text, bufferMinutes: _buffer.text.isEmpty ? null : int.parse(_buffer.text)));
                 if (!context.mounted) return;
-                if (ok) { Navigator.pop(context); } else { setState(() => _busy = false); }
+                if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
               },
               child: Text(l.save),
             ),

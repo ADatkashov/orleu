@@ -473,4 +473,31 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get bookingMoved => 'Жазылу көшірілді';
+
+  @override
+  String get recordPayment => 'Төлем қабылдау';
+
+  @override
+  String get paymentAmount => 'Сома';
+
+  @override
+  String get paymentMethod => 'Тәсіл';
+
+  @override
+  String get methodCash => 'Қолма-қол';
+
+  @override
+  String get methodBank => 'Банк аударымы';
+
+  @override
+  String get methodCard => 'Карта (қолмен)';
+
+  @override
+  String get errOverpayment => 'Сома төленетін қалдықтан асып кетті.';
+
+  @override
+  String get paymentRecorded => 'Төлем тіркелді';
+
+  @override
+  String get validationAmount => 'Қалдықтан аспайтын соманы енгізіңіз';
 }

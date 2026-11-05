@@ -59,13 +59,17 @@ class _AddEmployeeState extends ConsumerState<_AddEmployeeDialog> {
   final _form = GlobalKey<FormState>();
   final _name = TextEditingController();
   bool _busy = false;
+  String? _error;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     return AlertDialog(
       title: Text(l.addEmployee),
-      content: Form(key: _form, child: TextFormField(key: const Key('empName'), controller: _name, decoration: InputDecoration(labelText: l.employeeName), validator: (v) => v == null || v.trim().isEmpty ? l.validationRequired : null)),
+      content: Form(key: _form, child: Column(mainAxisSize: MainAxisSize.min, children: [
+        TextFormField(key: const Key('empName'), controller: _name, decoration: InputDecoration(labelText: l.employeeName), validator: (v) => v == null || v.trim().isEmpty ? l.validationRequired : null),
+        FormError(_error),
+      ])),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
         FilledButton(
@@ -73,9 +77,9 @@ class _AddEmployeeState extends ConsumerState<_AddEmployeeDialog> {
           onPressed: _busy ? null : () async {
             if (!_form.currentState!.validate()) return;
             setState(() => _busy = true);
-            final ok = await guarded(context, () => ref.read(bookingActionsProvider).createEmployee(_name.text.trim()));
+            final err = await attempt(context, () => ref.read(bookingActionsProvider).createEmployee(_name.text.trim()));
             if (!context.mounted) return;
-            if (ok) { Navigator.pop(context); } else { setState(() => _busy = false); }
+            if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
           },
           child: Text(l.save),
         ),
@@ -95,6 +99,7 @@ class _AssignmentsState extends ConsumerState<AssignmentsSheet> {
   late final Set<String> _branches = widget.employee.branchIds.toSet();
   late final Set<String> _services = widget.employee.serviceIds.toSet();
   bool _busy = false;
+  String? _error;
 
   @override
   Widget build(BuildContext context) {
@@ -119,14 +124,15 @@ class _AssignmentsState extends ConsumerState<AssignmentsSheet> {
             key: Key('service-${s.id}'), contentPadding: EdgeInsets.zero, title: Text(s.name), value: _services.contains(s.id),
             onChanged: (v) => setState(() => v! ? _services.add(s.id) : _services.remove(s.id)),
           ),
+          FormError(_error),
           const SizedBox(height: AppSpacing.md),
           FilledButton(
             key: const Key('saveAssignments'),
             onPressed: _busy ? null : () async {
               setState(() => _busy = true);
-              final ok = await guarded(context, () => ref.read(bookingActionsProvider).setAssignments(widget.employee.id, _branches.toList(), _services.toList()));
+              final err = await attempt(context, () => ref.read(bookingActionsProvider).setAssignments(widget.employee.id, _branches.toList(), _services.toList()));
               if (!context.mounted) return;
-              if (ok) { Navigator.pop(context); } else { setState(() => _busy = false); }
+              if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
             },
             child: Text(l.save),
           ),
