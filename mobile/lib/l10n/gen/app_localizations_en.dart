@@ -411,4 +411,69 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get minutesShort => 'min';
+
+  @override
+  String get newBooking => 'New booking';
+
+  @override
+  String get selectService => 'Service';
+
+  @override
+  String get selectLocation => 'Location';
+
+  @override
+  String get selectSpecialist => 'Specialist';
+
+  @override
+  String get anySpecialist => 'Any available';
+
+  @override
+  String get pickDate => 'Date';
+
+  @override
+  String get pickTime => 'Time';
+
+  @override
+  String get noSlots => 'No free times on this day';
+
+  @override
+  String get clientName => 'Client name';
+
+  @override
+  String get clientPhone => 'Client phone';
+
+  @override
+  String get validationPhone =>
+      'Use international format, e.g. +7 701 123 45 67';
+
+  @override
+  String get notesOptional => 'Notes (optional)';
+
+  @override
+  String get bookAction => 'Create booking';
+
+  @override
+  String get rescheduleAction => 'Reschedule';
+
+  @override
+  String get rescheduleTitle => 'Move booking';
+
+  @override
+  String get moveHere => 'Move';
+
+  @override
+  String get errSlot => 'This time is no longer available. Pick another.';
+
+  @override
+  String get errBlockedCustomer => 'This client is blocked.';
+
+  @override
+  String get setupFirst =>
+      'Finish business setup first: a location, a service and a specialist.';
+
+  @override
+  String get bookingCreated => 'Booking created';
+
+  @override
+  String get bookingMoved => 'Booking moved';
 }

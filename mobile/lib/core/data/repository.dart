@@ -83,6 +83,17 @@ final employeesProvider = FutureProvider.autoDispose<List<Employee>>((ref) async
   return (r.data as List).map((e) => Employee.fromJson(e)).toList();
 });
 
+typedef AvailabilityKey = ({String branchId, String serviceId, String? employeeId, String date, String? excludeBookingId});
+
+final availabilityProvider = FutureProvider.autoDispose.family<List<Slot>, AvailabilityKey>((ref, k) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/availability', queryParameters: {
+        'branchId': k.branchId, 'serviceId': k.serviceId, 'date': k.date,
+        'employeeId': ?k.employeeId, 'excludeBookingId': ?k.excludeBookingId,
+      }));
+  return (r.data as List).map((e) => Slot.fromJson(e)).toList();
+});
+
 class BookingActions {
   final Ref ref;
   BookingActions(this.ref);
@@ -97,6 +108,24 @@ class BookingActions {
   }
 
   Future<String> _id() async => (await _biz(ref)).id;
+
+  Future<void> createBooking({required String branchId, required String serviceId, String? employeeId, required DateTime startsAt,
+      required String name, required String phone, String? notes}) async {
+    final id = await _id();
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/bookings', data: {
+          'branchId': branchId, 'serviceId': serviceId, 'employeeId': ?employeeId, 'startsAt': startsAt.toUtc().toIso8601String(),
+          'customer': {'fullName': name, 'phone': phone}, 'notes': ?(notes == null || notes.isEmpty ? null : notes),
+        }));
+    ref.invalidate(bookingsProvider);
+    ref.invalidate(todaySummaryProvider);
+    ref.invalidate(customersProvider);
+  }
+
+  Future<void> reschedule(String bookingId, DateTime startsAt) async {
+    final id = await _id();
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/bookings/$bookingId/reschedule', data: {'startsAt': startsAt.toUtc().toIso8601String()}));
+    ref.invalidate(bookingsProvider);
+  }
 
   Future<void> createBranch(String name, String? address) async {
     final id = await _id();

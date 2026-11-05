@@ -20,13 +20,14 @@ class Financials {
 const bookingStatuses = ['PENDING', 'AWAITING_PAYMENT', 'CONFIRMED', 'CHECKED_IN', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW', 'EXPIRED'];
 
 class Booking {
+  final String branchId, serviceId, employeeId;
   final String id, serviceName, employeeName, customerName, customerPhone, status, currency;
   final DateTime startsAt, endsAt;
   final Financials financials;
-  const Booking({required this.id, required this.serviceName, required this.employeeName, required this.customerName, required this.customerPhone,
+  const Booking({required this.branchId, required this.serviceId, required this.employeeId, required this.id, required this.serviceName, required this.employeeName, required this.customerName, required this.customerPhone,
       required this.status, required this.currency, required this.startsAt, required this.endsAt, required this.financials});
   factory Booking.fromJson(Map<String, dynamic> j) => Booking(
-      id: j['id'], serviceName: j['serviceName'], employeeName: j['employeeName'], customerName: j['customerName'], customerPhone: j['customerPhone'],
+      branchId: j['branchId'], serviceId: j['serviceId'], employeeId: j['employeeId'], id: j['id'], serviceName: j['serviceName'], employeeName: j['employeeName'], customerName: j['customerName'], customerPhone: j['customerPhone'],
       status: j['status'], currency: j['currency'], startsAt: DateTime.parse(j['startsAt']).toLocal(), endsAt: DateTime.parse(j['endsAt']).toLocal(),
       financials: Financials.fromJson(j['financials']));
 
@@ -39,6 +40,7 @@ class Booking {
         'IN_PROGRESS' => ['COMPLETED'],
         _ => const [],
       };
+  bool get canReschedule => const {'PENDING', 'AWAITING_PAYMENT', 'CONFIRMED'}.contains(status);
   bool get needsAction => status == 'PENDING' || status == 'AWAITING_PAYMENT';
   bool get isLive => const {'PENDING', 'AWAITING_PAYMENT', 'CONFIRMED', 'CHECKED_IN', 'IN_PROGRESS'}.contains(status);
 }
@@ -95,3 +97,23 @@ class Employee {
   factory Employee.fromJson(Map<String, dynamic> j) => Employee(
       id: j['id'], displayName: j['displayName'], branchIds: List<String>.from(j['branchIds'] ?? const []), serviceIds: List<String>.from(j['serviceIds'] ?? const []));
 }
+
+class Slot {
+  final DateTime start; // device-local; the API sends UTC instants
+  final List<String> employeeIds;
+  const Slot(this.start, this.employeeIds);
+  factory Slot.fromJson(Map<String, dynamic> j) => Slot(DateTime.parse(j['start']).toLocal(), List<String>.from(j['employeeIds'] ?? const []));
+}
+
+/// Normalises typed phone numbers to E.164 for Kazakhstan-style input (8 701 ... / 7 701 ... / +7 701 ...).
+String normalizePhone(String raw) {
+  var d = raw.replaceAll(RegExp(r'[\s\-()]'), '');
+  if (RegExp(r'^8\d{10}$').hasMatch(d)) {
+    d = '+7${d.substring(1)}';
+  } else if (RegExp(r'^7\d{10}$').hasMatch(d)) {
+    d = '+$d';
+  }
+  return d;
+}
+
+final phoneE164 = RegExp(r'^\+[1-9]\d{7,14}$');

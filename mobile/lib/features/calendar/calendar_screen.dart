@@ -8,6 +8,7 @@ import '../../core/design/tokens.dart';
 import '../../core/errors.dart';
 import '../../core/widgets/common.dart';
 import '../../l10n/gen/app_localizations.dart';
+import 'booking_forms.dart';
 
 /// Day view: navigate days, open a booking for details and status actions (validated by the backend).
 class CalendarScreen extends ConsumerStatefulWidget {
@@ -28,6 +29,10 @@ class _State extends ConsumerState<CalendarScreen> {
     final locale = Localizations.localeOf(context).toLanguageTag();
     final bookings = ref.watch(bookingsProvider(_day));
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        key: const Key('newBooking'), icon: const Icon(Icons.add), label: Text(l.newBooking),
+        onPressed: () => showModalBottomSheet(context: context, isScrollControlled: true, showDragHandle: true, builder: (_) => const NewBookingSheet()),
+      ),
       appBar: AppBar(
         title: Text(DateFormat.MMMEd(locale).format(_day)),
         actions: [
@@ -44,7 +49,7 @@ class _State extends ConsumerState<CalendarScreen> {
             : RefreshIndicator(
                 onRefresh: () async => ref.invalidate(bookingsProvider),
                 child: ListView.separated(
-                  padding: const EdgeInsets.all(AppSpacing.md),
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, 96),
                   itemCount: list.length,
                   separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
                   itemBuilder: (_, i) {
@@ -138,6 +143,19 @@ class _SheetState extends ConsumerState<BookingSheet> {
           row(l.paymentStatus, _pay(l, f.paymentStatus)),
           if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.sm), child: Text(_error!, style: TextStyle(color: t.colorScheme.error))),
           const SizedBox(height: AppSpacing.md),
+          if (b.canReschedule) Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: OutlinedButton.icon(
+              key: const Key('reschedule'),
+              icon: const Icon(Icons.event_repeat),
+              label: Text(l.rescheduleAction),
+              onPressed: _busy ? null : () {
+                final nav = Navigator.of(context);
+                nav.pop();
+                showModalBottomSheet(context: nav.context, isScrollControlled: true, showDragHandle: true, builder: (_) => RescheduleSheet(booking: b));
+              },
+            ),
+          ),
           for (final s in b.nextActions) Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: s == 'CANCELLED' || s == 'NO_SHOW'

@@ -409,4 +409,69 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get minutesShort => 'мин';
+
+  @override
+  String get newBooking => 'Новая запись';
+
+  @override
+  String get selectService => 'Услуга';
+
+  @override
+  String get selectLocation => 'Филиал';
+
+  @override
+  String get selectSpecialist => 'Специалист';
+
+  @override
+  String get anySpecialist => 'Любой свободный';
+
+  @override
+  String get pickDate => 'Дата';
+
+  @override
+  String get pickTime => 'Время';
+
+  @override
+  String get noSlots => 'На этот день нет свободного времени';
+
+  @override
+  String get clientName => 'Имя клиента';
+
+  @override
+  String get clientPhone => 'Телефон клиента';
+
+  @override
+  String get validationPhone =>
+      'Международный формат, например +7 701 123 45 67';
+
+  @override
+  String get notesOptional => 'Заметка (необязательно)';
+
+  @override
+  String get bookAction => 'Создать запись';
+
+  @override
+  String get rescheduleAction => 'Перенести';
+
+  @override
+  String get rescheduleTitle => 'Перенос записи';
+
+  @override
+  String get moveHere => 'Перенести';
+
+  @override
+  String get errSlot => 'Это время уже недоступно. Выберите другое.';
+
+  @override
+  String get errBlockedCustomer => 'Этот клиент заблокирован.';
+
+  @override
+  String get setupFirst =>
+      'Сначала завершите настройку: филиал, услуга и специалист.';
+
+  @override
+  String get bookingCreated => 'Запись создана';
+
+  @override
+  String get bookingMoved => 'Запись перенесена';
 }

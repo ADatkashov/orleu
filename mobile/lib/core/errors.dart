@@ -17,6 +17,8 @@ String errorText(BuildContext context, Object error) {
     'BRANCH_LIMIT_REACHED' || 'EMPLOYEE_LIMIT_REACHED' => l.errLimit,
     'NOT_READY_TO_PUBLISH' => l.errNotReady,
     'BUSINESS_SUSPENDED' => l.errSuspended,
+    'SLOT_UNAVAILABLE' => l.errSlot,
+    'FORBIDDEN' => l.errBlockedCustomer,
     _ => l.errGeneric,
   };
 }
