@@ -8,13 +8,13 @@ on:
 jobs:
   compose:
     runs-on: ubuntu-latest   # needs Docker (also true for a self-hosted runner)
+    env:                     # job-level: every `docker compose` call needs these (compose refuses to start without them)
+      ORLEU_DB_PASSWORD: ci-only-password
+      ORLEU_JWT_SECRET: ci-only-secret-ci-only-secret-ci-only-secret
     steps:
       - uses: actions/checkout@v4
       - name: Start the stack (builds the image from backend/Dockerfile)
         working-directory: infrastructure
-        env:
-          ORLEU_DB_PASSWORD: ci-only-password
-          ORLEU_JWT_SECRET: ci-only-secret-ci-only-secret-ci-only-secret
         run: docker compose up -d --build
       - name: Wait for readiness
         run: |
