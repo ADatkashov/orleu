@@ -80,28 +80,33 @@ class PlanUsage {
 class Branch {
   final String id, name;
   final String? address;
+  final bool active;
   /// ISO weekday (1=Mon..7=Sun) -> ('HH:mm', 'HH:mm'). Missing day = closed.
   final Map<int, (String, String)> hours;
-  const Branch({required this.id, required this.name, this.address, required this.hours});
+  const Branch({required this.id, required this.name, this.address, this.active = true, required this.hours});
   factory Branch.fromJson(Map<String, dynamic> j) => Branch(
-      id: j['id'], name: j['name'], address: j['address'],
+      id: j['id'], name: j['name'], address: j['address'], active: j['active'] != false,
       hours: {for (final h in (j['hours'] as List? ?? const [])) h['dayOfWeek'] as int: ((h['open'] as String).substring(0, 5), (h['close'] as String).substring(0, 5))});
 }
 
 class ServiceItem {
   final String id, name;
-  final int durationMinutes;
+  final int durationMinutes, bufferMinutes;
   final double price;
-  const ServiceItem({required this.id, required this.name, required this.durationMinutes, required this.price});
-  factory ServiceItem.fromJson(Map<String, dynamic> j) => ServiceItem(id: j['id'], name: j['name'], durationMinutes: j['durationMinutes'], price: _num(j['price']));
+  final double? depositPercent; // null = the business default applies
+  final bool active;
+  const ServiceItem({required this.id, required this.name, required this.durationMinutes, this.bufferMinutes = 0, required this.price, this.depositPercent, this.active = true});
+  factory ServiceItem.fromJson(Map<String, dynamic> j) => ServiceItem(id: j['id'], name: j['name'], durationMinutes: j['durationMinutes'], bufferMinutes: j['bufferMinutes'] ?? 0,
+      price: _num(j['price']), depositPercent: j['depositPercent'] == null ? null : _num(j['depositPercent']), active: j['active'] != false);
 }
 
 class Employee {
   final String id, displayName;
+  final bool active;
   final List<String> branchIds, serviceIds;
-  const Employee({required this.id, required this.displayName, required this.branchIds, required this.serviceIds});
+  const Employee({required this.id, required this.displayName, this.active = true, required this.branchIds, required this.serviceIds});
   factory Employee.fromJson(Map<String, dynamic> j) => Employee(
-      id: j['id'], displayName: j['displayName'], branchIds: List<String>.from(j['branchIds'] ?? const []), serviceIds: List<String>.from(j['serviceIds'] ?? const []));
+      id: j['id'], displayName: j['displayName'], active: j['active'] != false, branchIds: List<String>.from(j['branchIds'] ?? const []), serviceIds: List<String>.from(j['serviceIds'] ?? const []));
 }
 
 class Slot {
@@ -127,3 +132,37 @@ String normalizePhone(String raw) {
 }
 
 final phoneE164 = RegExp(r'^\+[1-9]\d{7,14}$');
+
+class BookingLine {
+  final String id, serviceName, employeeName, status;
+  final DateTime startsAt; // wall clock in the business timezone
+  final double price, netPaid;
+  const BookingLine({required this.id, required this.serviceName, required this.employeeName, required this.status, required this.startsAt, required this.price, required this.netPaid});
+  factory BookingLine.fromJson(Map<String, dynamic> j, {String zone = 'UTC'}) => BookingLine(id: j['id'], serviceName: j['serviceName'], employeeName: j['employeeName'],
+      status: j['status'], startsAt: wallFromInstant(DateTime.parse(j['startsAt']), zone), price: _num(j['price']), netPaid: _num(j['netPaid']));
+}
+
+class CustomerStats {
+  final int totalBookings, completedVisits, cancelled, noShows, upcoming;
+  final DateTime? lastVisit; // wall clock in the business timezone
+  final double totalSpent;
+  final double? averageSpendPerVisit; // null until there is a completed visit
+  const CustomerStats({required this.totalBookings, required this.completedVisits, required this.cancelled, required this.noShows, required this.upcoming,
+      this.lastVisit, required this.totalSpent, this.averageSpendPerVisit});
+  factory CustomerStats.fromJson(Map<String, dynamic> j, {String zone = 'UTC'}) => CustomerStats(
+      totalBookings: j['totalBookings'] ?? 0, completedVisits: j['completedVisits'] ?? 0, cancelled: j['cancelled'] ?? 0, noShows: j['noShows'] ?? 0, upcoming: j['upcoming'] ?? 0,
+      lastVisit: j['lastVisit'] == null ? null : wallFromInstant(DateTime.parse(j['lastVisit']), zone), totalSpent: _num(j['totalSpent']),
+      averageSpendPerVisit: j['averageSpendPerVisit'] == null ? null : _num(j['averageSpendPerVisit']));
+}
+
+class CustomerProfile {
+  final Customer customer;
+  final bool marketingOptIn;
+  final String? notes;
+  final CustomerStats stats;
+  final List<BookingLine> bookings;
+  const CustomerProfile({required this.customer, required this.marketingOptIn, this.notes, required this.stats, required this.bookings});
+  factory CustomerProfile.fromJson(Map<String, dynamic> j, {String zone = 'UTC'}) => CustomerProfile(
+      customer: Customer.fromJson(j['customer']), marketingOptIn: j['customer']['marketingOptIn'] == true, notes: j['customer']['notes'],
+      stats: CustomerStats.fromJson(j['stats'], zone: zone), bookings: [for (final b in (j['bookings'] as List)) BookingLine.fromJson(b, zone: zone)]);
+}

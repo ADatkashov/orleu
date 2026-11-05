@@ -35,10 +35,11 @@ class EmployeesScreen extends ConsumerWidget {
                   final assigned = e.branchIds.isNotEmpty && e.serviceIds.isNotEmpty;
                   return Card(
                     child: ListTile(
+                      key: Key('emp-${e.id}'),
                       leading: CircleAvatar(child: Text(e.displayName.isEmpty ? '?' : e.displayName[0].toUpperCase())),
-                      title: Text(e.displayName),
-                      subtitle: Text('${l.services}: ${e.serviceIds.length} · ${l.branches}: ${e.branchIds.length}'),
-                      trailing: Icon(assigned ? Icons.check_circle : Icons.warning_amber_rounded, color: assigned ? AppColors.success : AppColors.warning),
+                      title: Text(e.displayName, style: e.active ? null : TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                      subtitle: Text(e.active ? '${l.services}: ${e.serviceIds.length} · ${l.branches}: ${e.branchIds.length}' : l.inactive),
+                      trailing: e.active ? Icon(assigned ? Icons.check_circle : Icons.warning_amber_rounded, color: assigned ? AppColors.success : AppColors.warning) : const Icon(Icons.pause_circle_outline),
                       onTap: () => showModalBottomSheet(context: context, isScrollControlled: true, showDragHandle: true, builder: (_) => AssignmentsSheet(employee: e)),
                     ),
                   );
@@ -98,6 +99,8 @@ class AssignmentsSheet extends ConsumerStatefulWidget {
 class _AssignmentsState extends ConsumerState<AssignmentsSheet> {
   late final Set<String> _branches = widget.employee.branchIds.toSet();
   late final Set<String> _services = widget.employee.serviceIds.toSet();
+  late final _name = TextEditingController(text: widget.employee.displayName);
+  late bool _active = widget.employee.active;
   bool _busy = false;
   String? _error;
 
@@ -105,14 +108,18 @@ class _AssignmentsState extends ConsumerState<AssignmentsSheet> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context);
-    final branches = ref.watch(branchesProvider).value ?? const <Branch>[];
-    final services = ref.watch(servicesProvider).value ?? const <ServiceItem>[];
+    // only active locations/services can be assigned (existing assignments to inactive ones are kept untouched)
+    final branches = [for (final b in ref.watch(branchesProvider).value ?? const <Branch>[]) if (b.active) b];
+    final services = [for (final s in ref.watch(servicesProvider).value ?? const <ServiceItem>[]) if (s.active) s];
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
-          Text(widget.employee.displayName, style: t.textTheme.titleLarge),
+          Text(l.editSpecialist, style: t.textTheme.titleLarge),
           const SizedBox(height: AppSpacing.md),
+          TextField(key: const Key('empEditName'), controller: _name, decoration: InputDecoration(labelText: l.employeeName)),
+          SwitchListTile(key: const Key('empActive'), contentPadding: EdgeInsets.zero, title: Text(l.active), subtitle: Text(l.deactivateNote), value: _active, onChanged: (v) => setState(() => _active = v)),
+          const SizedBox(height: AppSpacing.sm),
           Text(l.assignLocations, style: t.textTheme.titleMedium),
           for (final b in branches) CheckboxListTile(
             key: Key('branch-${b.id}'), contentPadding: EdgeInsets.zero, title: Text(b.name), value: _branches.contains(b.id),
@@ -129,8 +136,17 @@ class _AssignmentsState extends ConsumerState<AssignmentsSheet> {
           FilledButton(
             key: const Key('saveAssignments'),
             onPressed: _busy ? null : () async {
-              setState(() => _busy = true);
-              final err = await attempt(context, () => ref.read(bookingActionsProvider).setAssignments(widget.employee.id, _branches.toList(), _services.toList()));
+              if (_name.text.trim().isEmpty) {
+                setState(() => _error = l.validationRequired);
+                return;
+              }
+              setState(() { _busy = true; _error = null; });
+              final actions = ref.read(bookingActionsProvider);
+              final nameChanged = _name.text.trim() != widget.employee.displayName, activeChanged = _active != widget.employee.active;
+              final err = await attempt(context, () async {
+                if (nameChanged || activeChanged) await actions.updateEmployee(widget.employee.id, displayName: nameChanged ? _name.text.trim() : null, active: activeChanged ? _active : null);
+                await actions.setAssignments(widget.employee.id, _branches.toList(), _services.toList());
+              });
               if (!context.mounted) return;
               if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
             },

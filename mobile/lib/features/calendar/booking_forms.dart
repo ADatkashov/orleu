@@ -27,9 +27,10 @@ class _NewBookingState extends ConsumerState<NewBookingSheet> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context);
-    final services = ref.watch(servicesProvider).value ?? const <ServiceItem>[];
-    final branches = ref.watch(branchesProvider).value ?? const <Branch>[];
-    final employees = ref.watch(employeesProvider).value ?? const <Employee>[];
+    // inactive items are never offered (the backend rejects them as well)
+    final services = [for (final s in ref.watch(servicesProvider).value ?? const <ServiceItem>[]) if (s.active) s];
+    final branches = [for (final b in ref.watch(branchesProvider).value ?? const <Branch>[]) if (b.active) b];
+    final employees = [for (final e in ref.watch(employeesProvider).value ?? const <Employee>[]) if (e.active) e];
 
     List<Employee> eligible(String? svc, String? br) => [
           for (final e in employees) if (svc != null && e.serviceIds.contains(svc) && (br == null || e.branchIds.contains(br))) e

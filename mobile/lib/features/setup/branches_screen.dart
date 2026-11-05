@@ -35,9 +35,13 @@ class BranchesScreen extends ConsumerWidget {
                   return Card(
                     child: ListTile(
                       leading: const Icon(Icons.storefront_outlined),
-                      title: Text(b.name),
-                      subtitle: Text(b.hours.isEmpty ? l.stepHours : (b.address ?? l.workingHours)),
-                      trailing: Icon(b.hours.isEmpty ? Icons.warning_amber_rounded : Icons.schedule, color: b.hours.isEmpty ? AppColors.warning : null),
+                      key: Key('branch-${b.id}'),
+                      title: Text(b.name, style: b.active ? null : TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                      subtitle: Text(!b.active ? l.inactive : b.hours.isEmpty ? l.stepHours : (b.address ?? l.workingHours)),
+                      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                        IconButton(key: Key('editBranch-${b.id}'), tooltip: l.edit, icon: const Icon(Icons.edit_outlined), onPressed: () => showDialog(context: context, builder: (_) => _AddBranchDialog(initial: b))),
+                        Icon(b.hours.isEmpty ? Icons.warning_amber_rounded : Icons.schedule, color: b.hours.isEmpty ? AppColors.warning : null),
+                      ]),
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => HoursScreen(branch: b))),
                     ),
                   );
@@ -49,14 +53,16 @@ class BranchesScreen extends ConsumerWidget {
 }
 
 class _AddBranchDialog extends ConsumerStatefulWidget {
-  const _AddBranchDialog();
+  final Branch? initial; // null = create, otherwise edit
+  const _AddBranchDialog({this.initial});
   @override
   ConsumerState<_AddBranchDialog> createState() => _AddBranchState();
 }
 
 class _AddBranchState extends ConsumerState<_AddBranchDialog> {
   final _form = GlobalKey<FormState>();
-  final _name = TextEditingController(), _address = TextEditingController();
+  late final _name = TextEditingController(text: widget.initial?.name ?? ''), _address = TextEditingController(text: widget.initial?.address ?? '');
+  late bool _active = widget.initial?.active ?? true;
   bool _busy = false;
   String? _error;
 
@@ -64,13 +70,14 @@ class _AddBranchState extends ConsumerState<_AddBranchDialog> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     return AlertDialog(
-      title: Text(l.addBranch),
+      title: Text(widget.initial == null ? l.addBranch : l.editLocation),
       content: Form(
         key: _form,
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           TextFormField(controller: _name, decoration: InputDecoration(labelText: l.branchName), validator: (v) => v == null || v.trim().isEmpty ? l.validationRequired : null),
           const SizedBox(height: AppSpacing.md),
           TextFormField(controller: _address, decoration: InputDecoration(labelText: l.address)),
+          if (widget.initial != null) SwitchListTile(key: const Key('branchActive'), contentPadding: EdgeInsets.zero, title: Text(l.active), subtitle: Text(l.deactivateNote), value: _active, onChanged: (v) => setState(() => _active = v)),
           FormError(_error),
         ]),
       ),
@@ -81,7 +88,10 @@ class _AddBranchState extends ConsumerState<_AddBranchDialog> {
           onPressed: _busy ? null : () async {
             if (!_form.currentState!.validate()) return;
             setState(() => _busy = true);
-            final err = await attempt(context, () => ref.read(bookingActionsProvider).createBranch(_name.text.trim(), _address.text.trim()));
+            final actions = ref.read(bookingActionsProvider);
+            final err = await attempt(context, () => widget.initial == null
+                ? actions.createBranch(_name.text.trim(), _address.text.trim())
+                : actions.updateBranch(widget.initial!.id, name: _name.text.trim(), address: _address.text.trim(), active: _active));
             if (!context.mounted) return;
             if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
           },

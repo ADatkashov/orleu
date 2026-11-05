@@ -500,4 +500,82 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get validationAmount => 'Қалдықтан аспайтын соманы енгізіңіз';
+
+  @override
+  String get statVisits => 'Келулер';
+
+  @override
+  String get statCancelled => 'Бас тартулар';
+
+  @override
+  String get statNoShows => 'Келмеулер';
+
+  @override
+  String get statUpcoming => 'Алдағы';
+
+  @override
+  String get statLastVisit => 'Соңғы келуі';
+
+  @override
+  String get statSpent => 'Барлығы төленді';
+
+  @override
+  String get statAvg => 'Бір келуге орта есеппен';
+
+  @override
+  String get noVisitsYet => 'Келулер әзірге жоқ';
+
+  @override
+  String get historyTitle => 'Жазылулар тарихы';
+
+  @override
+  String get noHistory => 'Жазылулар әзірге жоқ';
+
+  @override
+  String get notes => 'Ескертпелер';
+
+  @override
+  String get editClient => 'Клиентті өзгерту';
+
+  @override
+  String get marketingConsent => 'Жарнамалық хабарламаларға келісімі бар';
+
+  @override
+  String get blockClient => 'Клиентті бұғаттау';
+
+  @override
+  String get unblockClient => 'Клиентті бұғаттан шығару';
+
+  @override
+  String get blockConfirm =>
+      'Бұғатталған клиент онлайн жазыла алмайды және қызметкерлер оны жаза алмайды.';
+
+  @override
+  String get blocked => 'Бұғатталған';
+
+  @override
+  String get edit => 'Өзгерту';
+
+  @override
+  String get active => 'Белсенді';
+
+  @override
+  String get inactive => 'Белсенді емес';
+
+  @override
+  String get deactivateNote =>
+      'Белсенді емес элементтер жазылуда көрінбейді. Бар жазылулар мен тарих сақталады.';
+
+  @override
+  String get editService => 'Қызметті өзгерту';
+
+  @override
+  String get editLocation => 'Филиалды өзгерту';
+
+  @override
+  String get editSpecialist => 'Маманды өзгерту';
+
+  @override
+  String get statsNote =>
+      'Төленді = алынған ақша минус қайтарулар, жазылулар сомасы емес.';
 }
