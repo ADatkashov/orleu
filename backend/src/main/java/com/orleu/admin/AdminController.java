@@ -18,8 +18,18 @@ public class AdminController {
     public record SuspendRequest(@Size(max = 300) String reason) {}
     public record PlanLimitsRequest(@NotNull Integer maxBranches, @NotNull Integer maxEmployees) {}
 
+    public record MeView(PlatformRole role, boolean canModify) {}
+
     private final AdminService service;
-    public AdminController(AdminService service) { this.service = service; }
+    private final PlatformAccess access;
+    public AdminController(AdminService service, PlatformAccess access) { this.service = service; this.access = access; }
+
+    /** Lets the admin UI show only the actions the caller may perform (the server still enforces every one of them). */
+    @GetMapping("/me")
+    public MeView me() {
+        PlatformRole r = access.currentRole();
+        return new MeView(r, r == PlatformRole.SUPER_ADMIN);
+    }
 
     @GetMapping("/businesses")
     public Page<BusinessRow> businesses(@RequestParam(required = false) String q, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
