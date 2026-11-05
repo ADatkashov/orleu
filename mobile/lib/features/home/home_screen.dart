@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
+import '../../core/tz.dart';
 import '../../core/design/tokens.dart';
 import '../../core/widgets/common.dart';
 import '../../l10n/gen/app_localizations.dart';
@@ -17,7 +18,8 @@ class HomeScreen extends ConsumerWidget {
     final t = Theme.of(context);
     final biz = ref.watch(currentBusinessProvider).value;
     final name = ref.watch(meNameProvider).value ?? '';
-    final today = dayStart(DateTime.now());
+    final zone = ref.watch(businessZoneProvider);
+    final today = dayStart(nowWall(zone));
     final bookings = ref.watch(bookingsProvider(today));
     final summary = ref.watch(todaySummaryProvider);
     final currency = biz?.currency ?? 'KZT';
@@ -52,7 +54,7 @@ class HomeScreen extends ConsumerWidget {
             error: (e, _) => ErrorRetry(error: e, onRetry: () => ref.invalidate(bookingsProvider)),
             data: (list) {
               final pending = list.where((b) => b.needsAction).length;
-              final upcoming = list.where((b) => b.isLive && b.endsAt.isAfter(DateTime.now())).take(5).toList();
+              final upcoming = list.where((b) => b.isLive && b.endsInstant.isAfter(DateTime.now().toUtc())).take(5).toList();
               return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 StatTile(label: l.pendingBookings, value: '$pending', valueColor: pending > 0 ? AppColors.warning : null),
                 const SizedBox(height: AppSpacing.lg),

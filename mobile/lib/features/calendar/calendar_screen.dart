@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
+import '../../core/tz.dart';
 import '../../core/design/tokens.dart';
 import '../../core/errors.dart';
 import '../../core/widgets/common.dart';
@@ -18,27 +19,30 @@ class CalendarScreen extends ConsumerStatefulWidget {
 }
 
 class _State extends ConsumerState<CalendarScreen> {
-  DateTime _day = dayStart(DateTime.now());
+  DateTime? _dayOverride; // null = today in the business timezone
 
-  void _shift(int days) => setState(() => _day = _day.add(Duration(days: days)));
+  void _shift(DateTime current, int days) => setState(() => _dayOverride = DateTime(current.year, current.month, current.day + days));
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context);
     final locale = Localizations.localeOf(context).toLanguageTag();
-    final bookings = ref.watch(bookingsProvider(_day));
+    final zone = ref.watch(businessZoneProvider);
+    final today = dayStart(nowWall(zone));
+    final day = _dayOverride ?? today;
+    final bookings = ref.watch(bookingsProvider(day));
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         key: const Key('newBooking'), icon: const Icon(Icons.add), label: Text(l.newBooking),
         onPressed: () => showModalBottomSheet(context: context, isScrollControlled: true, showDragHandle: true, builder: (_) => const NewBookingSheet()),
       ),
       appBar: AppBar(
-        title: Text(DateFormat.MMMEd(locale).format(_day)),
+        title: Text(DateFormat.MMMEd(locale).format(day)),
         actions: [
-          IconButton(icon: const Icon(Icons.chevron_left), tooltip: '−1', onPressed: () => _shift(-1)),
-          IconButton(icon: const Icon(Icons.today), tooltip: DateFormat.MMMd(locale).format(DateTime.now()), onPressed: () => setState(() => _day = dayStart(DateTime.now()))),
-          IconButton(icon: const Icon(Icons.chevron_right), tooltip: '+1', onPressed: () => _shift(1)),
+          IconButton(icon: const Icon(Icons.chevron_left), tooltip: '−1', onPressed: () => _shift(day, -1)),
+          IconButton(icon: const Icon(Icons.today), tooltip: DateFormat.MMMd(locale).format(today), onPressed: () => setState(() => _dayOverride = null)),
+          IconButton(icon: const Icon(Icons.chevron_right), tooltip: '+1', onPressed: () => _shift(day, 1)),
         ],
       ),
       body: bookings.when(
