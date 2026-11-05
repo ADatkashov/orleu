@@ -35,6 +35,11 @@ Flutter: per-branch timezones, drag-and-drop, week/month calendar, editing/delet
 ## BLOCKED BY EXTERNAL DEPENDENCY
 Real payment providers (FreedomPay, Kaspi, cards) need merchant accounts, official API docs and webhook secrets — no provider code or mock was written, to avoid presenting fake payments. SMS/e-mail/WhatsApp/push providers, Neon and R2 credentials likewise.
 
+## Operations
+- **Backup/restore verified** (scripts + `backup-restore` workflow): dump → restore → exact row counts of all tables → app boots on the restored DB → pre-backup user can sign in; corrupted dumps and non-empty targets are refused. Details and what is *not* verified (Neon PITR, production-size timing, backup encryption): `docs/BACKUP_AND_RECOVERY.md`. RPO/RTO are targets, not measurements.
+- `docs/DEPLOYMENT.md` (artifacts, environment variables, manual release procedure) and `docs/OPERATIONS.md` (health, jobs, incident table) describe only what exists. `infrastructure/k8s/` manifests are YAML-validated, **never applied to a cluster**.
+- Metrics are not exposed over HTTP (a signed-in tenant user could read them); no monitoring or alerting exists.
+
 ## Known limitations / production blockers
 1. Rate limiter is per-instance memory; needs a shared limiter before multiple replicas.
 2. No PostgreSQL row-level security (application + FK isolation only).

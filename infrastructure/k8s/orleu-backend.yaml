@@ -1,0 +1,79 @@
+# Kubernetes manifests for the backend. VALIDATED AS YAML ONLY - never applied to a cluster.
+# Replace image, host and secret values; create the Secret out-of-band (see secret.example.yaml), never commit real values.
+# replicas stays 1 until the in-memory rate limiter is replaced by a shared one.
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: orleu-backend-config }
+data:
+  SPRING_PROFILES_ACTIVE: prod
+  ORLEU_API_DOCS_ENABLED: "false"
+  ORLEU_DB_POOL_SIZE: "10"
+  ORLEU_ALLOWED_ORIGINS: "https://app.example.com,https://admin.example.com"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: orleu-backend, labels: { app: orleu-backend } }
+spec:
+  replicas: 1
+  strategy: { type: RollingUpdate, rollingUpdate: { maxUnavailable: 0, maxSurge: 1 } }
+  selector: { matchLabels: { app: orleu-backend } }
+  template:
+    metadata: { labels: { app: orleu-backend } }
+    spec:
+      securityContext: { runAsNonRoot: true, runAsUser: 10001, seccompProfile: { type: RuntimeDefault } }
+      containers:
+        - name: backend
+          image: ghcr.io/OWNER/orleu-backend:TAG   # placeholder: no registry publishing is configured
+          ports: [{ containerPort: 8080, name: http }]
+          envFrom:
+            - configMapRef: { name: orleu-backend-config }
+            - secretRef: { name: orleu-backend-secrets }   # ORLEU_DB_URL, ORLEU_DB_USER, ORLEU_DB_PASSWORD, ORLEU_JWT_SECRET
+          resources:
+            requests: { cpu: 250m, memory: 512Mi }
+            limits: { memory: 768Mi }
+          startupProbe: { httpGet: { path: /actuator/health/liveness, port: http }, failureThreshold: 30, periodSeconds: 5 }
+          livenessProbe: { httpGet: { path: /actuator/health/liveness, port: http }, periodSeconds: 10 }
+          readinessProbe: { httpGet: { path: /actuator/health/readiness, port: http }, periodSeconds: 5 }
+          securityContext: { allowPrivilegeEscalation: false, readOnlyRootFilesystem: true, capabilities: { drop: [ALL] } }
+          volumeMounts: [{ name: tmp, mountPath: /tmp }]
+      volumes: [{ name: tmp, emptyDir: {} }]
+---
+apiVersion: v1
+kind: Service
+metadata: { name: orleu-backend }
+spec:
+  selector: { app: orleu-backend }
+  ports: [{ name: http, port: 80, targetPort: http }]
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orleu-backend
+  annotations: { nginx.ingress.kubernetes.io/proxy-body-size: 1m }
+spec:
+  ingressClassName: nginx
+  tls: [{ hosts: [api.example.com], secretName: orleu-api-tls }]
+  rules:
+    - host: api.example.com
+      http: { paths: [{ path: /, pathType: Prefix, backend: { service: { name: orleu-backend, port: { name: http } } } }] }
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata: { name: orleu-backup }
+spec:
+  schedule: "17 2 * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: backup
+              image: postgres:16-alpine
+              command: ["/bin/sh", "-c"]
+              # Uploading the dump to storage outside the cluster is NOT implemented here: add it (and encryption) before relying on this job.
+              args: ["pg_dump --format=custom --no-owner --no-privileges --file /backup/orleu-$(date -u +%F).dump && ls -l /backup"]
+              envFrom: [{ secretRef: { name: orleu-backup-secrets } }]   # PGHOST PGPORT PGUSER PGPASSWORD PGDATABASE
+              volumeMounts: [{ name: backup, mountPath: /backup }]
+          volumes: [{ name: backup, emptyDir: {} }]

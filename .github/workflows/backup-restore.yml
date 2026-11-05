@@ -1,0 +1,62 @@
+name: backup-restore
+on:
+  push:
+    branches: [main]
+    paths: ["backend/**", "scripts/*.sh", ".github/workflows/backup-restore.yml"]
+  pull_request:
+    paths: ["backend/**", "scripts/*.sh", ".github/workflows/backup-restore.yml"]
+  schedule:
+    - cron: "23 3 * * 1"   # weekly: restorability must keep holding as the schema grows
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      PGHOST: localhost
+      PGPORT: "5432"
+      PGUSER: orleu
+      PGPASSWORD: orleu
+      PGDATABASE: orleu
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_DB: orleu, POSTGRES_USER: orleu, POSTGRES_PASSWORD: orleu }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U orleu" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "21", cache: gradle }
+      - name: Build backend
+        working-directory: backend
+        run: ./gradlew --no-daemon bootJar -x test
+      - name: Start backend (creates the schema) and register a user
+        run: |
+          ORLEU_DB_URL=jdbc:postgresql://localhost:5432/orleu ORLEU_DB_USER=orleu ORLEU_DB_PASSWORD=orleu \
+          ORLEU_JWT_SECRET=ci-backup-secret-ci-backup-secret-ci-backup SERVER_PORT=8080 \
+          nohup java -jar backend/build/libs/orleu-backend-*.jar > backend.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf localhost:8080/actuator/health/readiness | grep -q UP && break; sleep 2; done
+          curl -sf -X POST localhost:8080/api/v1/auth/register -H 'Content-Type: application/json' \
+            -d '{"email":"restore@example.com","password":"correct-horse-battery","fullName":"Restore Check"}' | grep accessToken
+          pkill -f orleu-backend || true
+      - name: Backup, restore into a scratch database, compare every table
+        run: scripts/verify-restore.sh
+      - name: Restore again and boot the real application on the restored database
+        run: |
+          scripts/backup.sh /tmp/ci.dump
+          scripts/restore.sh /tmp/ci.dump orleu_restored
+          ORLEU_DB_URL=jdbc:postgresql://localhost:5432/orleu_restored ORLEU_DB_USER=orleu ORLEU_DB_PASSWORD=orleu \
+          ORLEU_JWT_SECRET=ci-backup-secret-ci-backup-secret-ci-backup SERVER_PORT=8081 \
+          nohup java -jar backend/build/libs/orleu-backend-*.jar > restored.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf localhost:8081/actuator/health/readiness | grep -q UP && break; sleep 2; done
+          curl -sf localhost:8081/actuator/health | grep UP
+          curl -sf -X POST localhost:8081/api/v1/auth/login -H 'Content-Type: application/json' \
+            -d '{"email":"restore@example.com","password":"correct-horse-battery"}' | grep accessToken
+      - name: Refuses corrupted backups and non-empty targets
+        run: |
+          cp /tmp/ci.dump /tmp/bad.dump && cp /tmp/ci.dump.sha256 /tmp/bad.dump.sha256 && sed -i 's/ci.dump/bad.dump/' /tmp/bad.dump.sha256 && printf 'x' >> /tmp/bad.dump
+          if scripts/restore.sh /tmp/bad.dump orleu_never; then echo "corrupted dump was accepted"; exit 1; fi
+          if scripts/restore.sh /tmp/ci.dump orleu; then echo "restore into a non-empty database was accepted"; exit 1; fi
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: { name: logs, path: "*.log" }
