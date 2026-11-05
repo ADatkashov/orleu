@@ -21,6 +21,15 @@ public class CatalogController {
     @GetMapping("/branches")
     public List<BranchView> branches(@PathVariable UUID businessId) { return service.listBranches(businessId); }
 
+    @PatchMapping("/branches/{branchId}")
+    public BranchView updateBranch(@PathVariable UUID businessId, @PathVariable UUID branchId, @Valid @RequestBody UpdateBranchRequest r) { return service.updateBranch(businessId, branchId, r); }
+
+    @PatchMapping("/services/{serviceId}")
+    public ServiceView updateService(@PathVariable UUID businessId, @PathVariable UUID serviceId, @Valid @RequestBody UpdateServiceRequest r) { return service.updateService(businessId, serviceId, r); }
+
+    @PatchMapping("/employees/{employeeId}")
+    public EmployeeView updateEmployee(@PathVariable UUID businessId, @PathVariable UUID employeeId, @Valid @RequestBody UpdateEmployeeRequest r) { return service.updateEmployee(businessId, employeeId, r); }
+
     @PutMapping("/branches/{branchId}/hours") @ResponseStatus(HttpStatus.NO_CONTENT)
     public void hours(@PathVariable UUID businessId, @PathVariable UUID branchId, @Valid @RequestBody SetHoursRequest r) { service.setHours(businessId, branchId, r); }
 

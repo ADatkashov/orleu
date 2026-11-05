@@ -40,5 +40,18 @@ public final class CatalogDtos {
     public record AssignmentsRequest(@NotNull List<UUID> branchIds, @NotNull List<UUID> serviceIds) {}
     public record EmployeeView(UUID id, String displayName, boolean active, List<UUID> branchIds, List<UUID> serviceIds) {}
 
+    /** Partial updates: null = leave unchanged. "Deleting" is deactivation (active=false): history and bookings are kept. */
+    public record UpdateBranchRequest(@Size(min = 1, max = 200) String name, @Size(max = 300) String address,
+                                      @Pattern(regexp = "^\\+[1-9][0-9]{7,14}$") String phone, Boolean active) {}
+
+    public record UpdateServiceRequest(
+            @Size(min = 1, max = 200) String name, @Size(max = 2000) String description, @Size(max = 100) String category,
+            @Min(5) @Max(1440) Integer durationMinutes, @Min(0) @Max(240) Integer bufferMinutes,
+            @DecimalMin("0") @Digits(integer = 12, fraction = 2) BigDecimal price,
+            @DecimalMin("0") @DecimalMax("100") BigDecimal depositPercent, Boolean useBusinessDeposit,
+            Boolean onlineBookable, Boolean active) {}
+
+    public record UpdateEmployeeRequest(@Size(min = 1, max = 200) String displayName, Boolean active) {}
+
     public record TimeOffRequest(@NotNull Instant startsAt, @NotNull Instant endsAt, @Size(max = 200) String reason) {}
 }
