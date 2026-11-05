@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../tz.dart';
 import 'auth_controller.dart';
 import 'models.dart';
 
@@ -32,14 +33,16 @@ String newIdempotencyKey() {
   return List.generate(16, (_) => r.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
 }
 
-DateTime dayStart(DateTime d) => DateTime(d.year, d.month, d.day);
+/// Timezone of the current business (UTC until it is loaded; screens only render after the business gate anyway).
+final businessZoneProvider = Provider<String>((ref) => ref.watch(currentBusinessProvider).value?.timezone ?? 'UTC');
 
+/// [day] is a calendar date in the BUSINESS timezone (time of day ignored).
 final bookingsProvider = FutureProvider.autoDispose.family<List<Booking>, DateTime>((ref, day) async {
   final b = await _biz(ref);
-  final from = dayStart(day), to = from.add(const Duration(days: 1));
+  final from = instantFromWall(dayStart(day), b.timezone), to = instantFromWall(nextDay(day), b.timezone);
   final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/bookings',
-      queryParameters: {'from': from.toUtc().toIso8601String(), 'to': to.toUtc().toIso8601String()}));
-  return (r.data as List).map((e) => Booking.fromJson(e)).toList();
+      queryParameters: {'from': from.toIso8601String(), 'to': to.toIso8601String()}));
+  return (r.data as List).map((e) => Booking.fromJson(e, zone: b.timezone)).toList();
 });
 
 final customersProvider = FutureProvider.autoDispose.family<List<Customer>, String>((ref, q) async {
@@ -52,19 +55,19 @@ final customersProvider = FutureProvider.autoDispose.family<List<Customer>, Stri
 /// Last-30-days summary; the end of the range reaches into tomorrow so payments recorded today are included.
 final summaryProvider = FutureProvider.autoDispose<Summary>((ref) async {
   final b = await _biz(ref);
-  final now = DateTime.now();
-  final from = dayStart(now).subtract(const Duration(days: 30));
-  final to = dayStart(now).add(const Duration(days: 1));
+  final now = nowWall(b.timezone);
+  final from = instantFromWall(DateTime(now.year, now.month, now.day - 30), b.timezone);
+  final to = instantFromWall(nextDay(now), b.timezone);
   final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/analytics/summary',
-      queryParameters: {'from': from.toUtc().toIso8601String(), 'to': to.toUtc().toIso8601String()}));
+      queryParameters: {'from': from.toIso8601String(), 'to': to.toIso8601String()}));
   return Summary.fromJson(r.data);
 });
 
 final todaySummaryProvider = FutureProvider.autoDispose<Summary>((ref) async {
   final b = await _biz(ref);
-  final from = dayStart(DateTime.now());
+  final today = dayStart(nowWall(b.timezone));
   final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/analytics/summary',
-      queryParameters: {'from': from.toUtc().toIso8601String(), 'to': from.add(const Duration(days: 1)).toUtc().toIso8601String()}));
+      queryParameters: {'from': instantFromWall(today, b.timezone).toIso8601String(), 'to': instantFromWall(nextDay(today), b.timezone).toIso8601String()}));
   return Summary.fromJson(r.data);
 });
 
@@ -100,7 +103,7 @@ final availabilityProvider = FutureProvider.autoDispose.family<List<Slot>, Avail
         'branchId': k.branchId, 'serviceId': k.serviceId, 'date': k.date,
         'employeeId': ?k.employeeId, 'excludeBookingId': ?k.excludeBookingId,
       }));
-  return (r.data as List).map((e) => Slot.fromJson(e)).toList();
+  return (r.data as List).map((e) => Slot.fromJson(e, zone: b.timezone)).toList();
 });
 
 class BookingActions {
@@ -127,11 +130,11 @@ class BookingActions {
     ref.invalidate(summaryProvider);
   }
 
-  Future<void> createBooking({required String branchId, required String serviceId, String? employeeId, required DateTime startsAt,
+  Future<void> createBooking({required String branchId, required String serviceId, String? employeeId, required DateTime startsAtInstant,
       required String name, required String phone, String? notes}) async {
     final id = await _id();
     await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/bookings', data: {
-          'branchId': branchId, 'serviceId': serviceId, 'employeeId': ?employeeId, 'startsAt': startsAt.toUtc().toIso8601String(),
+          'branchId': branchId, 'serviceId': serviceId, 'employeeId': ?employeeId, 'startsAt': startsAtInstant.toUtc().toIso8601String(),
           'customer': {'fullName': name, 'phone': phone}, 'notes': ?(notes == null || notes.isEmpty ? null : notes),
         }));
     ref.invalidate(bookingsProvider);
@@ -139,9 +142,10 @@ class BookingActions {
     ref.invalidate(customersProvider);
   }
 
-  Future<void> reschedule(String bookingId, DateTime startsAt) async {
+  /// [startsAtInstant] is the exact UTC moment of the chosen slot (Slot.instant), never a wall-clock time.
+  Future<void> reschedule(String bookingId, DateTime startsAtInstant) async {
     final id = await _id();
-    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/bookings/$bookingId/reschedule', data: {'startsAt': startsAt.toUtc().toIso8601String()}));
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/bookings/$bookingId/reschedule', data: {'startsAt': startsAtInstant.toUtc().toIso8601String()}));
     ref.invalidate(bookingsProvider);
   }
 

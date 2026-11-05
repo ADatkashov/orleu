@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
+import '../../core/tz.dart';
 import '../../core/design/tokens.dart';
 import '../../core/widgets/common.dart';
 import '../../l10n/gen/app_localizations.dart';
@@ -22,8 +23,11 @@ class SlotPicker extends ConsumerStatefulWidget {
 }
 
 class _SlotPickerState extends ConsumerState<SlotPicker> {
-  late DateTime _date = dayStart(widget.initialDate ?? DateTime.now());
+  DateTime? _dateOverride;
   Slot? _selected;
+
+  /// Selected calendar date in the BUSINESS timezone (defaults to today there, or to the booking being moved).
+  DateTime get _date => _dateOverride ?? dayStart(widget.initialDate ?? nowWall(ref.read(businessZoneProvider)));
 
   String get _dateStr => DateFormat('yyyy-MM-dd').format(_date);
 
@@ -53,8 +57,10 @@ class _SlotPickerState extends ConsumerState<SlotPicker> {
         icon: const Icon(Icons.calendar_today, size: 18),
         label: Text(DateFormat.yMMMEd(locale).format(_date)),
         onPressed: () async {
-          final d = await showDatePicker(context: context, initialDate: _date, firstDate: dayStart(DateTime.now()), lastDate: DateTime.now().add(const Duration(days: 365)));
-          if (d != null) { setState(() => _date = d); _select(null); }
+          final today = dayStart(nowWall(ref.read(businessZoneProvider)));
+          final cur = _date;
+          final d = await showDatePicker(context: context, initialDate: cur.isBefore(today) ? today : cur, firstDate: today, lastDate: today.add(const Duration(days: 365)));
+          if (d != null) { setState(() => _dateOverride = d); _select(null); }
         },
         style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48), alignment: Alignment.centerLeft),
       ),
@@ -68,9 +74,9 @@ class _SlotPickerState extends ConsumerState<SlotPicker> {
             ? Padding(padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm), child: Text(l.noSlots, key: const Key('noSlots'), style: t.textTheme.bodySmall))
             : Wrap(spacing: AppSpacing.sm, runSpacing: AppSpacing.sm, children: [
                 for (final s in list) ChoiceChip(
-                  key: Key('slot-${s.start.toUtc().toIso8601String()}'),
+                  key: Key('slot-${s.instant.toIso8601String()}'),
                   label: Text(DateFormat.Hm().format(s.start)),
-                  selected: _selected?.start == s.start,
+                  selected: _selected?.instant == s.instant,
                   onSelected: (_) => _select(s),
                 ),
               ]),

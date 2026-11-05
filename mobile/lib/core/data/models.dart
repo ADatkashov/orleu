@@ -1,12 +1,14 @@
+import '../tz.dart';
+
 /// Plain immutable models mirroring the backend DTOs. Money stays as decimal strings -> num only for display.
 double _num(Object? v) => v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
 
 class Business {
-  final String id, name, slug, currency, planCode;
+  final String id, name, slug, currency, planCode, timezone;
   final bool published;
-  const Business({required this.id, required this.name, required this.slug, required this.currency, required this.planCode, required this.published});
+  const Business({required this.id, required this.name, required this.slug, required this.currency, required this.planCode, required this.published, this.timezone = 'UTC'});
   factory Business.fromJson(Map<String, dynamic> j) => Business(
-      id: j['id'], name: j['name'], slug: j['slug'], currency: j['currency'] ?? 'KZT', planCode: j['planCode'] ?? 'FREE', published: j['published'] == true);
+      id: j['id'], name: j['name'], slug: j['slug'], currency: j['currency'] ?? 'KZT', planCode: j['planCode'] ?? 'FREE', published: j['published'] == true, timezone: j['timezone'] ?? 'UTC');
 }
 
 class Financials {
@@ -22,13 +24,15 @@ const bookingStatuses = ['PENDING', 'AWAITING_PAYMENT', 'CONFIRMED', 'CHECKED_IN
 class Booking {
   final String branchId, serviceId, employeeId;
   final String id, serviceName, employeeName, customerName, customerPhone, status, currency;
-  final DateTime startsAt, endsAt;
+  /// Wall-clock times in the business timezone (see tz.dart); [endsInstant] is the exact UTC moment.
+  final DateTime startsAt, endsAt, endsInstant;
   final Financials financials;
   const Booking({required this.branchId, required this.serviceId, required this.employeeId, required this.id, required this.serviceName, required this.employeeName, required this.customerName, required this.customerPhone,
-      required this.status, required this.currency, required this.startsAt, required this.endsAt, required this.financials});
-  factory Booking.fromJson(Map<String, dynamic> j) => Booking(
+      required this.status, required this.currency, required this.startsAt, required this.endsAt, required this.endsInstant, required this.financials});
+  factory Booking.fromJson(Map<String, dynamic> j, {String zone = 'UTC'}) => Booking(
       branchId: j['branchId'], serviceId: j['serviceId'], employeeId: j['employeeId'], id: j['id'], serviceName: j['serviceName'], employeeName: j['employeeName'], customerName: j['customerName'], customerPhone: j['customerPhone'],
-      status: j['status'], currency: j['currency'], startsAt: DateTime.parse(j['startsAt']).toLocal(), endsAt: DateTime.parse(j['endsAt']).toLocal(),
+      status: j['status'], currency: j['currency'], startsAt: wallFromInstant(DateTime.parse(j['startsAt']), zone), endsAt: wallFromInstant(DateTime.parse(j['endsAt']), zone),
+      endsInstant: DateTime.parse(j['endsAt']).toUtc(),
       financials: Financials.fromJson(j['financials']));
 
   /// Status changes the UI offers. The backend remains the authority and rejects anything else.
@@ -101,10 +105,14 @@ class Employee {
 }
 
 class Slot {
-  final DateTime start; // device-local; the API sends UTC instants
+  final DateTime start;   // wall clock in the business timezone (for display)
+  final DateTime instant; // the exact UTC moment the server offered (what is sent back when booking)
   final List<String> employeeIds;
-  const Slot(this.start, this.employeeIds);
-  factory Slot.fromJson(Map<String, dynamic> j) => Slot(DateTime.parse(j['start']).toLocal(), List<String>.from(j['employeeIds'] ?? const []));
+  const Slot(this.start, this.instant, this.employeeIds);
+  factory Slot.fromJson(Map<String, dynamic> j, {String zone = 'UTC'}) {
+    final utc = DateTime.parse(j['start']).toUtc();
+    return Slot(wallFromInstant(utc, zone), utc, List<String>.from(j['employeeIds'] ?? const []));
+  }
 }
 
 /// Normalises typed phone numbers to E.164 for Kazakhstan-style input (8 701 ... / 7 701 ... / +7 701 ...).

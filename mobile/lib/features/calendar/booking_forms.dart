@@ -103,7 +103,7 @@ class _NewBookingState extends ConsumerState<NewBookingSheet> {
                   if (!_form.currentState!.validate()) return;
                   setState(() => _busy = true);
                   final err = await attempt(context, () => ref.read(bookingActionsProvider).createBooking(
-                        branchId: _branchId!, serviceId: _serviceId!, employeeId: _employeeId, startsAt: _slot!.start,
+                        branchId: _branchId!, serviceId: _serviceId!, employeeId: _employeeId, startsAtInstant: _slot!.instant,
                         name: _name.text.trim(), phone: normalizePhone(_phone.text), notes: _notes.text.trim()));
                   if (!context.mounted) return;
                   if (err == null) {
@@ -155,7 +155,7 @@ class _RescheduleState extends ConsumerState<RescheduleSheet> {
             key: const Key('moveBooking'),
             onPressed: _busy || _slot == null ? null : () async {
               setState(() => _busy = true);
-              final err = await attempt(context, () => ref.read(bookingActionsProvider).reschedule(b.id, _slot!.start));
+              final err = await attempt(context, () => ref.read(bookingActionsProvider).reschedule(b.id, _slot!.instant));
               if (!context.mounted) return;
               if (err == null) {
                 Navigator.pop(context);
