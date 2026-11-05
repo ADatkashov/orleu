@@ -1,0 +1,42 @@
+name: e2e-public-booking
+on:
+  push:
+    branches: [main]
+    paths: ["backend/**", "scripts/**", ".github/workflows/e2e.yml"]
+  pull_request:
+    paths: ["backend/**", "scripts/**", ".github/workflows/e2e.yml"]
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_DB: orleu, POSTGRES_USER: orleu, POSTGRES_PASSWORD: orleu }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U orleu" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "21", cache: gradle }
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: Build backend
+        working-directory: backend
+        run: ./gradlew --no-daemon bootJar -x test
+      - name: Start backend
+        run: |
+          ORLEU_DB_URL=jdbc:postgresql://localhost:5432/orleu ORLEU_DB_USER=orleu ORLEU_DB_PASSWORD=orleu \
+          ORLEU_JWT_SECRET=ci-e2e-secret-ci-e2e-secret-ci-e2e-secret SERVER_PORT=8080 \
+          nohup java -jar backend/build/libs/orleu-backend-*.jar > backend.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf localhost:8080/actuator/health/readiness | grep -q UP && exit 0; sleep 2; done
+          cat backend.log; exit 1
+      - name: Install Playwright
+        working-directory: scripts
+        run: npm install && npx playwright install --with-deps chromium
+      - name: Run E2E
+        working-directory: scripts
+        run: BASE=http://localhost:8080 node e2e-public-booking.js
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: { name: backend-log, path: backend.log }

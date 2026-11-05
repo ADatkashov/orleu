@@ -61,7 +61,7 @@ public class PaymentService {
             throw ApiException.conflict("OVERPAYMENT", "Amount exceeds the remaining balance of " + Money.scale(remaining));
         }
         insert(businessId, bookingId, "PAYMENT", amount, b.getCurrency(), r, idempotencyKey);
-        outbox.publish(businessId, "PAYMENT_RECEIVED", bookingId, "PAYMENT_RECEIVED:" + idempotencyKey);
+        outbox.publish(businessId, "PAYMENT_RECEIVED", bookingId, "PAYMENT_RECEIVED:" + businessId + ":" + idempotencyKey);
 
         BigDecimal net = paid.subtract(refunded).add(amount);
         if (b.getStatus() == BookingStatus.AWAITING_PAYMENT && net.compareTo(b.getDepositAmount()) >= 0) {
