@@ -26,7 +26,7 @@ Backend foundation (modular Spring Boot 3.5 / Java 21 / PostgreSQL / Flyway) plu
 | Ops basics | Request-ID correlation, uniform error envelope (no stack traces), actuator health/readiness, OpenAPI, in-memory per-IP rate limit on auth/public POST, audit log table. App boot smoke-tested (health UP). |
 
 ## IMPLEMENTED BUT NOT TESTED
-- `backend/Dockerfile`, `infrastructure/docker-compose.yml`, `.github/workflows/backend.yml` — no Docker daemon was available; never executed. Testcontainers path of the tests is likewise unexercised here.
+- `backend/Dockerfile` + `infrastructure/docker-compose.yml`: built and smoke-tested by the `docker-smoke` workflow (see CI results); never run in the authoring environment (no Docker daemon). Kubernetes manifests do not exist.
 - ECS JSON logging profile (`prod`) — enabled, output format not inspected.
 
 ## NOT IMPLEMENTED
