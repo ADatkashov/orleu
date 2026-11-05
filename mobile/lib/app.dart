@@ -8,6 +8,7 @@ import 'core/design/theme.dart';
 import 'core/settings/settings.dart';
 import 'features/auth/auth_screens.dart';
 import 'features/calendar/calendar_screen.dart';
+import 'features/customers/customer_profile_screen.dart';
 import 'features/customers/customers_screen.dart';
 import 'features/finance/finance_screen.dart';
 import 'features/home/home_screen.dart';
@@ -53,7 +54,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         branches: [
           StatefulShellBranch(routes: [GoRoute(path: '/home', builder: (_, _) => const HomeScreen())]),
           StatefulShellBranch(routes: [GoRoute(path: '/calendar', builder: (_, _) => const CalendarScreen())]),
-          StatefulShellBranch(routes: [GoRoute(path: '/customers', builder: (_, _) => const CustomersScreen())]),
+          StatefulShellBranch(routes: [
+            GoRoute(path: '/customers', builder: (_, _) => const CustomersScreen(), routes: [
+              GoRoute(path: ':id', builder: (_, state) => CustomerProfileScreen(customerId: state.pathParameters['id']!)),
+            ]),
+          ]),
           StatefulShellBranch(routes: [GoRoute(path: '/finance', builder: (_, _) => const FinanceScreen())]),
           StatefulShellBranch(routes: [
             GoRoute(path: '/more', builder: (_, _) => const MoreScreen(), routes: [

@@ -25,7 +25,7 @@ _Last updated: 2026-11-05._
 | F | Confirm, reschedule, cancel, complete | DONE | staff in app; customer cancel by link |
 | G | Deposit through a provider or an identified sandbox | **BLOCKED / PARTIAL** | manual payments only; provider adapters need FreedomPay/Kaspi accounts + official docs |
 | H | Remaining balance visible | DONE | |
-| I | Manage customers and employees | PARTIAL | backend DONE (customer profile + stats, edit; branch/service/specialist edit + deactivate); app screens for them are the next step; no tags/import/export/segments |
+| I | Manage customers and employees | DONE (core) | customer card + edit + block, catalog edit/deactivate in API and app; still missing: customer tags, import/export, duplicate merge, segments, employee schedules/commission/performance |
 | J | Meaningful financial/booking analytics | PARTIAL | summary + finance screen; no charts, per-employee/service/branch breakdowns |
 | K | Subscription entitlements enforced by backend | DONE | limits; billing lifecycle is TODO |
 | L | Tenant isolation covered by tests | DONE | |
@@ -86,7 +86,7 @@ AI assistant (only with real testable use cases), forecasting (labelled estimate
 Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real payment integrations (BLOCKED), local SMS and numbers (E.164 DONE; SMS BLOCKED), Kazakhstan document/address formats (TODO), accounting export (TODO). No claim of fiscal-receipt/tax compliance is made anywhere.
 
 ## Next up (my ordering; revisit after each merge)
-1. Customer CRM profile + visit history (app + API) and employee/service edit/delete — closes DoD I.
+1. ~~Customer CRM profile + visit history and catalog edit/deactivate~~ — done (core of DoD I).
 2. Analytics breakdowns and charts (by employee/service/branch, peak hours) — closes DoD J.
 3. Reminders and notification templates (kk/ru/en) behind the existing outbox; provider-specific senders stay BLOCKED.
 4. Password-reset / change-password / sessions screens in the app — closes DoD M.

@@ -19,6 +19,7 @@ String errorText(BuildContext context, Object error) {
     'BUSINESS_SUSPENDED' => l.errSuspended,
     'SLOT_UNAVAILABLE' => l.errSlot,
     'OVERPAYMENT' => l.errOverpayment,
+    'INVALID_NAME' => l.validationRequired,
     'FORBIDDEN' => l.errBlockedCustomer,
     _ => l.errGeneric,
   };

@@ -501,4 +501,82 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get validationAmount => 'Введите сумму не больше остатка';
+
+  @override
+  String get statVisits => 'Визиты';
+
+  @override
+  String get statCancelled => 'Отмены';
+
+  @override
+  String get statNoShows => 'Неявки';
+
+  @override
+  String get statUpcoming => 'Предстоящие';
+
+  @override
+  String get statLastVisit => 'Последний визит';
+
+  @override
+  String get statSpent => 'Оплачено всего';
+
+  @override
+  String get statAvg => 'В среднем за визит';
+
+  @override
+  String get noVisitsYet => 'Визитов пока нет';
+
+  @override
+  String get historyTitle => 'История записей';
+
+  @override
+  String get noHistory => 'Записей пока нет';
+
+  @override
+  String get notes => 'Заметки';
+
+  @override
+  String get editClient => 'Изменить клиента';
+
+  @override
+  String get marketingConsent => 'Согласен на рекламные сообщения';
+
+  @override
+  String get blockClient => 'Заблокировать клиента';
+
+  @override
+  String get unblockClient => 'Разблокировать клиента';
+
+  @override
+  String get blockConfirm =>
+      'Заблокированный клиент не может записаться онлайн, и сотрудники не смогут его записать.';
+
+  @override
+  String get blocked => 'Заблокирован';
+
+  @override
+  String get edit => 'Изменить';
+
+  @override
+  String get active => 'Активно';
+
+  @override
+  String get inactive => 'Неактивно';
+
+  @override
+  String get deactivateNote =>
+      'Неактивное не показывается при записи. Существующие записи и история сохраняются.';
+
+  @override
+  String get editService => 'Изменить услугу';
+
+  @override
+  String get editLocation => 'Изменить филиал';
+
+  @override
+  String get editSpecialist => 'Изменить специалиста';
+
+  @override
+  String get statsNote =>
+      'Оплачено = полученные деньги минус возвраты, а не сумма записей.';
 }

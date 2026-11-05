@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
 import '../../core/widgets/common.dart';
@@ -32,8 +33,10 @@ class ServicesScreen extends ConsumerWidget {
                 separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
                 itemBuilder: (_, i) => Card(
                   child: ListTile(
-                    title: Text(list[i].name),
-                    subtitle: Text('${list[i].durationMinutes} ${l.minutesShort}'),
+                    key: Key('service-${list[i].id}'),
+                    onTap: () => showModalBottomSheet(context: context, isScrollControlled: true, showDragHandle: true, builder: (_) => _ServiceForm(initial: list[i])),
+                    title: Text(list[i].name, style: list[i].active ? null : TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                    subtitle: Text('${list[i].durationMinutes} ${l.minutesShort}${list[i].active ? '' : ' · ${l.inactive}'}'),
                     trailing: Text(money(context, list[i].price, cur), style: Theme.of(context).textTheme.titleMedium),
                   ),
                 ),
@@ -44,15 +47,21 @@ class ServicesScreen extends ConsumerWidget {
 }
 
 class _ServiceForm extends ConsumerStatefulWidget {
-  const _ServiceForm();
+  final ServiceItem? initial; // null = create, otherwise edit
+  const _ServiceForm({this.initial});
   @override
   ConsumerState<_ServiceForm> createState() => _ServiceFormState();
 }
 
 class _ServiceFormState extends ConsumerState<_ServiceForm> {
   final _form = GlobalKey<FormState>();
-  final _name = TextEditingController(), _duration = TextEditingController(text: '60'), _price = TextEditingController(),
-      _deposit = TextEditingController(), _buffer = TextEditingController();
+  late final ServiceItem? _s = widget.initial;
+  static String _n(double v) => v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toString();
+  late final _name = TextEditingController(text: _s?.name ?? ''), _duration = TextEditingController(text: '${_s?.durationMinutes ?? 60}'),
+      _price = TextEditingController(text: _s == null ? '' : _n(_s.price)),
+      _deposit = TextEditingController(text: _s?.depositPercent == null ? '' : _n(_s!.depositPercent!)),
+      _buffer = TextEditingController(text: _s == null || _s.bufferMinutes == 0 ? '' : '${_s.bufferMinutes}');
+  late bool _active = _s?.active ?? true;
   bool _busy = false;
   String? _error;
 
@@ -73,7 +82,7 @@ class _ServiceFormState extends ConsumerState<_ServiceForm> {
         child: Form(
           key: _form,
           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            Text(l.addService, style: Theme.of(context).textTheme.titleLarge),
+            Text(_s == null ? l.addService : l.editService, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: AppSpacing.md),
             TextFormField(key: const Key('svcName'), controller: _name, decoration: InputDecoration(labelText: l.serviceName), validator: (v) => v == null || v.trim().isEmpty ? l.validationRequired : null),
             const SizedBox(height: AppSpacing.md),
@@ -89,6 +98,9 @@ class _ServiceFormState extends ConsumerState<_ServiceForm> {
               const SizedBox(width: AppSpacing.sm),
               Expanded(child: TextFormField(key: const Key('svcBuffer'), controller: _buffer, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: l.bufferMin), validator: (v) => _intIn(v, l, 0, 240, optional: true))),
             ]),
+            if (_s != null) ...[
+              SwitchListTile(key: const Key('svcActive'), contentPadding: EdgeInsets.zero, title: Text(l.active), subtitle: Text(l.deactivateNote), value: _active, onChanged: (v) => setState(() => _active = v)),
+            ],
             FormError(_error),
             const SizedBox(height: AppSpacing.lg),
             FilledButton(
@@ -96,9 +108,14 @@ class _ServiceFormState extends ConsumerState<_ServiceForm> {
               onPressed: _busy ? null : () async {
                 if (!_form.currentState!.validate()) return;
                 setState(() => _busy = true);
-                final err = await attempt(context, () => ref.read(bookingActionsProvider).createService(
-                      name: _name.text.trim(), durationMinutes: int.parse(_duration.text), price: _price.text.trim().replaceAll(',', '.'),
-                      depositPercent: _deposit.text.isEmpty ? null : _deposit.text, bufferMinutes: _buffer.text.isEmpty ? null : int.parse(_buffer.text)));
+                final actions = ref.read(bookingActionsProvider);
+                final price = _price.text.trim().replaceAll(',', '.');
+                final err = await attempt(context, () => _s == null
+                    ? actions.createService(name: _name.text.trim(), durationMinutes: int.parse(_duration.text), price: price,
+                        depositPercent: _deposit.text.isEmpty ? null : _deposit.text, bufferMinutes: _buffer.text.isEmpty ? null : int.parse(_buffer.text))
+                    : actions.updateService(_s.id, name: _name.text.trim(), durationMinutes: int.parse(_duration.text), price: price,
+                        bufferMinutes: _buffer.text.isEmpty ? 0 : int.parse(_buffer.text), depositPercent: _deposit.text.isEmpty ? null : _deposit.text,
+                        useBusinessDeposit: _deposit.text.isEmpty, active: _active));
                 if (!context.mounted) return;
                 if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
               },

@@ -71,6 +71,12 @@ final todaySummaryProvider = FutureProvider.autoDispose<Summary>((ref) async {
   return Summary.fromJson(r.data);
 });
 
+final customerProfileProvider = FutureProvider.autoDispose.family<CustomerProfile, String>((ref, id) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/customers/$id/profile'));
+  return CustomerProfile.fromJson(r.data, zone: b.timezone);
+});
+
 final usageProvider = FutureProvider.autoDispose<PlanUsage>((ref) async {
   final b = await _biz(ref);
   final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/subscription'));
@@ -147,6 +153,45 @@ class BookingActions {
     final id = await _id();
     await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/bookings/$bookingId/reschedule', data: {'startsAt': startsAtInstant.toUtc().toIso8601String()}));
     ref.invalidate(bookingsProvider);
+  }
+
+  Future<void> updateCustomer(String id, {String? fullName, String? email, String? notes, bool? marketingOptIn}) async {
+    final biz = await _id();
+    await ref.read(apiClientProvider).run((d) => d.patch('/api/v1/businesses/$biz/customers/$id',
+        data: {'fullName': ?fullName, 'email': ?email, 'notes': ?notes, 'marketingOptIn': ?marketingOptIn}));
+    ref.invalidate(customerProfileProvider);
+    ref.invalidate(customersProvider);
+  }
+
+  Future<void> setCustomerBlocked(String id, bool blocked) async {
+    final biz = await _id();
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$biz/customers/$id/${blocked ? 'block' : 'unblock'}'));
+    ref.invalidate(customerProfileProvider);
+    ref.invalidate(customersProvider);
+  }
+
+  Future<void> updateBranch(String id, {String? name, String? address, bool? active}) async {
+    final biz = await _id();
+    await ref.read(apiClientProvider).run((d) => d.patch('/api/v1/businesses/$biz/branches/$id', data: {'name': ?name, 'address': ?address, 'active': ?active}));
+    ref.invalidate(branchesProvider);
+  }
+
+  /// [depositPercent] null together with [useBusinessDeposit] = true clears the service-level override.
+  Future<void> updateService(String id, {String? name, int? durationMinutes, int? bufferMinutes, String? price, String? depositPercent,
+      bool useBusinessDeposit = false, bool? active}) async {
+    final biz = await _id();
+    await ref.read(apiClientProvider).run((d) => d.patch('/api/v1/businesses/$biz/services/$id', data: {
+          'name': ?name, 'durationMinutes': ?durationMinutes, 'bufferMinutes': ?bufferMinutes, 'price': ?price,
+          if (useBusinessDeposit) 'useBusinessDeposit': true else 'depositPercent': ?depositPercent,
+          'active': ?active,
+        }));
+    ref.invalidate(servicesProvider);
+  }
+
+  Future<void> updateEmployee(String id, {String? displayName, bool? active}) async {
+    final biz = await _id();
+    await ref.read(apiClientProvider).run((d) => d.patch('/api/v1/businesses/$biz/employees/$id', data: {'displayName': ?displayName, 'active': ?active}));
+    ref.invalidate(employeesProvider);
   }
 
   Future<void> createBranch(String name, String? address) async {

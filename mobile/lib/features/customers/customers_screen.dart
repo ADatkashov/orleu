@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
@@ -55,6 +56,8 @@ class _State extends ConsumerState<CustomersScreen> {
                       final c = list[i];
                       return Card(
                         child: ListTile(
+                          key: Key('customer-${c.id}'),
+                          onTap: () => context.push('/customers/${c.id}'),
                           leading: CircleAvatar(child: Text(c.fullName.isEmpty ? '?' : c.fullName[0].toUpperCase())),
                           title: Text(c.fullName),
                           subtitle: Text(c.phone),

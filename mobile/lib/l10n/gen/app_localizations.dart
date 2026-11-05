@@ -1065,6 +1065,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter an amount up to the remaining balance'**
   String get validationAmount;
+
+  /// No description provided for @statVisits.
+  ///
+  /// In en, this message translates to:
+  /// **'Visits'**
+  String get statVisits;
+
+  /// No description provided for @statCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellations'**
+  String get statCancelled;
+
+  /// No description provided for @statNoShows.
+  ///
+  /// In en, this message translates to:
+  /// **'No-shows'**
+  String get statNoShows;
+
+  /// No description provided for @statUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get statUpcoming;
+
+  /// No description provided for @statLastVisit.
+  ///
+  /// In en, this message translates to:
+  /// **'Last visit'**
+  String get statLastVisit;
+
+  /// No description provided for @statSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Total paid'**
+  String get statSpent;
+
+  /// No description provided for @statAvg.
+  ///
+  /// In en, this message translates to:
+  /// **'Average per visit'**
+  String get statAvg;
+
+  /// No description provided for @noVisitsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No visits yet'**
+  String get noVisitsYet;
+
+  /// No description provided for @historyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking history'**
+  String get historyTitle;
+
+  /// No description provided for @noHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings yet'**
+  String get noHistory;
+
+  /// No description provided for @notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get notes;
+
+  /// No description provided for @editClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit client'**
+  String get editClient;
+
+  /// No description provided for @marketingConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Agrees to marketing messages'**
+  String get marketingConsent;
+
+  /// No description provided for @blockClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Block client'**
+  String get blockClient;
+
+  /// No description provided for @unblockClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Unblock client'**
+  String get unblockClient;
+
+  /// No description provided for @blockConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'A blocked client cannot book online and cannot be booked by staff.'**
+  String get blockConfirm;
+
+  /// No description provided for @blocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked'**
+  String get blocked;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// No description provided for @inactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get inactive;
+
+  /// No description provided for @deactivateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive items disappear from booking. Existing bookings and history are kept.'**
+  String get deactivateNote;
+
+  /// No description provided for @editService.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit service'**
+  String get editService;
+
+  /// No description provided for @editLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit location'**
+  String get editLocation;
+
+  /// No description provided for @editSpecialist.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit specialist'**
+  String get editSpecialist;
+
+  /// No description provided for @statsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid = cash collected minus refunds, not booked value.'**
+  String get statsNote;
 }
 
 class _AppLocalizationsDelegate

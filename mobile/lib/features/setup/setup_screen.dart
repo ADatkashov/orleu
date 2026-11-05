@@ -35,10 +35,10 @@ class SetupScreen extends ConsumerWidget {
       return Scaffold(appBar: AppBar(title: Text(l.setupTitle)), body: const SkeletonList());
     }
 
-    final hasBranch = branches.value!.isNotEmpty;
-    final hasHours = branches.value!.any((b) => b.hours.isNotEmpty);
-    final hasService = services.value!.isNotEmpty;
-    final hasEmployee = employees.value!.any((e) => e.branchIds.isNotEmpty && e.serviceIds.isNotEmpty);
+    final hasBranch = branches.value!.any((b) => b.active);
+    final hasHours = branches.value!.any((b) => b.active && b.hours.isNotEmpty);
+    final hasService = services.value!.any((s) => s.active);
+    final hasEmployee = employees.value!.any((e) => e.active && e.branchIds.isNotEmpty && e.serviceIds.isNotEmpty);
     final ready = hasBranch && hasHours && hasService && hasEmployee;
     final link = '$publicBaseUrl/b/${biz.slug}';
 

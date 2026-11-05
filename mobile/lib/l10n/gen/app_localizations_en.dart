@@ -503,4 +503,82 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get validationAmount => 'Enter an amount up to the remaining balance';
+
+  @override
+  String get statVisits => 'Visits';
+
+  @override
+  String get statCancelled => 'Cancellations';
+
+  @override
+  String get statNoShows => 'No-shows';
+
+  @override
+  String get statUpcoming => 'Upcoming';
+
+  @override
+  String get statLastVisit => 'Last visit';
+
+  @override
+  String get statSpent => 'Total paid';
+
+  @override
+  String get statAvg => 'Average per visit';
+
+  @override
+  String get noVisitsYet => 'No visits yet';
+
+  @override
+  String get historyTitle => 'Booking history';
+
+  @override
+  String get noHistory => 'No bookings yet';
+
+  @override
+  String get notes => 'Notes';
+
+  @override
+  String get editClient => 'Edit client';
+
+  @override
+  String get marketingConsent => 'Agrees to marketing messages';
+
+  @override
+  String get blockClient => 'Block client';
+
+  @override
+  String get unblockClient => 'Unblock client';
+
+  @override
+  String get blockConfirm =>
+      'A blocked client cannot book online and cannot be booked by staff.';
+
+  @override
+  String get blocked => 'Blocked';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get inactive => 'Inactive';
+
+  @override
+  String get deactivateNote =>
+      'Inactive items disappear from booking. Existing bookings and history are kept.';
+
+  @override
+  String get editService => 'Edit service';
+
+  @override
+  String get editLocation => 'Edit location';
+
+  @override
+  String get editSpecialist => 'Edit specialist';
+
+  @override
+  String get statsNote =>
+      'Paid = cash collected minus refunds, not booked value.';
 }
