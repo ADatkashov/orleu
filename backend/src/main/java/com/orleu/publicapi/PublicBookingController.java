@@ -96,6 +96,6 @@ public class PublicBookingController {
     }
 
     private Business published(String slug) {
-        return businesses.findBySlug(slug).filter(Business::isPublished).orElseThrow(() -> ApiException.notFound("Business"));
+        return businesses.findBySlug(slug).filter(b -> b.isPublished() && !"SUSPENDED".equals(b.getStatus())).orElseThrow(() -> ApiException.notFound("Business"));
     }
 }

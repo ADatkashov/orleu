@@ -28,6 +28,7 @@ public class Business {
     private String timezone = "Asia/Almaty";
     @Column(name = "plan_code") private String planCode = "FREE";
     private boolean published;
+    private String status = "ACTIVE";
     @Column(name = "onboarding_step") private int onboardingStep = 1;
     @Column(name = "deposit_percent") private BigDecimal depositPercent = BigDecimal.ZERO;
     @Column(name = "auto_confirm") private boolean autoConfirm = true;

@@ -34,6 +34,7 @@ orleu:
     max-failed-logins: 5
     lockout-duration: PT15M
     allowed-origins: ${ORLEU_ALLOWED_ORIGINS:}
+  bootstrap-admin-email: ${ORLEU_BOOTSTRAP_ADMIN_EMAIL:}
   rate-limit:
     per-minute: ${ORLEU_RATE_LIMIT_PER_MINUTE:60}
   jobs:
