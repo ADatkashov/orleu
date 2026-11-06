@@ -35,9 +35,11 @@ public class SupportService {
     private final TenantAccess tenant;
     private final PlatformAccess platform;
     private final AuditService audit;
+    private final com.orleu.notifications.OutboxService outbox;
 
-    public SupportService(JdbcClient jdbc, TenantAccess tenant, PlatformAccess platform, AuditService audit) {
-        this.jdbc = jdbc; this.tenant = tenant; this.platform = platform; this.audit = audit;
+    public SupportService(JdbcClient jdbc, TenantAccess tenant, PlatformAccess platform, AuditService audit,
+                          com.orleu.notifications.OutboxService outbox) {
+        this.outbox = outbox; this.jdbc = jdbc; this.tenant = tenant; this.platform = platform; this.audit = audit;
     }
 
     private static final String ROW = """
@@ -134,6 +136,7 @@ public class SupportService {
         addMessage(ticketId, biz, staff, true, body);
         setStatus(ticketId, "ANSWERED");
         audit.log(biz, staff, "SUPPORT_TICKET_REPLIED", "SUPPORT_TICKET", ticketId, null);
+        outbox.publish(biz, "SUPPORT_REPLIED", null, "SUPPORT_REPLIED:" + ticketId + ":" + System.currentTimeMillis()); // shown as an in-app notification
         return detail(ticketId, biz);
     }
 

@@ -127,4 +127,26 @@ class NotificationsIT extends AbstractIT {
         assertEquals(1, count("select count(*) from notifications where business_id = ?", f.businessId));
         assertEquals(2, count("select attempts from outbox_events where business_id = ?", f.businessId));
     }
+
+    @Test void notificationsCarryBookingContextAndCanAllBeMarkedRead() {
+        Fixture f = Fixture.create(this, 1, false);
+        UUID id = book(f, 10).id();
+        post(f.ownerToken, "/api/v1/businesses/%s/bookings/%s/transition", Map.of("status", "CANCELLED"), f.businessId, id);
+        processor.processDue();
+        Res list = get(f.ownerToken, "/api/v1/businesses/%s/notifications", f.businessId);
+        assertEquals(2, list.body().size());
+        for (var n : list.body()) {
+            assertFalse(n.path("customerName").asText().isEmpty(), "the notification names the customer");
+            assertEquals("Haircut", n.path("serviceName").asText());
+            assertTrue(n.hasNonNull("startsAt"));
+        }
+        assertEquals(204, post(f.ownerToken, "/api/v1/businesses/%s/notifications/read-all", null, f.businessId).status());
+        assertEquals(0, get(f.ownerToken, "/api/v1/businesses/%s/notifications?unreadOnly=true", f.businessId).body().size());
+        Fixture other = Fixture.create(this, 1, false);
+        book(other, 11);
+        processor.processDue();
+        post(f.ownerToken, "/api/v1/businesses/%s/notifications/read-all", null, f.businessId);
+        assertEquals(1, get(other.ownerToken, "/api/v1/businesses/%s/notifications?unreadOnly=true", other.businessId).body().size(), "marking one business read never touches another");
+        assertEquals(404, post(f.ownerToken, "/api/v1/businesses/%s/notifications/read-all", null, other.businessId).status());
+    }
 }

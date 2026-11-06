@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/data/models.dart';
@@ -31,7 +32,17 @@ class HomeScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(biz?.name ?? l.appName)),
+      appBar: AppBar(title: Text(biz?.name ?? l.appName), actions: [
+        Consumer(builder: (context, ref, _) {
+          final unread = ref.watch(unreadNotificationsProvider);
+          return IconButton(
+            key: const Key('bell'),
+            tooltip: l.notifTitle,
+            icon: Badge(isLabelVisible: unread > 0, label: Text('$unread'), child: const Icon(Icons.notifications_outlined)),
+            onPressed: () => context.push('/notifications'),
+          );
+        }),
+      ]),
       body: RefreshIndicator(
         onRefresh: refresh,
         child: ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [

@@ -267,5 +267,21 @@
   "supportTeam": "ORLEU қолдауы",
   "supportYou": "Сіз",
   "errTicketClosed": "Өтініш жабылған",
-  "errTooManyTickets": "Ашық өтініштер тым көп. Біразын жабыңыз немесе жауапты күтіңіз."
+  "errTooManyTickets": "Ашық өтініштер тым көп. Біразын жабыңыз немесе жауапты күтіңіз.",
+  "notifTitle": "Хабарландырулар",
+  "notifMarkAll": "Барлығын оқылған деп белгілеу",
+  "notifNone": "Хабарландырулар әлі жоқ",
+  "notifBOOKING_CREATED": "Жаңа жазылу",
+  "notifBOOKING_CONFIRMED": "Жазылу расталды",
+  "notifBOOKING_CANCELLED": "Жазылудан бас тартылды",
+  "notifBOOKING_RESCHEDULED": "Жазылу ауыстырылды",
+  "notifBOOKING_EXPIRED": "Төленбеген жазылу мерзімі өтті",
+  "notifBOOKING_CHECKED_IN": "Клиент келді",
+  "notifBOOKING_IN_PROGRESS": "Келу басталды",
+  "notifBOOKING_COMPLETED": "Келу аяқталды",
+  "notifBOOKING_NO_SHOW": "Клиент келмеді",
+  "notifBOOKING_REMINDER": "Клиентке еске салу дайындалды",
+  "notifPAYMENT_RECEIVED": "Төлем тіркелді",
+  "notifSUPPORT_REPLIED": "ORLEU қолдауы өтінішіңізге жауап берді",
+  "notifOther": "Жаңарту"
 }

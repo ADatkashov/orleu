@@ -140,6 +140,18 @@ class ReviewSummary {
       count: j['count'] ?? 0, average: j['average'] == null ? null : _num(j['average']), distribution: List<int>.from(j['distribution'] ?? const [0, 0, 0, 0, 0]));
 }
 
+class AppNotification {
+  final String id, eventType;
+  final String? bookingId, customerName, serviceName;
+  final DateTime createdAt;
+  final DateTime? startsAtInstant;
+  final bool read;
+  const AppNotification({required this.id, required this.eventType, this.bookingId, this.customerName, this.serviceName, required this.createdAt, this.startsAtInstant, required this.read});
+  factory AppNotification.fromJson(Map<String, dynamic> j) => AppNotification(
+      id: j['id'], eventType: j['eventType'], bookingId: j['bookingId'], customerName: j['customerName'], serviceName: j['serviceName'],
+      createdAt: DateTime.parse(j['createdAt']), startsAtInstant: j['startsAt'] == null ? null : DateTime.parse(j['startsAt']), read: j['read'] == true);
+}
+
 class PlanUsage {
   final String planCode;
   final int employees, maxEmployees;

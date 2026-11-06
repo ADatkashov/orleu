@@ -291,5 +291,21 @@
   "supportTeam": "ORLEU support",
   "supportYou": "You",
   "errTicketClosed": "This request is closed",
-  "errTooManyTickets": "Too many open requests. Close some or wait for answers."
+  "errTooManyTickets": "Too many open requests. Close some or wait for answers.",
+  "notifTitle": "Notifications",
+  "notifMarkAll": "Mark all as read",
+  "notifNone": "No notifications yet",
+  "notifBOOKING_CREATED": "New booking",
+  "notifBOOKING_CONFIRMED": "Booking confirmed",
+  "notifBOOKING_CANCELLED": "Booking cancelled",
+  "notifBOOKING_RESCHEDULED": "Booking rescheduled",
+  "notifBOOKING_EXPIRED": "Unpaid booking expired",
+  "notifBOOKING_CHECKED_IN": "Customer arrived",
+  "notifBOOKING_IN_PROGRESS": "Visit started",
+  "notifBOOKING_COMPLETED": "Visit completed",
+  "notifBOOKING_NO_SHOW": "Customer did not show up",
+  "notifBOOKING_REMINDER": "Reminder prepared for a customer",
+  "notifPAYMENT_RECEIVED": "Payment recorded",
+  "notifSUPPORT_REPLIED": "ORLEU support replied to your request",
+  "notifOther": "Update"
 }
