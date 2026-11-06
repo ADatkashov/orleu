@@ -23,7 +23,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
-    implementation("org.bouncycastle:bcprov-jdk18on:1.80") // Argon2id for Spring Security
+    implementation("org.bouncycastle:bcprov-jdk18on:1.86") // Argon2id for Spring Security
     runtimeOnly("org.postgresql:postgresql")
 
     compileOnly("org.projectlombok:lombok")
