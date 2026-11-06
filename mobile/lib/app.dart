@@ -21,6 +21,7 @@ import 'features/more/reviews_screen.dart';
 import 'features/more/support_screen.dart';
 import 'features/setup/branches_screen.dart';
 import 'features/setup/employees_screen.dart';
+import 'features/setup/schedule_screen.dart';
 import 'features/setup/services_screen.dart';
 import 'features/setup/setup_screen.dart';
 import 'features/shell/shell.dart';
@@ -74,7 +75,9 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(path: 'setup', builder: (_, _) => const SetupScreen()),
               GoRoute(path: 'branches', builder: (_, _) => const BranchesScreen()),
               GoRoute(path: 'services', builder: (_, _) => const ServicesScreen()),
-              GoRoute(path: 'employees', builder: (_, _) => const EmployeesScreen()),
+              GoRoute(path: 'employees', builder: (_, _) => const EmployeesScreen(), routes: [
+                GoRoute(path: ':id/schedule', builder: (_, state) => ScheduleScreen(employeeId: state.pathParameters['id']!)),
+              ]),
               GoRoute(path: 'messages', builder: (_, _) => const MessagesScreen()),
               GoRoute(path: 'account', builder: (_, _) => const AccountScreen()),
               GoRoute(path: 'reviews', builder: (_, _) => const ReviewsScreen()),

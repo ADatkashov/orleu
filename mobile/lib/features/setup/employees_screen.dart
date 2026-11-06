@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
@@ -130,6 +131,11 @@ class _AssignmentsState extends ConsumerState<AssignmentsSheet> {
           for (final s in services) CheckboxListTile(
             key: Key('service-${s.id}'), contentPadding: EdgeInsets.zero, title: Text(s.name), value: _services.contains(s.id),
             onChanged: (v) => setState(() => v! ? _services.add(s.id) : _services.remove(s.id)),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          OutlinedButton.icon(
+            key: const Key('openSchedule'), icon: const Icon(Icons.schedule), label: Text(l.scheduleOpen),
+            onPressed: () { Navigator.pop(context); context.push('/more/employees/${widget.employee.id}/schedule'); },
           ),
           FormError(_error),
           const SizedBox(height: AppSpacing.md),

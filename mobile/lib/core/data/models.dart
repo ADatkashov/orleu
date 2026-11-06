@@ -187,6 +187,32 @@ class LoginHistory {
       [for (final e in (j['events'] as List)) LoginEvent.fromJson(e)], j['failedSinceLastSuccess'] ?? 0, j['newDeviceRecently'] == true);
 }
 
+class ScheduleRange {
+  final int day; // ISO weekday, 1 = Monday
+  final String start, end; // 'HH:mm'
+  const ScheduleRange(this.day, this.start, this.end);
+  factory ScheduleRange.fromJson(Map<String, dynamic> j) => ScheduleRange(j['dayOfWeek'], (j['start'] as String).substring(0, 5), (j['end'] as String).substring(0, 5));
+  Map<String, Object> toJson() => {'dayOfWeek': day, 'start': start, 'end': end};
+}
+
+class TimeOffItem {
+  final String id;
+  final DateTime startsAt, endsAt; // exact instants
+  final String? reason;
+  final int affectedBookings;
+  const TimeOffItem({required this.id, required this.startsAt, required this.endsAt, this.reason, required this.affectedBookings});
+  factory TimeOffItem.fromJson(Map<String, dynamic> j) => TimeOffItem(
+      id: j['id'], startsAt: DateTime.parse(j['startsAt']), endsAt: DateTime.parse(j['endsAt']), reason: j['reason'], affectedBookings: j['affectedBookings'] ?? 0);
+}
+
+class EmployeeSchedule {
+  final List<ScheduleRange> hours;
+  final List<TimeOffItem> timeOff;
+  const EmployeeSchedule(this.hours, this.timeOff);
+  factory EmployeeSchedule.fromJson(Map<String, dynamic> j) => EmployeeSchedule(
+      [for (final h in (j['hours'] as List)) ScheduleRange.fromJson(h)], [for (final t in (j['timeOff'] as List)) TimeOffItem.fromJson(t)]);
+}
+
 class PlanUsage {
   final String planCode;
   final int employees, maxEmployees;

@@ -25,7 +25,7 @@ _Last updated: 2026-11-05._
 | F | Confirm, reschedule, cancel, complete | DONE | staff in app; customer cancel by link |
 | G | Deposit through a provider or an identified sandbox | **BLOCKED / PARTIAL** | manual payments only; provider adapters need FreedomPay/Kaspi accounts + official docs |
 | H | Remaining balance visible | DONE | |
-| I | Manage customers and employees | DONE (core) | customer card + edit + block, catalog edit/deactivate in API and app; still missing: customer tags, import/export, duplicate merge, segments, employee schedules/commission/performance |
+| I | Manage customers and employees | DONE (core) | customer card + edit + block, catalog edit/deactivate in API and app; still missing: customer tags, import/export, duplicate merge, segments, commission/performance (employee schedules DONE) |
 | J | Meaningful financial/booking analytics | DONE (measured) | summary, breakdowns by service/employee/branch, daily series, peak hours, new vs returning; forecasts/LTV/utilisation/funnel still TODO |
 | K | Subscription entitlements enforced by backend | DONE | limits; billing lifecycle is TODO |
 | L | Tenant isolation covered by tests | DONE | |
@@ -36,7 +36,7 @@ _Last updated: 2026-11-05._
 ## Phases (spec addendum §14)
 ### Phase 1 — Foundation: DONE (with gaps)
 Auth, multi-tenancy, onboarding (create business → setup checklist → publish), branches/hours, services, employees, scheduling, bookings: DONE.
-Gaps: OTP/phone login, MFA, e-mail invitations, branch-level permissions, employee shifts/breaks/holidays, service images, per-employee prices, onboarding templates per business type, branding settings.
+Gaps: OTP/phone login, MFA, e-mail invitations, branch-level permissions, (done: specialist weekly hours, breaks, time off; still missing: per-date exceptions, shift templates), service images, per-employee prices, onboarding templates per business type, branding settings.
 
 ### Phase 2 — Commercial core: PARTIAL
 - DONE: deposits (decimal-safe), immutable ledger, manual payments/refunds with idempotency, plans + entitlements, outbox + in-app notifications.

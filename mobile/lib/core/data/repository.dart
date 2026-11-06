@@ -220,6 +220,32 @@ class BookingActions {
     return (name: name, bytes: Uint8List.fromList(r.data!));
   }
 
+  /// Replaces the weekly hours of a specialist (empty = follow the location). Returns how many upcoming bookings no longer fit.
+  Future<int> setEmployeeHours(String employeeId, List<ScheduleRange> ranges) async {
+    final biz = await _id();
+    final r = await ref.read(apiClientProvider).run((d) => d.put('/api/v1/businesses/$biz/employees/$employeeId/hours', data: {'hours': [for (final x in ranges) x.toJson()]}));
+    ref.invalidate(employeeScheduleProvider);
+    ref.invalidate(availabilityProvider);
+    return r.data['affectedBookings'] ?? 0;
+  }
+
+  /// [firstDay]..[lastDay] are calendar days in the business timezone; the whole of both days is off.
+  Future<void> addTimeOff(String employeeId, DateTime firstDay, DateTime lastDay, String? reason) async {
+    final b = await _biz(ref);
+    final from = instantFromWall(dayStart(firstDay), b.timezone), to = instantFromWall(nextDay(lastDay), b.timezone);
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/${b.id}/employees/$employeeId/time-off',
+        data: {'startsAt': from.toIso8601String(), 'endsAt': to.toIso8601String(), 'reason': ?((reason ?? '').trim().isEmpty ? null : reason!.trim())}));
+    ref.invalidate(employeeScheduleProvider);
+    ref.invalidate(availabilityProvider);
+  }
+
+  Future<void> removeTimeOff(String employeeId, String timeOffId) async {
+    final biz = await _id();
+    await ref.read(apiClientProvider).run((d) => d.delete('/api/v1/businesses/$biz/employees/$employeeId/time-off/$timeOffId'));
+    ref.invalidate(employeeScheduleProvider);
+    ref.invalidate(availabilityProvider);
+  }
+
   /// Business-level customer messaging settings (reminder lead time in hours, 0 = off; language of customer messages).
   Future<void> updateMessaging({int? reminderHours, String? customerLocale, int? retentionMonths}) async {
     final biz = await _id();
@@ -441,4 +467,10 @@ class MfaApi {
 final loginHistoryProvider = FutureProvider.autoDispose<LoginHistory>((ref) async {
   final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/auth/login-history'));
   return LoginHistory.fromJson(r.data);
+});
+
+final employeeScheduleProvider = FutureProvider.autoDispose.family<EmployeeSchedule, String>((ref, employeeId) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/employees/$employeeId/schedule'));
+  return EmployeeSchedule.fromJson(r.data);
 });
