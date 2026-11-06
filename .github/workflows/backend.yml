@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest   # change to [self-hosted, linux] to use a self-hosted runner (needs Docker for Testcontainers)
     defaults: { run: { working-directory: backend } }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: "21", cache: gradle }
       - name: Test (Testcontainers starts postgres:16)

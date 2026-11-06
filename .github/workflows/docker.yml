@@ -12,7 +12,7 @@ jobs:
       ORLEU_DB_PASSWORD: ci-only-password
       ORLEU_JWT_SECRET: ci-only-secret-ci-only-secret-ci-only-secret
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Start the stack (builds the image from backend/Dockerfile)
         working-directory: infrastructure
         run: docker compose up -d --build
