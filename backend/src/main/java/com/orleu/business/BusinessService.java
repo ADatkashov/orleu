@@ -90,6 +90,8 @@ public class BusinessService {
         if (r.maxAdvanceDays() != null) b.setMaxAdvanceDays(r.maxAdvanceDays());
         if (r.paymentHoldMinutes() != null) b.setPaymentHoldMinutes(r.paymentHoldMinutes());
         if (r.cancellationDeadlineHours() != null) b.setCancellationDeadlineHours(r.cancellationDeadlineHours());
+        if (r.reminderHours() != null) b.setReminderHours(r.reminderHours());
+        if (r.customerLocale() != null) b.setCustomerLocale(r.customerLocale());
         audit.log(businessId, CurrentUser.id(), "BUSINESS_SETTINGS_UPDATED", "BUSINESS", businessId, null);
         return BusinessView.of(b);
     }

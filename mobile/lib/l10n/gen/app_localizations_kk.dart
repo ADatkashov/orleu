@@ -627,4 +627,37 @@ class AppLocalizationsKk extends AppLocalizations {
   @override
   String get reportsNote =>
       'Мәліметтер таңдалған кезеңдегі жазылулар мен төлемдер бойынша есептеледі. Бас тартылған жазылулар сұраныс болып саналмайды.';
+
+  @override
+  String get messagesNav => 'Клиенттерге хабарламалар';
+
+  @override
+  String get messagesReminder => 'Келуге дейін клиенттерге еске салу';
+
+  @override
+  String get messagesReminderOff => 'Өшірулі';
+
+  @override
+  String messagesReminderHours(String n) {
+    return '$n сағат бұрын';
+  }
+
+  @override
+  String get messagesLanguage => 'Клиент хабарламаларының тілі';
+
+  @override
+  String get messagesPrepared => 'Дайындалған хабарламалар';
+
+  @override
+  String get messagesNone => 'Дайындалған хабарламалар әлі жоқ';
+
+  @override
+  String get messagesNotSent => 'Жіберілмеген';
+
+  @override
+  String get messagesNote =>
+      'SMS немесе e-mail арқылы жіберу әлі қосылмаған: хабарламалар дайындалып, осында көрсетіледі, бірақ клиенттерге ештеңе жеткізілмейді.';
+
+  @override
+  String get messagesSaved => 'Сақталды';
 }

@@ -4,11 +4,14 @@ import '../tz.dart';
 double _num(Object? v) => v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
 
 class Business {
-  final String id, name, slug, currency, planCode, timezone;
+  final String id, name, slug, currency, planCode, timezone, customerLocale;
   final bool published;
-  const Business({required this.id, required this.name, required this.slug, required this.currency, required this.planCode, required this.published, this.timezone = 'UTC'});
+  final int reminderHours;
+  const Business({required this.id, required this.name, required this.slug, required this.currency, required this.planCode, required this.published, this.timezone = 'UTC',
+      this.reminderHours = 24, this.customerLocale = 'ru'});
   factory Business.fromJson(Map<String, dynamic> j) => Business(
-      id: j['id'], name: j['name'], slug: j['slug'], currency: j['currency'] ?? 'KZT', planCode: j['planCode'] ?? 'FREE', published: j['published'] == true, timezone: j['timezone'] ?? 'UTC');
+      id: j['id'], name: j['name'], slug: j['slug'], currency: j['currency'] ?? 'KZT', planCode: j['planCode'] ?? 'FREE', published: j['published'] == true, timezone: j['timezone'] ?? 'UTC',
+      reminderHours: j['reminderHours'] ?? 24, customerLocale: j['customerLocale'] ?? 'ru');
 }
 
 class Financials {
@@ -99,6 +102,15 @@ class CustomerMix {
   const CustomerMix({required this.newCustomers, required this.returningCustomers, required this.returningShare});
   factory CustomerMix.fromJson(Map<String, dynamic> j) => CustomerMix(
       newCustomers: j['newCustomers'] ?? 0, returningCustomers: j['returningCustomers'] ?? 0, returningShare: _num(j['returningShare']));
+}
+
+class CustomerMessage {
+  final String id, messageType, locale, recipientPhone, body, status;
+  final DateTime createdAt;
+  const CustomerMessage({required this.id, required this.messageType, required this.locale, required this.recipientPhone, required this.body, required this.status, required this.createdAt});
+  factory CustomerMessage.fromJson(Map<String, dynamic> j) => CustomerMessage(
+      id: j['id'], messageType: j['messageType'], locale: j['locale'], recipientPhone: j['recipientPhone'], body: j['body'], status: j['status'],
+      createdAt: DateTime.parse(j['createdAt']));
 }
 
 class PlanUsage {

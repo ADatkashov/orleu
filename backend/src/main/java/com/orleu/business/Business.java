@@ -36,9 +36,15 @@ public class Business {
     @Column(name = "max_advance_days") private int maxAdvanceDays = 60;
     @Column(name = "payment_hold_minutes") private int paymentHoldMinutes = 15;
     @Column(name = "cancellation_deadline_hours") private int cancellationDeadlineHours = 24;
+    @Column(name = "reminder_hours") private int reminderHours = 24;
+    @Column(name = "customer_locale") private String customerLocale = "ru";
     @Column(name = "created_at", updatable = false) private Instant createdAt;
     @Column(name = "updated_at") private Instant updatedAt;
 
     @PrePersist void onCreate() { createdAt = updatedAt = Instant.now(); }
     @PreUpdate void onUpdate() { updatedAt = Instant.now(); }
+    public int getReminderHours() { return reminderHours; }
+    public void setReminderHours(int v) { this.reminderHours = v; }
+    public String getCustomerLocale() { return customerLocale; }
+    public void setCustomerLocale(String v) { this.customerLocale = v; }
 }
