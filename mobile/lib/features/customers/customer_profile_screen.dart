@@ -7,6 +7,7 @@ import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
 import '../../core/widgets/common.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../finance/export_section.dart';
 import '../setup/setup_common.dart';
 
 /// Customer card: measured statistics (money = cash collected, not booked value), history and editable notes.
@@ -78,6 +79,19 @@ class CustomerProfileScreen extends ConsumerWidget {
                 : OutlinedButton(
                     key: const Key('block'), style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
                     onPressed: () => showDialog(context: context, builder: (_) => _BlockDialog(customerId: customerId)), child: Text(l.blockClient)),
+            const SizedBox(height: AppSpacing.sm),
+            OutlinedButton.icon(key: const Key('exportClient'), icon: const Icon(Icons.download_outlined), label: Text(l.privacyExport), onPressed: () => guarded(context, () async {
+              final f = await ref.read(bookingActionsProvider).exportCustomer(customerId);
+              final saved = await ref.read(csvSaverProvider)(f.name, f.bytes);
+              if (saved && context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.privacySaved)));
+            })),
+            if (canErase(ref.watch(myRoleProvider).value)) ...[
+              const SizedBox(height: AppSpacing.sm),
+              OutlinedButton.icon(
+                key: const Key('eraseClient'), style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger), icon: const Icon(Icons.delete_forever_outlined),
+                label: Text(l.privacyDelete), onPressed: () => showDialog(context: context, builder: (_) => _EraseDialog(customerId: customerId)),
+              ),
+            ],
             const SizedBox(height: AppSpacing.lg),
             Text(l.historyTitle, style: t.textTheme.titleMedium),
             const SizedBox(height: AppSpacing.sm),
@@ -196,6 +210,44 @@ class _BlockState extends ConsumerState<_BlockDialog> {
             if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
           },
           child: Text(l.blockClient),
+        ),
+      ],
+    );
+  }
+}
+
+/// Owner/admin only on the server; this just hides the button for other roles.
+bool canErase(String? role) => role == 'BUSINESS_OWNER' || role == 'BUSINESS_ADMIN';
+
+class _EraseDialog extends ConsumerStatefulWidget {
+  final String customerId;
+  const _EraseDialog({required this.customerId});
+  @override
+  ConsumerState<_EraseDialog> createState() => _EraseState();
+}
+
+class _EraseState extends ConsumerState<_EraseDialog> {
+  bool _busy = false;
+  String? _error;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l.privacyDelete),
+      content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [Text(l.privacyDeleteWarn), FormError(_error)]),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
+        FilledButton(
+          key: const Key('confirmErase'),
+          style: FilledButton.styleFrom(backgroundColor: AppColors.danger, foregroundColor: Colors.white, minimumSize: const Size(96, 44)),
+          onPressed: _busy ? null : () async {
+            setState(() { _busy = true; _error = null; });
+            final err = await attempt(context, () => ref.read(bookingActionsProvider).anonymizeCustomer(widget.customerId));
+            if (!context.mounted) return;
+            if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
+          },
+          child: Text(l.privacyConfirm),
         ),
       ],
     );

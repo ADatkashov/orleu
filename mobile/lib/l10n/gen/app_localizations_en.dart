@@ -1126,4 +1126,42 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get histNote =>
       'Kept for 90 days. The device is recognised by its app or browser type, not proven.';
+
+  @override
+  String get privacyExport => 'Export client data';
+
+  @override
+  String get privacyDelete => 'Delete personal data';
+
+  @override
+  String get privacyDeleteWarn =>
+      'This removes the name, phone, e-mail, notes and messages of this client for good and cannot be undone. Bookings and payments stay for your accounting, without personal data.';
+
+  @override
+  String get privacyConfirm => 'Delete for good';
+
+  @override
+  String get privacyDone => 'Personal data deleted';
+
+  @override
+  String get errHasUpcoming =>
+      'Cancel the upcoming bookings of this client first';
+
+  @override
+  String get privacySaved => 'File saved';
+
+  @override
+  String get retentionTitle => 'Automatic deletion of inactive clients';
+
+  @override
+  String get retentionNote =>
+      'Anonymise clients who had no booking for this long (never those with upcoming bookings). Off by default. Check what the law requires in your country.';
+
+  @override
+  String get retentionOff => 'Off';
+
+  @override
+  String retentionYears(String n) {
+    return '$n years';
+  }
 }

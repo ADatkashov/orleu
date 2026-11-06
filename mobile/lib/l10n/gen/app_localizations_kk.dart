@@ -1123,4 +1123,42 @@ class AppLocalizationsKk extends AppLocalizations {
   @override
   String get histNote =>
       '90 күн сақталады. Құрылғы қосымша немесе браузер түрі бойынша танылады, бұл дәлел емес.';
+
+  @override
+  String get privacyExport => 'Клиент деректерін шығару';
+
+  @override
+  String get privacyDelete => 'Жеке деректерді жою';
+
+  @override
+  String get privacyDeleteWarn =>
+      'Бұл клиенттің аты, телефоны, e-mail, жазбалары мен хабарламалары біржола жойылады, қайтару мүмкін емес. Жазылулар мен төлемдер есептілік үшін жеке деректерсіз қалады.';
+
+  @override
+  String get privacyConfirm => 'Біржола жою';
+
+  @override
+  String get privacyDone => 'Жеке деректер жойылды';
+
+  @override
+  String get errHasUpcoming =>
+      'Алдымен клиенттің алдағы жазылуларынан бас тартыңыз';
+
+  @override
+  String get privacySaved => 'Файл сақталды';
+
+  @override
+  String get retentionTitle => 'Белсенді емес клиенттерді автоматты жою';
+
+  @override
+  String get retentionNote =>
+      'Осынша уақыт жазылуы болмаған клиенттерді иесіздендіру (алдағы жазылуы барларды қоспағанда). Әдепкіде өшірулі. Еліңіздегі заң талаптарын тексеріңіз.';
+
+  @override
+  String get retentionOff => 'Өшірулі';
+
+  @override
+  String retentionYears(String n) {
+    return '$n жыл';
+  }
 }

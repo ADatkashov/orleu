@@ -17,6 +17,7 @@ String errorText(BuildContext context, Object error) {
     'INVALID_MFA_CHALLENGE' => l.errMfaChallenge,
     'MFA_REQUIRED' => l.errMfaRequired,
     'EXPORT_TOO_LARGE' => l.errExportTooLarge,
+    'HAS_UPCOMING_BOOKINGS' => l.errHasUpcoming,
     'IMPORT_EMPTY' => l.errImportEmpty,
     'IMPORT_MISSING_COLUMNS' => l.errImportColumns,
     'IMPORT_TOO_LARGE' => l.errImportTooLarge,

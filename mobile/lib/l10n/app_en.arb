@@ -379,5 +379,17 @@
   "histNewDevice": "New device",
   "histWithCode": "with code",
   "histNone": "No sign-ins recorded yet",
-  "histNote": "Kept for 90 days. The device is recognised by its app or browser type, not proven."
+  "histNote": "Kept for 90 days. The device is recognised by its app or browser type, not proven.",
+  "privacyExport": "Export client data",
+  "privacyDelete": "Delete personal data",
+  "privacyDeleteWarn": "This removes the name, phone, e-mail, notes and messages of this client for good and cannot be undone. Bookings and payments stay for your accounting, without personal data.",
+  "privacyConfirm": "Delete for good",
+  "privacyDone": "Personal data deleted",
+  "errHasUpcoming": "Cancel the upcoming bookings of this client first",
+  "privacySaved": "File saved",
+  "retentionTitle": "Automatic deletion of inactive clients",
+  "retentionNote": "Anonymise clients who had no booking for this long (never those with upcoming bookings). Off by default. Check what the law requires in your country.",
+  "retentionOff": "Off",
+  "retentionYears": "{n} years",
+  "@retentionYears": {"placeholders": {"n": {"type": "String"}}}
 }

@@ -69,7 +69,7 @@ AI assistant (only with real testable use cases), forecasting (labelled estimate
 | Mobile quality: deep links, push, offline cache, device sessions UI, store builds, crash reporting | TODO |
 | Documentation set (spec §32) | PARTIAL: `IMPLEMENTATION_STATUS`, `SECURITY`, `ARCHITECTURE`, `DEPLOYMENT`, `OPERATIONS`, `BACKUP_AND_RECOVERY` exist; the other listed files are not written (write each when the area has real content, never from imagination) |
 | Architecture checks (no cyclic module deps) | DONE for module cycles and boundaries (ArchUnit in CI); layered rules and shared-table access rules TODO |
-| Privacy: consent history, data export, account deletion, retention | TODO; legal review required before any compliance claim |
+| Privacy: consent history, data export, account deletion, retention | PARTIAL — customer export, anonymisation and opt-in retention job exist (`docs/IMPLEMENTATION_STATUS.md`); consent history, account/business deletion, customer-facing requests TODO; legal review required before any compliance claim |
 
 ## The 7 pre-launch directions (addendum follow-up)
 | # | Direction | Status |

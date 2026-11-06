@@ -32,19 +32,21 @@ public final class BusinessDtos {
             @Min(1) @Max(1440) Integer paymentHoldMinutes,
             @Min(0) @Max(720) Integer cancellationDeadlineHours,
             @Min(0) @Max(168) Integer reminderHours,
-            @Pattern(regexp = "kk|ru|en") String customerLocale) {}
+            @Pattern(regexp = "kk|ru|en") String customerLocale,
+            /** 0 = switch automatic anonymisation off; otherwise 12-120 months of inactivity. */
+            @Min(0) @Max(120) Integer customerRetentionMonths) {}
 
     public record BusinessView(UUID id, String slug, String name, String businessType, String description,
                                String country, String city, String address, String currency, String timezone,
                                String planCode, boolean published, int onboardingStep, BigDecimal depositPercent,
                                boolean autoConfirm, int minNoticeMinutes, int maxAdvanceDays, int paymentHoldMinutes,
-                               int cancellationDeadlineHours, int reminderHours, String customerLocale) {
+                               int cancellationDeadlineHours, int reminderHours, String customerLocale, Integer customerRetentionMonths) {
         public static BusinessView of(Business b) {
             return new BusinessView(b.getId(), b.getSlug(), b.getName(), b.getBusinessType(), b.getDescription(),
                     b.getCountry(), b.getCity(), b.getAddress(), b.getCurrency(), b.getTimezone(), b.getPlanCode(),
                     b.isPublished(), b.getOnboardingStep(), b.getDepositPercent(), b.isAutoConfirm(),
                     b.getMinNoticeMinutes(), b.getMaxAdvanceDays(), b.getPaymentHoldMinutes(), b.getCancellationDeadlineHours(),
-                    b.getReminderHours(), b.getCustomerLocale());
+                    b.getReminderHours(), b.getCustomerLocale(), b.getCustomerRetentionMonths());
         }
     }
 

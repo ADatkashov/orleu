@@ -38,6 +38,7 @@ public class Business {
     @Column(name = "cancellation_deadline_hours") private int cancellationDeadlineHours = 24;
     @Column(name = "reminder_hours") private int reminderHours = 24;
     @Column(name = "customer_locale") private String customerLocale = "ru";
+    @Column(name = "customer_retention_months") private Integer customerRetentionMonths;
     @Column(name = "created_at", updatable = false) private Instant createdAt;
     @Column(name = "updated_at") private Instant updatedAt;
 
@@ -47,4 +48,6 @@ public class Business {
     public void setReminderHours(int v) { this.reminderHours = v; }
     public String getCustomerLocale() { return customerLocale; }
     public void setCustomerLocale(String v) { this.customerLocale = v; }
+    public Integer getCustomerRetentionMonths() { return customerRetentionMonths; }
+    public void setCustomerRetentionMonths(Integer v) { this.customerRetentionMonths = v; }
 }

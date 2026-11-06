@@ -66,7 +66,7 @@ void main() {
     final e = Env();
     e.adapter.routes['PATCH /api/v1/businesses/b1/settings'] = (_) => err(400, 'VALIDATION_FAILED');
     await open(tester, env: e);
-    await tester.tap(find.text('Off'));
+    await tester.tap(find.descendant(of: find.byKey(const Key('reminder-hours')), matching: find.text('Off')));
     await tester.pumpAndSettle();
     expect(e.reminderHours, 24);
     expect(find.byType(SnackBar), findsOneWidget);
