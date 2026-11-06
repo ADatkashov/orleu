@@ -31,6 +31,9 @@ class NotificationsIT extends AbstractIT {
 
     @Autowired OutboxProcessor processor;
 
+    /** The processor takes a bounded batch; events left pending by other test classes would starve this class's events. */
+    @org.junit.jupiter.api.BeforeEach void clearForeignBacklog() { jdbc.update("delete from outbox_events where status = 'PENDING'"); }
+
     private Res book(Fixture f, int h) {
         return post(f.ownerToken, "/api/v1/businesses/%s/bookings", Map.of("branchId", f.branchId, "serviceId", f.serviceId,
                 "startsAt", at(bookingDate(), h, 0).toString(), "customer", f.customer("+7701000" + (3000 + h))), f.businessId);
