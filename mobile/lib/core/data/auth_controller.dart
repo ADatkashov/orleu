@@ -47,6 +47,25 @@ class AuthController extends Notifier<AuthStatus> {
     state = AuthStatus.authenticated;
   }
 
+  /// Always completes normally for any e-mail (the server does not reveal whether an account exists).
+  Future<void> requestPasswordReset(String email) =>
+      ref.read(apiClientProvider).run((d) => d.post('/api/v1/auth/password-reset/request', data: {'email': email}, options: _noAuth));
+
+  Future<void> confirmPasswordReset(String token, String newPassword) =>
+      ref.read(apiClientProvider).run((d) => d.post('/api/v1/auth/password-reset/confirm', data: {'token': token, 'newPassword': newPassword}, options: _noAuth));
+
+  /// The server signs out every session on a password change and returns fresh tokens for this device: store them.
+  Future<void> changePassword(String current, String next) async {
+    final r = await ref.read(apiClientProvider).run((d) => d.post('/api/v1/auth/change-password', data: {'currentPassword': current, 'newPassword': next}));
+    await ref.read(tokenStoreProvider).save(access: r.data['accessToken'], refresh: r.data['refreshToken']);
+  }
+
+  Future<void> logoutEverywhere() async {
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/auth/logout-all'));
+    await ref.read(tokenStoreProvider).clear();
+    state = AuthStatus.unauthenticated;
+  }
+
   Future<void> logout() async {
     final store = ref.read(tokenStoreProvider);
     final refresh = await store.readRefresh();

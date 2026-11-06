@@ -297,3 +297,13 @@ final customerMessagesProvider = FutureProvider.autoDispose<List<CustomerMessage
   final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/notifications/customer-messages'));
   return (r.data as List).map((e) => CustomerMessage.fromJson(e)).toList();
 });
+
+final sessionsProvider = FutureProvider.autoDispose<List<DeviceSession>>((ref) async {
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/auth/sessions'));
+  return (r.data as List).map((e) => DeviceSession.fromJson(e)).toList();
+});
+
+Future<void> revokeSession(WidgetRef ref, String id) async {
+  await ref.read(apiClientProvider).run((d) => d.delete('/api/v1/auth/sessions/$id'));
+  ref.invalidate(sessionsProvider);
+}

@@ -1359,6 +1359,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saved'**
   String get messagesSaved;
+
+  /// No description provided for @forgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPassword;
+
+  /// No description provided for @resetIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your account e-mail to request a password reset code.'**
+  String get resetIntro;
+
+  /// No description provided for @resetRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Request reset code'**
+  String get resetRequest;
+
+  /// No description provided for @resetRequested.
+  ///
+  /// In en, this message translates to:
+  /// **'If an account exists for this e-mail, a reset code was requested. Enter the code you received and choose a new password.'**
+  String get resetRequested;
+
+  /// No description provided for @resetCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset code'**
+  String get resetCode;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get newPassword;
+
+  /// No description provided for @resetConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Set new password'**
+  String get resetConfirm;
+
+  /// No description provided for @resetDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password was changed. Sign in with the new password.'**
+  String get resetDone;
+
+  /// No description provided for @backToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get backToSignIn;
+
+  /// No description provided for @errWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The current password is incorrect'**
+  String get errWrongPassword;
+
+  /// No description provided for @errResetToken.
+  ///
+  /// In en, this message translates to:
+  /// **'This reset code is invalid or has expired'**
+  String get errResetToken;
+
+  /// No description provided for @accountNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Account & security'**
+  String get accountNav;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get changePassword;
+
+  /// No description provided for @currentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get currentPassword;
+
+  /// No description provided for @confirmPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat new password'**
+  String get confirmPassword;
+
+  /// No description provided for @passwordsDiffer.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDiffer;
+
+  /// No description provided for @passwordChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed. Other devices were signed out.'**
+  String get passwordChanged;
+
+  /// No description provided for @sessionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed-in devices'**
+  String get sessionsTitle;
+
+  /// No description provided for @sessionsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing your password signs out all other devices. Revoking the session of this device signs you out here too.'**
+  String get sessionsNote;
+
+  /// No description provided for @sessionRevoke.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get sessionRevoke;
+
+  /// No description provided for @sessionUnknownDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown device'**
+  String get sessionUnknownDevice;
+
+  /// No description provided for @sessionSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Since {date}'**
+  String sessionSince(String date);
+
+  /// No description provided for @signOutEverywhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out on all devices'**
+  String get signOutEverywhere;
+
+  /// No description provided for @sessionsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No active sessions'**
+  String get sessionsNone;
 }
 
 class _AppLocalizationsDelegate

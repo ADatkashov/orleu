@@ -14,6 +14,7 @@ import 'features/finance/finance_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/more/more_screen.dart';
 import 'features/more/messages_screen.dart';
+import 'features/more/account_screen.dart';
 import 'features/setup/branches_screen.dart';
 import 'features/setup/employees_screen.dart';
 import 'features/setup/services_screen.dart';
@@ -36,7 +37,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final auth = ref.read(authControllerProvider);
       final loc = state.matchedLocation;
-      final onAuth = loc == '/login' || loc == '/register';
+      final onAuth = loc == '/login' || loc == '/register' || loc == '/forgot';
       switch (auth) {
         case AuthStatus.unknown:
           return loc == '/splash' ? null : '/splash';
@@ -50,6 +51,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/splash', builder: (_, _) => const Scaffold(body: Center(child: CircularProgressIndicator()))),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
+      GoRoute(path: '/forgot', builder: (_, _) => const ForgotPasswordScreen()),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => AppShell(shell: shell),
         branches: [
@@ -68,6 +70,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(path: 'services', builder: (_, _) => const ServicesScreen()),
               GoRoute(path: 'employees', builder: (_, _) => const EmployeesScreen()),
               GoRoute(path: 'messages', builder: (_, _) => const MessagesScreen()),
+              GoRoute(path: 'account', builder: (_, _) => const AccountScreen()),
             ]),
           ]),
         ],

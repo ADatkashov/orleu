@@ -12,6 +12,8 @@ String errorText(BuildContext context, Object error) {
     'INVALID_CREDENTIALS' => l.errInvalidCredentials,
     'EMAIL_TAKEN' || 'ACCOUNT_EXISTS' => l.errEmailTaken,
     'ACCOUNT_LOCKED' => l.errAccountLocked,
+    'WRONG_PASSWORD' => l.errWrongPassword,
+    'INVALID_RESET_TOKEN' => l.errResetToken,
     'SLUG_TAKEN' => l.errSlugTaken,
     'INVALID_TRANSITION' || 'PAYMENT_REQUIRED' => l.errInvalidTransition,
     'BRANCH_LIMIT_REACHED' || 'EMPLOYEE_LIMIT_REACHED' => l.errLimit,
