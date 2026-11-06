@@ -739,4 +739,24 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get sessionsNone => 'Белсенді сессиялар жоқ';
+
+  @override
+  String get calDay => 'Күн';
+
+  @override
+  String get calWeek => 'Апта';
+
+  @override
+  String get calMonth => 'Ай';
+
+  @override
+  String get filterAllSpecialists => 'Барлық мамандар';
+
+  @override
+  String get filterAllLocations => 'Барлық филиалдар';
+
+  @override
+  String calBookingsCount(int n) {
+    return 'Жазылу: $n';
+  }
 }

@@ -255,5 +255,12 @@
   "sessionSince": "Since {date}",
   "@sessionSince": {"placeholders": {"date": {"type": "String"}}},
   "signOutEverywhere": "Sign out on all devices",
-  "sessionsNone": "No active sessions"
+  "sessionsNone": "No active sessions",
+  "calDay": "Day",
+  "calWeek": "Week",
+  "calMonth": "Month",
+  "filterAllSpecialists": "All specialists",
+  "filterAllLocations": "All locations",
+  "calBookingsCount": "{n} bookings",
+  "@calBookingsCount": {"placeholders": {"n": {"type": "int"}}}
 }
