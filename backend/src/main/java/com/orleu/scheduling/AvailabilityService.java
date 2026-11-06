@@ -91,6 +91,18 @@ public class AvailabilityService {
                     return 0;
                 }).list();
 
+        // Personal schedules: no rows = follows the branch; rows = only inside one of that weekday's ranges (a service cannot span a break).
+        Map<UUID, List<LocalTime[]>> personal = new HashMap<>();
+        Set<UUID> hasSchedule = new HashSet<>(jdbc.sql("select distinct employee_id from employee_hours where employee_id in (:ids)").param("ids", employees).query(UUID.class).list());
+        if (!hasSchedule.isEmpty()) {
+            jdbc.sql("select employee_id, start_time, end_time from employee_hours where employee_id in (:ids) and day_of_week = :d")
+                    .param("ids", employees).param("d", date.getDayOfWeek().getValue())
+                    .query((rs, i) -> {
+                        personal.computeIfAbsent(rs.getObject(1, UUID.class), k -> new ArrayList<>()).add(new LocalTime[]{rs.getObject(2, LocalTime.class), rs.getObject(3, LocalTime.class)});
+                        return 0;
+                    }).list();
+        }
+
         Instant earliest = applyOnlineRules ? now.plus(Duration.ofMinutes(rules[0])) : now;
         Instant latest = applyOnlineRules ? now.plus(Duration.ofDays(rules[1])) : Instant.MAX;
 
@@ -102,7 +114,13 @@ public class AvailabilityService {
             if (start.isBefore(earliest) || start.isAfter(latest)) continue;
             Instant blockedUntil = start.plus(blocked);
             List<UUID> free = new ArrayList<>();
+            LocalTime slotStart = t.toLocalTime(), slotEnd = t.plus(duration).toLocalTime();
+            boolean sameDay = t.plus(duration).toLocalDate().equals(date);
             for (UUID e : employees) {
+                if (hasSchedule.contains(e)) {
+                    boolean inside = sameDay && personal.getOrDefault(e, List.of()).stream().anyMatch(r -> !slotStart.isBefore(r[0]) && !slotEnd.isAfter(r[1]));
+                    if (!inside) continue;
+                }
                 boolean clash = busy.getOrDefault(e, List.of()).stream().anyMatch(iv -> iv.overlaps(start, blockedUntil));
                 if (!clash) free.add(e);
             }
