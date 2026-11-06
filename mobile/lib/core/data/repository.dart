@@ -185,6 +185,13 @@ class BookingActions {
     ref.invalidate(notificationsProvider);
   }
 
+  Future<ImportReport> importCustomers(String csv, {required bool dryRun}) async {
+    final biz = await _id();
+    final r = await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$biz/customers/import', data: {'csv': csv, 'dryRun': dryRun}));
+    if (!dryRun) ref.invalidate(customersProvider);
+    return ImportReport.fromJson(r.data);
+  }
+
   /// Business-level customer messaging settings (reminder lead time in hours, 0 = off; language of customer messages).
   Future<void> updateMessaging({int? reminderHours, String? customerLocale}) async {
     final biz = await _id();

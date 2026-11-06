@@ -899,4 +899,91 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get notifOther => 'Обновление';
+
+  @override
+  String get importNav => 'Импорт клиентов (CSV)';
+
+  @override
+  String get importIntro =>
+      'Сохраните таблицу как CSV (UTF-8). Первая строка — названия столбцов: обязательны имя и телефон, e-mail и заметки по желанию. Уже существующие клиенты не меняются, а импортированные не считаются давшими согласие на рекламные сообщения.';
+
+  @override
+  String get importChoose => 'Выбрать файл CSV';
+
+  @override
+  String importFile(String name) {
+    return 'Файл: $name';
+  }
+
+  @override
+  String get importNew => 'Новые клиенты';
+
+  @override
+  String get importExisting => 'Уже есть в списке';
+
+  @override
+  String get importDupes => 'Дубли внутри файла';
+
+  @override
+  String get importInvalid => 'Строки с ошибками';
+
+  @override
+  String get importProblems => 'Строки, которые будут пропущены';
+
+  @override
+  String importRow(String row, String reason) {
+    return 'Строка $row: $reason';
+  }
+
+  @override
+  String get imp_PHONE_INVALID => 'неверный номер телефона';
+
+  @override
+  String get imp_NAME_MISSING => 'нет имени';
+
+  @override
+  String get imp_NAME_TOO_LONG => 'слишком длинное имя';
+
+  @override
+  String get imp_EMAIL_INVALID => 'неверный e-mail';
+
+  @override
+  String get imp_NOTES_TOO_LONG => 'слишком длинные заметки';
+
+  @override
+  String get importMoreProblems => '…и ещё строки с ошибками';
+
+  @override
+  String importConfirm(String n) {
+    return 'Импортировать клиентов: $n';
+  }
+
+  @override
+  String get importNothing => 'Новых клиентов для импорта нет';
+
+  @override
+  String importDone(String n) {
+    return 'Импортировано клиентов: $n';
+  }
+
+  @override
+  String get importAnother => 'Импортировать другой файл';
+
+  @override
+  String get importPreviewSample => 'Первые новые клиенты';
+
+  @override
+  String get errImportEmpty => 'Файл пуст или в нём нет строк с клиентами';
+
+  @override
+  String get errImportColumns =>
+      'В первой строке должны быть столбцы с именем и телефоном';
+
+  @override
+  String get errImportTooLarge =>
+      'Файл слишком большой (не более 5000 клиентов и 2 МБ)';
+
+  @override
+  String get errImportEncoding =>
+      'Файл не в кодировке UTF-8. В Excel при сохранении выберите «CSV UTF-8».';
 }

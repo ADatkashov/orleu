@@ -15,6 +15,7 @@ import 'features/home/home_screen.dart';
 import 'features/more/more_screen.dart';
 import 'features/more/messages_screen.dart';
 import 'features/more/account_screen.dart';
+import 'features/customers/import_screen.dart';
 import 'features/home/notifications_screen.dart';
 import 'features/more/reviews_screen.dart';
 import 'features/more/support_screen.dart';
@@ -63,6 +64,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(routes: [GoRoute(path: '/calendar', builder: (_, _) => const CalendarScreen())]),
           StatefulShellBranch(routes: [
             GoRoute(path: '/customers', builder: (_, _) => const CustomersScreen(), routes: [
+              GoRoute(path: 'import', builder: (_, _) => const ImportCustomersScreen()),
               GoRoute(path: ':id', builder: (_, state) => CustomerProfileScreen(customerId: state.pathParameters['id']!)),
             ]),
           ]),

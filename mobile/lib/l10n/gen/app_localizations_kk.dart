@@ -898,4 +898,91 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get notifOther => 'Жаңарту';
+
+  @override
+  String get importNav => 'Клиенттерді импорттау (CSV)';
+
+  @override
+  String get importIntro =>
+      'Кестені CSV (UTF-8) ретінде сақтаңыз. Бірінші жолда баған атаулары болады: аты мен телефон міндетті, e-mail және жазбалар қалауыңызша. Бар клиенттер өзгертілмейді, ал импортталғандар жарнамалық хабарламаларға келісім берген деп саналмайды.';
+
+  @override
+  String get importChoose => 'CSV файлын таңдау';
+
+  @override
+  String importFile(String name) {
+    return 'Файл: $name';
+  }
+
+  @override
+  String get importNew => 'Жаңа клиенттер';
+
+  @override
+  String get importExisting => 'Тізімде бар';
+
+  @override
+  String get importDupes => 'Файл ішіндегі қайталанулар';
+
+  @override
+  String get importInvalid => 'Қателі жолдар';
+
+  @override
+  String get importProblems => 'Өткізіп жіберілетін жолдар';
+
+  @override
+  String importRow(String row, String reason) {
+    return '$row-жол: $reason';
+  }
+
+  @override
+  String get imp_PHONE_INVALID => 'телефон нөмірі қате';
+
+  @override
+  String get imp_NAME_MISSING => 'аты жоқ';
+
+  @override
+  String get imp_NAME_TOO_LONG => 'аты тым ұзын';
+
+  @override
+  String get imp_EMAIL_INVALID => 'e-mail қате';
+
+  @override
+  String get imp_NOTES_TOO_LONG => 'жазбалар тым ұзын';
+
+  @override
+  String get importMoreProblems => '…және қателі жолдар бар';
+
+  @override
+  String importConfirm(String n) {
+    return 'Клиенттерді импорттау: $n';
+  }
+
+  @override
+  String get importNothing => 'Импорттауға жаңа клиент жоқ';
+
+  @override
+  String importDone(String n) {
+    return 'Импортталған клиенттер: $n';
+  }
+
+  @override
+  String get importAnother => 'Басқа файлды импорттау';
+
+  @override
+  String get importPreviewSample => 'Алғашқы жаңа клиенттер';
+
+  @override
+  String get errImportEmpty => 'Файл бос немесе клиент жолдары жоқ';
+
+  @override
+  String get errImportColumns =>
+      'Бірінші жолда аты және телефон бағандары болуы керек';
+
+  @override
+  String get errImportTooLarge =>
+      'Файл тым үлкен (5000 клиенттен және 2 МБ-тан аспауы керек)';
+
+  @override
+  String get errImportEncoding =>
+      'Файл UTF-8 емес. Excel-де сақтағанда «CSV UTF-8» таңдаңыз.';
 }
