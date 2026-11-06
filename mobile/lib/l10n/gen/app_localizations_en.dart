@@ -1293,4 +1293,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errCodeExists => 'This code already exists.';
+
+  @override
+  String get tagsTitle => 'Tags';
+
+  @override
+  String get tagsHint => 'Comma-separated, up to 10 tags of 30 characters';
+
+  @override
+  String get tagsInvalid => 'Up to 10 tags, each at most 30 characters.';
 }

@@ -68,6 +68,14 @@ class CustomerProfileScreen extends ConsumerWidget {
               ]),
               Text(p.notes == null || p.notes!.isEmpty ? dash : p.notes!, key: const Key('clientNotes')),
               const SizedBox(height: AppSpacing.sm),
+              Row(children: [
+                Expanded(child: Text(l.tagsTitle, style: t.textTheme.titleSmall)),
+                TextButton(key: const Key('editTags'), onPressed: () => showDialog(context: context, builder: (_) => _TagsDialog(customer: p.customer)), child: Text(l.edit)),
+              ]),
+              p.customer.tags.isEmpty
+                  ? Text(dash, key: const Key('noTags'))
+                  : Wrap(spacing: AppSpacing.xs, children: [for (final tag in p.customer.tags) Chip(key: Key('tag-$tag'), label: Text(tag))]),
+              const SizedBox(height: AppSpacing.sm),
               SwitchListTile(
                 key: const Key('marketingSwitch'), contentPadding: EdgeInsets.zero, title: Text(l.marketingConsent), value: p.marketingOptIn,
                 onChanged: (v) => guarded(context, () => ref.read(bookingActionsProvider).updateCustomer(customerId, marketingOptIn: v)),
@@ -248,6 +256,46 @@ class _EraseState extends ConsumerState<_EraseDialog> {
             if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
           },
           child: Text(l.privacyConfirm),
+        ),
+      ],
+    );
+  }
+}
+
+class _TagsDialog extends ConsumerStatefulWidget {
+  final Customer customer;
+  const _TagsDialog({required this.customer});
+  @override
+  ConsumerState<_TagsDialog> createState() => _TagsState();
+}
+
+class _TagsState extends ConsumerState<_TagsDialog> {
+  late final _text = TextEditingController(text: widget.customer.tags.join(', '));
+  bool _busy = false;
+  String? _error;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l.tagsTitle),
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        TextField(key: const Key('tagsField'), controller: _text, decoration: InputDecoration(labelText: l.tagsTitle, helperText: l.tagsHint)),
+        FormError(_error),
+      ]),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
+        FilledButton(
+          key: const Key('saveTags'),
+          onPressed: _busy ? null : () async {
+            final tags = _text.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+            if (tags.any((t) => t.length > 30) || tags.length > 10) { setState(() => _error = l.tagsInvalid); return; }
+            setState(() { _busy = true; _error = null; });
+            final err = await attempt(context, () => ref.read(bookingActionsProvider).setCustomerTags(widget.customer.id, tags));
+            if (!context.mounted) return;
+            if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
+          },
+          child: Text(l.save),
         ),
       ],
     );

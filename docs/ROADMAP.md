@@ -6,7 +6,7 @@ requirement to its current status; `docs/IMPLEMENTATION_STATUS.md` holds the tec
 Update both after every merged increment. Status words: **DONE** (implemented and verified by automated tests/CI),
 **PARTIAL**, **TODO**, **BLOCKED** (needs the owner's external accounts/credentials/legal decision).
 
-_Last updated: 2026-11-05._
+_Last updated: 2026-11-06._
 
 ## Working agreement (from the owner)
 - Choose the next most valuable item yourself; merge when CI is green (see `CLAUDE.md`). Ask only for external accounts/credentials or irreversible actions.
@@ -25,7 +25,7 @@ _Last updated: 2026-11-05._
 | F | Confirm, reschedule, cancel, complete | DONE | staff in app; customer cancel by link |
 | G | Deposit through a provider or an identified sandbox | **BLOCKED / PARTIAL** | manual payments only; provider adapters need FreedomPay/Kaspi accounts + official docs |
 | H | Remaining balance visible | DONE | |
-| I | Manage customers and employees | DONE (core) | customer card + edit + block, catalog edit/deactivate in API and app; still missing: customer tags, import/export, duplicate merge, segments, commission/performance (employee schedules DONE) |
+| I | Manage customers and employees | DONE (core) | customer card + edit + block, catalog edit/deactivate in API and app; customer tags + tag filter DONE; still missing: duplicate merge, rule-based segments, commission/performance (employee schedules DONE) |
 | J | Meaningful financial/booking analytics | DONE (measured) | summary, breakdowns by service/employee/branch, daily series, peak hours, new vs returning; forecasts/LTV/utilisation/funnel still TODO |
 | K | Subscription entitlements enforced by backend | DONE | limits; billing lifecycle is TODO |
 | L | Tenant isolation covered by tests | DONE | |
@@ -94,4 +94,5 @@ Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real 
 6. ~~Reviews, support tickets, admin Users/Support~~ — done; customer portal (needs guest accounts), review moderation and ticket notifications remain.
 7. ~~Load-test scenarios and a first measured baseline; ArchUnit checks~~ — done (baseline is single-run, same-machine; see `docs/LOAD_TESTING.md`).
 8. ~~Promo codes / discounts~~ — done (percent or fixed, validity window, usage limit, per-service; no per-customer limits, stacking or automatic discounts yet).
-9. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.
+9. ~~Customer tags and tag filter~~ — done (manual tags only; no automatic/rule-based segments yet).
+10. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.

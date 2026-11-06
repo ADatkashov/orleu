@@ -1292,4 +1292,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get errCodeExists => 'Такой код уже существует.';
+
+  @override
+  String get tagsTitle => 'Теги';
+
+  @override
+  String get tagsHint => 'Через запятую, до 10 тегов по 30 символов';
+
+  @override
+  String get tagsInvalid => 'Не более 10 тегов, каждый до 30 символов.';
 }

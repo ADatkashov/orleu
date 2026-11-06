@@ -21,10 +21,16 @@ public class CustomerController {
     public CustomerView create(@PathVariable UUID businessId, @Valid @RequestBody CustomerInput in) { return service.create(businessId, in); }
 
     @GetMapping
-    public PageView<CustomerView> search(@PathVariable UUID businessId, @RequestParam(required = false) String q,
+    public PageView<CustomerView> search(@PathVariable UUID businessId, @RequestParam(required = false) String q, @RequestParam(required = false) String tag,
                                          @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
-        return service.search(businessId, q, page, size);
+        return service.search(businessId, q, tag, page, size);
     }
+
+    @GetMapping("/tags")
+    public java.util.List<TagCount> tags(@PathVariable UUID businessId) { return service.tagCounts(businessId); }
+
+    @PutMapping("/{id}/tags")
+    public CustomerView setTags(@PathVariable UUID businessId, @PathVariable UUID id, @Valid @RequestBody TagsRequest r) { return service.setTags(businessId, id, r); }
 
     @GetMapping("/{id}")
     public CustomerView get(@PathVariable UUID businessId, @PathVariable UUID id) { return service.get(businessId, id); }

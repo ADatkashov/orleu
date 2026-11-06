@@ -30,19 +30,58 @@ public class CustomerService {
         if (customers.findByBusinessIdAndPhone(businessId, in.phone()).isPresent()) {
             throw ApiException.conflict("CUSTOMER_EXISTS", "A customer with this phone already exists");
         }
-        return CustomerView.of(upsert(businessId, in));
+        return CustomerView.of(upsert(businessId, in), java.util.List.of());
     }
 
-    public PageView<CustomerView> search(UUID businessId, String q, int page, int size) {
+    public PageView<CustomerView> search(UUID businessId, String q, String tag, int page, int size) {
         access.require(businessId, Permission.CUSTOMERS_VIEW);
-        var p = customers.search(businessId, q == null || q.isBlank() ? null : q.trim(),
+        String t = tag == null || tag.isBlank() ? null : tag.trim().toLowerCase();
+        var p = customers.search(businessId, q == null || q.isBlank() ? null : q.trim(), t,
                 PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 100)));
-        return new PageView<>(p.getContent().stream().map(CustomerView::of).toList(), p.getNumber(), p.getSize(), p.getTotalElements());
+        var tags = tagsFor(businessId, p.getContent().stream().map(Customer::getId).toList());
+        return new PageView<>(p.getContent().stream().map(c -> CustomerView.of(c, tags.getOrDefault(c.getId(), java.util.List.of()))).toList(),
+                p.getNumber(), p.getSize(), p.getTotalElements());
+    }
+
+    private java.util.Map<UUID, java.util.List<String>> tagsFor(UUID businessId, java.util.Collection<UUID> ids) {
+        var out = new java.util.HashMap<UUID, java.util.List<String>>();
+        if (ids.isEmpty()) return out;
+        jdbc.sql("select customer_id, tag from customer_tags where business_id = :b and customer_id in (:ids) order by tag")
+                .param("b", businessId).param("ids", ids)
+                .query((rs, i) -> java.util.Map.entry(rs.getObject("customer_id", UUID.class), rs.getString("tag")))
+                .list().forEach(e -> out.computeIfAbsent(e.getKey(), k -> new java.util.ArrayList<>()).add(e.getValue()));
+        return out;
+    }
+
+    private CustomerView view(UUID businessId, Customer c) {
+        return CustomerView.of(c, tagsFor(businessId, java.util.List.of(c.getId())).getOrDefault(c.getId(), java.util.List.of()));
+    }
+
+    /** All tags in use with the number of customers carrying each (for the filter chips). */
+    public java.util.List<TagCount> tagCounts(UUID businessId) {
+        access.require(businessId, Permission.CUSTOMERS_VIEW);
+        return jdbc.sql("select tag, count(*) as n from customer_tags where business_id = :b group by tag order by n desc, tag")
+                .param("b", businessId).query((rs, i) -> new TagCount(rs.getString("tag"), rs.getLong("n"))).list();
+    }
+
+    /** Replaces the customer's tags. Tags are trimmed, lower-cased and de-duplicated; at most 10. */
+    @Transactional
+    public CustomerView setTags(UUID businessId, UUID id, TagsRequest r) {
+        access.require(businessId, Permission.CUSTOMERS_MANAGE);
+        Customer c = customers.findByIdAndBusinessId(id, businessId).orElseThrow(() -> ApiException.notFound("Customer"));
+        var clean = r.tags().stream().map(t -> t.trim().toLowerCase()).filter(t -> !t.isEmpty()).distinct().sorted().toList();
+        if (clean.size() > 10) throw ApiException.badRequest("TOO_MANY_TAGS", "At most 10 tags per customer");
+        jdbc.sql("delete from customer_tags where customer_id = :c and business_id = :b").param("c", id).param("b", businessId).update();
+        for (String t : clean) {
+            jdbc.sql("insert into customer_tags (customer_id, business_id, tag) values (:c, :b, :t)").param("c", id).param("b", businessId).param("t", t).update();
+        }
+        audit.log(businessId, CurrentUser.id(), "CUSTOMER_TAGS_UPDATED", "CUSTOMER", id, null);
+        return CustomerView.of(c, clean);
     }
 
     public CustomerView get(UUID businessId, UUID id) {
         access.require(businessId, Permission.CUSTOMERS_VIEW);
-        return CustomerView.of(customers.findByIdAndBusinessId(id, businessId).orElseThrow(() -> ApiException.notFound("Customer")));
+        return view(businessId, customers.findByIdAndBusinessId(id, businessId).orElseThrow(() -> ApiException.notFound("Customer")));
     }
 
     @Transactional
@@ -57,7 +96,7 @@ public class CustomerService {
         if (r.notes() != null) c.setNotes(r.notes());
         if (r.marketingOptIn() != null) c.setMarketingOptIn(r.marketingOptIn());
         audit.log(businessId, CurrentUser.id(), "CUSTOMER_UPDATED", "CUSTOMER", id, null);
-        return CustomerView.of(c);
+        return view(businessId, c);
     }
 
     /** Customer card: identity, measured statistics and the latest 50 bookings. Everything is filtered by business id. */
@@ -101,7 +140,7 @@ public class CustomerService {
             """).param("biz", businessId).param("cid", id).query(java.math.BigDecimal.class).single();
         java.math.BigDecimal avg = completed == 0 ? null : completedSpent.divide(java.math.BigDecimal.valueOf(completed), 2, java.math.RoundingMode.HALF_UP);
         var last = (java.sql.Timestamp) stats[5];
-        return new CustomerProfile(CustomerView.of(c), new CustomerStats((Long) stats[0], completed, (Long) stats[2], (Long) stats[3], (Long) stats[4],
+        return new CustomerProfile(view(businessId, c), new CustomerStats((Long) stats[0], completed, (Long) stats[2], (Long) stats[3], (Long) stats[4],
                 last == null ? null : last.toInstant(), com.orleu.common.Money.scale(spent), avg), lines);
     }
 
@@ -111,7 +150,7 @@ public class CustomerService {
         Customer c = customers.findByIdAndBusinessId(id, businessId).orElseThrow(() -> ApiException.notFound("Customer"));
         c.setBlocked(blocked);
         audit.log(businessId, CurrentUser.id(), blocked ? "CUSTOMER_BLOCKED" : "CUSTOMER_UNBLOCKED", "CUSTOMER", id, null);
-        return CustomerView.of(c);
+        return view(businessId, c);
     }
 
     /** Finds a customer by phone within the business or creates one. No authorization: callers must have done it. */
