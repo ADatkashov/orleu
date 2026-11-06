@@ -29,8 +29,5 @@ public final class AuthDtos {
 
     public record TokenResponse(String accessToken, String refreshToken, long expiresInSeconds, String tokenType) {}
 
-    public record MeResponse(java.util.UUID id, String email, String fullName, String locale,
-                             java.util.List<MembershipView> memberships) {}
 
-    public record MembershipView(java.util.UUID businessId, String businessName, String role) {}
 }
