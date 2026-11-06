@@ -336,5 +336,14 @@
   "errImportEmpty": "The file is empty or has no client rows",
   "errImportColumns": "The first row must contain a name column and a phone column",
   "errImportTooLarge": "The file is too large (at most 5000 clients, 2 MB)",
-  "errImportEncoding": "The file is not UTF-8. In Excel choose \"CSV UTF-8\" when saving."
+  "errImportEncoding": "The file is not UTF-8. In Excel choose \"CSV UTF-8\" when saving.",
+  "exportTitle": "Export for accounting",
+  "exportNote": "CSV of all payments and refunds in the selected period (refunds negative, business time). It contains no customer names or phone numbers and is not a fiscal document.",
+  "exportComma": "Comma",
+  "exportSemicolon": "Semicolon (Excel RU/KZ)",
+  "exportButton": "Export CSV",
+  "exportSaved": "File saved",
+  "exportCancelled": "Not saved",
+  "errExportTooLarge": "Too many entries: choose a shorter period",
+  "errExportForbidden": "Your role cannot export financial data"
 }

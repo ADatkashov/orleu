@@ -985,4 +985,33 @@ class AppLocalizationsKk extends AppLocalizations {
   @override
   String get errImportEncoding =>
       'Файл UTF-8 емес. Excel-де сақтағанда «CSV UTF-8» таңдаңыз.';
+
+  @override
+  String get exportTitle => 'Бухгалтерияға экспорт';
+
+  @override
+  String get exportNote =>
+      'Таңдалған кезеңдегі барлық төлемдер мен қайтарымдардың CSV файлы (қайтарымдар теріс, бизнес уақыты). Клиенттердің аты-жөні мен телефондары жоқ; бұл фискалдық құжат емес.';
+
+  @override
+  String get exportComma => 'Үтір';
+
+  @override
+  String get exportSemicolon => 'Нүктелі үтір (Excel RU/KZ)';
+
+  @override
+  String get exportButton => 'CSV экспорты';
+
+  @override
+  String get exportSaved => 'Файл сақталды';
+
+  @override
+  String get exportCancelled => 'Сақталмады';
+
+  @override
+  String get errExportTooLarge => 'Жазбалар тым көп: қысқарақ кезеңді таңдаңыз';
+
+  @override
+  String get errExportForbidden =>
+      'Сіздің рөліңіз қаржы деректерін экспорттауға рұқсат бермейді';
 }

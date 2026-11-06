@@ -13,6 +13,7 @@ String errorText(BuildContext context, Object error) {
     'EMAIL_TAKEN' || 'ACCOUNT_EXISTS' => l.errEmailTaken,
     'ACCOUNT_LOCKED' => l.errAccountLocked,
     'WRONG_PASSWORD' => l.errWrongPassword,
+    'EXPORT_TOO_LARGE' => l.errExportTooLarge,
     'IMPORT_EMPTY' => l.errImportEmpty,
     'IMPORT_MISSING_COLUMNS' => l.errImportColumns,
     'IMPORT_TOO_LARGE' => l.errImportTooLarge,

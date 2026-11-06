@@ -1953,6 +1953,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The file is not UTF-8. In Excel choose \"CSV UTF-8\" when saving.'**
   String get errImportEncoding;
+
+  /// No description provided for @exportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export for accounting'**
+  String get exportTitle;
+
+  /// No description provided for @exportNote.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV of all payments and refunds in the selected period (refunds negative, business time). It contains no customer names or phone numbers and is not a fiscal document.'**
+  String get exportNote;
+
+  /// No description provided for @exportComma.
+  ///
+  /// In en, this message translates to:
+  /// **'Comma'**
+  String get exportComma;
+
+  /// No description provided for @exportSemicolon.
+  ///
+  /// In en, this message translates to:
+  /// **'Semicolon (Excel RU/KZ)'**
+  String get exportSemicolon;
+
+  /// No description provided for @exportButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Export CSV'**
+  String get exportButton;
+
+  /// No description provided for @exportSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'File saved'**
+  String get exportSaved;
+
+  /// No description provided for @exportCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Not saved'**
+  String get exportCancelled;
+
+  /// No description provided for @errExportTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many entries: choose a shorter period'**
+  String get errExportTooLarge;
+
+  /// No description provided for @errExportForbidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Your role cannot export financial data'**
+  String get errExportForbidden;
 }
 
 class _AppLocalizationsDelegate

@@ -986,4 +986,34 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get errImportEncoding =>
       'Файл не в кодировке UTF-8. В Excel при сохранении выберите «CSV UTF-8».';
+
+  @override
+  String get exportTitle => 'Экспорт для бухгалтерии';
+
+  @override
+  String get exportNote =>
+      'CSV со всеми платежами и возвратами за выбранный период (возвраты отрицательные, время бизнеса). Без имён и телефонов клиентов; это не фискальный документ.';
+
+  @override
+  String get exportComma => 'Запятая';
+
+  @override
+  String get exportSemicolon => 'Точка с запятой (Excel RU/KZ)';
+
+  @override
+  String get exportButton => 'Экспорт CSV';
+
+  @override
+  String get exportSaved => 'Файл сохранён';
+
+  @override
+  String get exportCancelled => 'Не сохранено';
+
+  @override
+  String get errExportTooLarge =>
+      'Слишком много записей: выберите период короче';
+
+  @override
+  String get errExportForbidden =>
+      'Ваша роль не позволяет выгружать финансовые данные';
 }
