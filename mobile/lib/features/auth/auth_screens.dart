@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/api/api_client.dart';
 import '../../core/data/auth_controller.dart';
 import '../../core/design/tokens.dart';
 import '../../core/errors.dart';
@@ -46,17 +47,33 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginState extends ConsumerState<LoginScreen> {
   final _form = GlobalKey<FormState>();
-  final _email = TextEditingController(), _password = TextEditingController();
+  final _email = TextEditingController(), _password = TextEditingController(), _code = TextEditingController();
   bool _busy = false;
-  String? _error;
+  String? _error, _mfaToken;
 
   Future<void> _submit() async {
     if (!_form.currentState!.validate()) return;
     setState(() { _busy = true; _error = null; });
     try {
       await ref.read(authControllerProvider.notifier).login(_email.text.trim(), _password.text);
+    } on MfaRequired catch (m) {
+      if (mounted) setState(() { _mfaToken = m.token; _code.clear(); });
     } catch (e) {
       if (mounted) setState(() => _error = errorText(context, e));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _verify() async {
+    if (_code.text.trim().isEmpty) return;
+    setState(() { _busy = true; _error = null; });
+    try {
+      await ref.read(authControllerProvider.notifier).verifyMfa(_mfaToken!, _code.text.trim());
+    } catch (e) {
+      if (!mounted) return;
+      final expired = ApiError.from(e).code == 'INVALID_MFA_CHALLENGE';
+      setState(() { _error = errorText(context, e); if (expired) { _mfaToken = null; _password.clear(); } });
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -65,6 +82,18 @@ class _LoginState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    if (_mfaToken != null) {
+      return _AuthScaffold(children: [
+        Text(l.mfaLoginTitle, key: const Key('mfaPrompt')),
+        const SizedBox(height: AppSpacing.md),
+        TextField(key: const Key('mfaCode'), controller: _code, autofocus: true, keyboardType: TextInputType.text, autofillHints: const [AutofillHints.oneTimeCode],
+            decoration: InputDecoration(labelText: l.mfaCode), onSubmitted: (_) => _verify()),
+        if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.md), child: Text(_error!, key: const Key('authError'), style: TextStyle(color: Theme.of(context).colorScheme.error))),
+        const SizedBox(height: AppSpacing.lg),
+        FilledButton(key: const Key('mfaVerify'), onPressed: _busy ? null : _verify, child: _busy ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)) : Text(l.mfaVerify)),
+        TextButton(onPressed: () => setState(() { _mfaToken = null; _error = null; }), child: Text(l.backToSignIn)),
+      ]);
+    }
     return _AuthScaffold(children: [
       Form(
         key: _form,

@@ -30,9 +30,11 @@ public class AuthService {
     private final JwtEncoder jwtEncoder;
     private final SecurityProperties props;
     private final AuditService audit;
+    private final MfaService mfa;
 
     public AuthService(UserRepository users, RefreshTokenRepository refreshTokens, PasswordEncoder encoder,
-                       JwtEncoder jwtEncoder, SecurityProperties props, AuditService audit) {
+                       JwtEncoder jwtEncoder, SecurityProperties props, AuditService audit, MfaService mfa) {
+        this.mfa = mfa;
         this.users = users;
         this.refreshTokens = refreshTokens;
         this.encoder = encoder;
@@ -63,7 +65,7 @@ public class AuthService {
     }
 
     @Transactional(noRollbackFor = ApiException.class)
-    public TokenResponse login(LoginRequest r, String userAgent) {
+    public LoginResponse login(LoginRequest r, String userAgent) {
         User u = users.findByEmailIgnoreCase(r.email().trim()).orElse(null);
         if (u == null) {
             encoder.matches(r.password(), dummyHash);
@@ -84,11 +86,21 @@ public class AuthService {
             users.save(u);
             throw invalidCredentials();
         }
+        if (mfa.isEnabled(u.getId())) {
+            // password is right but the account has a second factor: no tokens yet; failed attempts are reset only after the code is verified
+            audit.log(null, u.getId(), "LOGIN_PASSWORD_OK_MFA_PENDING", "USER", u.getId(), null);
+            return LoginResponse.challenge(mfa.startChallenge(u.getId(), userAgent));
+        }
         u.setFailedAttempts(0);
         u.setLockedUntil(null);
         users.save(u);
         audit.log(null, u.getId(), "LOGIN", "USER", u.getId(), null);
-        return issue(u, userAgent);
+        return LoginResponse.of(issue(u, userAgent));
+    }
+
+    @Transactional(noRollbackFor = ApiException.class)
+    public TokenResponse verifyMfa(String mfaToken, String code, String userAgent) {
+        return issue(mfa.completeChallenge(mfaToken, code), userAgent);
     }
 
     /** Rotates the refresh token. Presenting an already-used token revokes every session of that user. */

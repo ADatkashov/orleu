@@ -2007,6 +2007,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your role cannot export financial data'**
   String get errExportForbidden;
+
+  /// No description provided for @mfaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-factor authentication'**
+  String get mfaTitle;
+
+  /// No description provided for @mfaIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect your account with a code from an authenticator app (Google Authenticator, Microsoft Authenticator, Aegis, …). Sign-in then needs your password and a code.'**
+  String get mfaIntro;
+
+  /// No description provided for @mfaOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get mfaOff;
+
+  /// No description provided for @mfaOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On · {n} recovery codes left'**
+  String mfaOn(int n);
+
+  /// No description provided for @mfaEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get mfaEnable;
+
+  /// No description provided for @mfaDisable.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get mfaDisable;
+
+  /// No description provided for @mfaSetupKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup key'**
+  String get mfaSetupKey;
+
+  /// No description provided for @mfaSetupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'In your authenticator app add an account with this key (time-based), then enter the 6-digit code it shows.'**
+  String get mfaSetupHint;
+
+  /// No description provided for @mfaCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy key'**
+  String get mfaCopy;
+
+  /// No description provided for @mfaCode.
+  ///
+  /// In en, this message translates to:
+  /// **'6-digit code'**
+  String get mfaCode;
+
+  /// No description provided for @mfaConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get mfaConfirm;
+
+  /// No description provided for @mfaRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery codes'**
+  String get mfaRecoveryTitle;
+
+  /// No description provided for @mfaRecoveryNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Store these codes somewhere safe. Each works once if you lose your phone. They are shown only now.'**
+  String get mfaRecoveryNote;
+
+  /// No description provided for @mfaSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'I saved them'**
+  String get mfaSaved;
+
+  /// No description provided for @mfaDisableHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password and a current code (or a recovery code).'**
+  String get mfaDisableHint;
+
+  /// No description provided for @mfaLoginTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code from your authenticator app, or a recovery code.'**
+  String get mfaLoginTitle;
+
+  /// No description provided for @mfaVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get mfaVerify;
+
+  /// No description provided for @errMfaCode.
+  ///
+  /// In en, this message translates to:
+  /// **'The code is not correct'**
+  String get errMfaCode;
+
+  /// No description provided for @errMfaChallenge.
+  ///
+  /// In en, this message translates to:
+  /// **'The sign-in attempt expired. Please sign in again.'**
+  String get errMfaChallenge;
+
+  /// No description provided for @errMfaRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-factor authentication is required for this account'**
+  String get errMfaRequired;
 }
 
 class _AppLocalizationsDelegate

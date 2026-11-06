@@ -27,6 +27,18 @@ public final class AuthDtos {
 
     public record RefreshRequest(@NotBlank String refreshToken) {}
 
+    /** Login result: either the tokens, or {mfaRequired:true, mfaToken} when the account has a second factor. */
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+    public record LoginResponse(String accessToken, String refreshToken, Long expiresInSeconds, String tokenType, Boolean mfaRequired, String mfaToken) {
+        static LoginResponse of(TokenResponse t) { return new LoginResponse(t.accessToken(), t.refreshToken(), t.expiresInSeconds(), t.tokenType(), null, null); }
+        static LoginResponse challenge(String token) { return new LoginResponse(null, null, null, null, true, token); }
+    }
+
+    public record MfaVerifyRequest(@NotBlank String mfaToken, @NotBlank @Size(max = 40) String code) {}
+    public record MfaCodeRequest(@NotBlank @Size(max = 40) String code) {}
+    public record MfaDisableRequest(@NotBlank String password, @NotBlank @Size(max = 40) String code) {}
+    public record RecoveryCodesResponse(java.util.List<String> recoveryCodes) {}
+
     public record TokenResponse(String accessToken, String refreshToken, long expiresInSeconds, String tokenType) {}
 
 

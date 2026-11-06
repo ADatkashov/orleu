@@ -1014,4 +1014,72 @@ class AppLocalizationsKk extends AppLocalizations {
   @override
   String get errExportForbidden =>
       'Сіздің рөліңіз қаржы деректерін экспорттауға рұқсат бермейді';
+
+  @override
+  String get mfaTitle => 'Екі факторлы аутентификация';
+
+  @override
+  String get mfaIntro =>
+      'Аккаунтты аутентификатор қосымшасындағы кодпен қорғаңыз (Google Authenticator, Microsoft Authenticator, Aegis, …). Кіру үшін құпиясөз бен код қажет болады.';
+
+  @override
+  String get mfaOff => 'Өшірулі';
+
+  @override
+  String mfaOn(int n) {
+    return 'Қосулы · резервтік кодтар: $n';
+  }
+
+  @override
+  String get mfaEnable => 'Қосу';
+
+  @override
+  String get mfaDisable => 'Өшіру';
+
+  @override
+  String get mfaSetupKey => 'Баптау кілті';
+
+  @override
+  String get mfaSetupHint =>
+      'Аутентификатор қосымшасында осы кілтпен аккаунт қосыңыз (уақытқа негізделген), сосын ол көрсеткен 6 таңбалы кодты енгізіңіз.';
+
+  @override
+  String get mfaCopy => 'Кілтті көшіру';
+
+  @override
+  String get mfaCode => '6 таңбалы код';
+
+  @override
+  String get mfaConfirm => 'Растау';
+
+  @override
+  String get mfaRecoveryTitle => 'Резервтік кодтар';
+
+  @override
+  String get mfaRecoveryNote =>
+      'Бұл кодтарды сенімді жерде сақтаңыз. Телефонды жоғалтсаңыз, әрқайсысы бір рет жұмыс істейді. Тек қазір көрсетіледі.';
+
+  @override
+  String get mfaSaved => 'Сақтадым';
+
+  @override
+  String get mfaDisableHint =>
+      'Құпиясөзді және ағымдағы кодты (немесе резервтік кодты) енгізіңіз.';
+
+  @override
+  String get mfaLoginTitle =>
+      'Аутентификатор қосымшасындағы кодты немесе резервтік кодты енгізіңіз.';
+
+  @override
+  String get mfaVerify => 'Тексеру';
+
+  @override
+  String get errMfaCode => 'Код қате';
+
+  @override
+  String get errMfaChallenge => 'Кіру әрекетінің мерзімі өтті. Қайта кіріңіз.';
+
+  @override
+  String get errMfaRequired =>
+      'Бұл аккаунт үшін екі факторлы аутентификация міндетті';
 }

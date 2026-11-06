@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -57,6 +58,8 @@ class _AccountState extends ConsumerState<AccountScreen> {
         const SizedBox(height: AppSpacing.md),
         FilledButton(key: const Key('change'), onPressed: _busy ? null : _change, child: Text(l.changePassword)),
         const SizedBox(height: AppSpacing.lg),
+        const _MfaCard(),
+        const SizedBox(height: AppSpacing.lg),
         Text(l.sessionsTitle, style: t.textTheme.titleMedium),
         const SizedBox(height: AppSpacing.xs),
         Text(l.sessionsNote, style: t.textTheme.bodySmall),
@@ -94,6 +97,126 @@ class _SessionTile extends ConsumerWidget {
         subtitle: Text(l.sessionSince(DateFormat('dd.MM.yyyy HH:mm').format(s.createdAt.toLocal()))),
         trailing: TextButton(key: Key('revoke-${s.id}'), onPressed: () => guarded(context, () => revokeSession(ref, s.id)), child: Text(l.sessionRevoke)),
       ),
+    );
+  }
+}
+
+/// Two-factor authentication (TOTP): shows the status, runs the enrolment (setup key -> first code -> one-time recovery codes) and the disabling.
+class _MfaCard extends ConsumerStatefulWidget {
+  const _MfaCard();
+  @override
+  ConsumerState<_MfaCard> createState() => _MfaState();
+}
+
+class _MfaState extends ConsumerState<_MfaCard> {
+  String? _secret, _error;
+  List<String>? _recovery;
+  final _code = TextEditingController();
+  bool _busy = false;
+
+  Future<void> _start() async {
+    setState(() { _busy = true; _error = null; });
+    String? secret;
+    final err = await attempt(context, () async { secret = (await MfaApi(ref).setup()).secret; });
+    if (!mounted) return;
+    setState(() { _busy = false; _error = err; _secret = secret; _code.clear(); });
+  }
+
+  Future<void> _confirm() async {
+    setState(() { _busy = true; _error = null; });
+    List<String>? codes;
+    final err = await attempt(context, () async { codes = await MfaApi(ref).enable(_code.text.trim()); });
+    if (!mounted) return;
+    setState(() { _busy = false; _error = err; if (err == null) { _secret = null; _recovery = codes; } });
+  }
+
+  Future<void> _disable() async {
+    await showDialog<void>(context: context, builder: (_) => const _DisableMfaDialog());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final t = Theme.of(context);
+    final status = ref.watch(mfaStatusProvider);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(l.mfaTitle, style: t.textTheme.titleMedium),
+          const SizedBox(height: AppSpacing.xs),
+          Text(l.mfaIntro, style: t.textTheme.bodySmall),
+          const SizedBox(height: AppSpacing.sm),
+          if (_recovery != null) ...[
+            Text(l.mfaRecoveryTitle, style: t.textTheme.titleSmall),
+            Text(l.mfaRecoveryNote, style: t.textTheme.bodySmall),
+            const SizedBox(height: AppSpacing.xs),
+            SelectableText(_recovery!.join('\n'), key: const Key('recoveryCodes'), style: const TextStyle(fontFamily: 'monospace')),
+            const SizedBox(height: AppSpacing.sm),
+            FilledButton(key: const Key('recoverySaved'), style: FilledButton.styleFrom(minimumSize: const Size(96, 44)), onPressed: () => setState(() => _recovery = null), child: Text(l.mfaSaved)),
+          ] else if (_secret != null) ...[
+            Text(l.mfaSetupKey, style: t.textTheme.titleSmall),
+            SelectableText(_secret!, key: const Key('setupKey'), style: const TextStyle(fontFamily: 'monospace', fontSize: 16)),
+            Text(l.mfaSetupHint, style: t.textTheme.bodySmall),
+            TextButton.icon(icon: const Icon(Icons.copy, size: 18), label: Text(l.mfaCopy), onPressed: () => Clipboard.setData(ClipboardData(text: _secret!))),
+            TextField(key: const Key('enableCode'), controller: _code, keyboardType: TextInputType.number, maxLength: 6, decoration: InputDecoration(labelText: l.mfaCode)),
+            FormError(_error),
+            FilledButton(key: const Key('mfaConfirm'), style: FilledButton.styleFrom(minimumSize: const Size(96, 44)), onPressed: _busy ? null : _confirm, child: Text(l.mfaConfirm)),
+          ] else
+            status.when(
+              loading: () => const LinearProgressIndicator(),
+              error: (e, _) => ErrorRetry(error: e, onRetry: () => ref.invalidate(mfaStatusProvider)),
+              data: (s) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(s.enabled ? l.mfaOn(s.recoveryCodesLeft) : l.mfaOff, key: const Key('mfaStatus'), style: t.textTheme.titleSmall?.copyWith(color: s.enabled ? AppColors.success : null)),
+                FormError(_error),
+                const SizedBox(height: AppSpacing.sm),
+                s.enabled
+                    ? OutlinedButton(key: const Key('mfaDisable'), style: OutlinedButton.styleFrom(minimumSize: const Size(96, 44)), onPressed: _disable, child: Text(l.mfaDisable))
+                    : FilledButton(key: const Key('mfaEnable'), style: FilledButton.styleFrom(minimumSize: const Size(96, 44)), onPressed: _busy ? null : _start, child: Text(l.mfaEnable)),
+              ]),
+            ),
+        ]),
+      ),
+    );
+  }
+}
+
+class _DisableMfaDialog extends ConsumerStatefulWidget {
+  const _DisableMfaDialog();
+  @override
+  ConsumerState<_DisableMfaDialog> createState() => _DisableState();
+}
+
+class _DisableState extends ConsumerState<_DisableMfaDialog> {
+  final _password = TextEditingController(), _code = TextEditingController();
+  bool _busy = false;
+  String? _error;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l.mfaDisable),
+      content: Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(l.mfaDisableHint),
+        TextField(key: const Key('disablePassword'), controller: _password, obscureText: true, decoration: InputDecoration(labelText: l.currentPassword)),
+        TextField(key: const Key('disableCode'), controller: _code, decoration: InputDecoration(labelText: l.mfaCode)),
+        FormError(_error),
+      ]),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
+        FilledButton(
+          key: const Key('confirmDisable'),
+          style: FilledButton.styleFrom(minimumSize: const Size(96, 44)),
+          onPressed: _busy ? null : () async {
+            setState(() { _busy = true; _error = null; });
+            final err = await attempt(context, () => MfaApi(ref).disable(_password.text, _code.text.trim()));
+            if (!context.mounted) return;
+            if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
+          },
+          child: Text(l.mfaDisable),
+        ),
+      ],
     );
   }
 }

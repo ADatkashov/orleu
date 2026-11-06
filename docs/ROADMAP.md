@@ -60,7 +60,7 @@ AI assistant (only with real testable use cases), forecasting (labelled estimate
 | Tests (backend integration, concurrency, tenant isolation, Flutter widget, real-browser E2E) | DONE, growing |
 | Load tests (availability, booking, calendar, customer search, dashboard) | PARTIAL — script + first single-machine baseline (`docs/LOAD_TESTING.md`); no CI job, no soak/large-tenant runs, no capacity claims |
 | Migration tests beyond "applies from scratch and Flyway validates" | PARTIAL |
-| Security: threat model | PARTIAL (`docs/SECURITY.md`); MFA, webhook signing/replay protection, file upload validation, secret rotation, data retention, export authorization: TODO |
+| Security: threat model | PARTIAL (`docs/SECURITY.md`); MFA DONE (TOTP, opt-in); export authorization DONE for the ledger export (FINANCE_EXPORT); webhook signing/replay protection (no webhooks exist), file upload validation (no uploads), secret rotation, data retention: TODO |
 | PostgreSQL row-level security | TODO (decision: defence in depth, not a replacement) |
 | Observability: JSON logs, request ids, health/readiness DONE; metrics scraping, alerting, error tracking, APM: TODO |
 | Backup/restore verified | DONE for the logical path (`docs/BACKUP_AND_RECOVERY.md`); Neon PITR drill, production-size timing, backup encryption: TODO/BLOCKED |

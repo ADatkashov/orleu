@@ -24,20 +24,56 @@ class AdminLoginScreen extends ConsumerStatefulWidget {
 
 class _LoginState extends ConsumerState<AdminLoginScreen> {
   final _form = GlobalKey<FormState>();
-  final _email = TextEditingController(), _password = TextEditingController();
+  final _email = TextEditingController(), _password = TextEditingController(), _code = TextEditingController();
   bool _busy = false;
-  String? _error;
+  String? _error, _mfaToken;
 
   Future<void> _submit() async {
     if (!_form.currentState!.validate()) return;
     setState(() { _busy = true; _error = null; });
-    final err = await adminAttempt(() => ref.read(authControllerProvider.notifier).login(_email.text.trim(), _password.text));
-    if (mounted) setState(() { _busy = false; _error = err; });
+    String? pending;
+    final err = await adminAttempt(() async {
+      try {
+        await ref.read(authControllerProvider.notifier).login(_email.text.trim(), _password.text);
+      } on MfaRequired catch (m) {
+        pending = m.token;
+      }
+    });
+    if (mounted) setState(() { _busy = false; _error = err; if (pending != null) { _mfaToken = pending; _code.clear(); } });
+  }
+
+  Future<void> _verify() async {
+    setState(() { _busy = true; _error = null; });
+    final err = await adminAttempt(() => ref.read(authControllerProvider.notifier).verifyMfa(_mfaToken!, _code.text.trim()));
+    if (mounted) setState(() { _busy = false; _error = err; if (err != null && err.contains('expired')) _mfaToken = null; });
   }
 
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
+    if (_mfaToken != null) {
+      return Scaffold(
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                Text('ORLEU', style: t.textTheme.headlineMedium?.copyWith(color: t.colorScheme.primary, letterSpacing: 4)),
+                const SizedBox(height: AppSpacing.lg),
+                const Text('Enter the code from your authenticator app, or a recovery code.', key: Key('adminMfaPrompt')),
+                const SizedBox(height: AppSpacing.md),
+                TextField(key: const Key('adminMfaCode'), controller: _code, autofocus: true, decoration: const InputDecoration(labelText: '6-digit code'), onSubmitted: (_) => _verify()),
+                InlineError(_error),
+                const SizedBox(height: AppSpacing.lg),
+                FilledButton(key: const Key('adminMfaVerify'), onPressed: _busy ? null : _verify, child: const Text('Verify')),
+                TextButton(onPressed: () => setState(() { _mfaToken = null; _error = null; }), child: const Text('Back')),
+              ]),
+            ),
+          ),
+        ),
+      );
+    }
     return Scaffold(
       body: Center(
         child: ConstrainedBox(

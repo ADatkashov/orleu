@@ -13,8 +13,10 @@ public class AuthController {
     private final AuthService auth;
     private final UserRepository users;
     private final PasswordService passwords;
+    private final MfaService mfa;
 
-    public AuthController(AuthService auth, UserRepository users, PasswordService passwords) {
+    public AuthController(AuthService auth, UserRepository users, PasswordService passwords, MfaService mfa) {
+        this.mfa = mfa;
         this.passwords = passwords;
         this.auth = auth;
         this.users = users;
@@ -27,9 +29,27 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-    public TokenResponse login(@Valid @RequestBody LoginRequest r, HttpServletRequest req) {
+    public LoginResponse login(@Valid @RequestBody LoginRequest r, HttpServletRequest req) {
         return auth.login(r, req.getHeader("User-Agent"));
     }
+
+    @PostMapping("/auth/mfa/verify")
+    public TokenResponse verifyMfa(@Valid @RequestBody MfaVerifyRequest r, HttpServletRequest req) {
+        return auth.verifyMfa(r.mfaToken(), r.code(), req.getHeader("User-Agent"));
+    }
+
+    @GetMapping("/auth/mfa")
+    public MfaService.Status mfaStatus() { return mfa.status(CurrentUser.id()); }
+
+    @PostMapping("/auth/mfa/setup")
+    public MfaService.Setup mfaSetup() { return mfa.setup(CurrentUser.id()); }
+
+    @PostMapping("/auth/mfa/enable")
+    public RecoveryCodesResponse mfaEnable(@Valid @RequestBody MfaCodeRequest r) { return new RecoveryCodesResponse(mfa.enable(CurrentUser.id(), r.code())); }
+
+    @PostMapping("/auth/mfa/disable")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void mfaDisable(@Valid @RequestBody MfaDisableRequest r) { mfa.disable(CurrentUser.id(), r.password(), r.code()); }
 
     @PostMapping("/auth/refresh")
     public TokenResponse refresh(@Valid @RequestBody RefreshRequest r, HttpServletRequest req) {
