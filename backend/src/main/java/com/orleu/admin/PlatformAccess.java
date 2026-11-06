@@ -16,7 +16,16 @@ import java.util.UUID;
 public class PlatformAccess {
     private final JdbcClient jdbc;
 
-    public PlatformAccess(JdbcClient jdbc) { this.jdbc = jdbc; }
+    private final com.orleu.auth.SecurityProperties props;
+
+    public PlatformAccess(JdbcClient jdbc, com.orleu.auth.SecurityProperties props) { this.jdbc = jdbc; this.props = props; }
+
+    /** With orleu.security.require-mfa-for-platform-roles=true, platform staff without an enabled second factor get 403 MFA_REQUIRED. */
+    private void enforceMfa(UUID user) {
+        if (!props.requireMfaForPlatformRoles()) return;
+        boolean on = Boolean.TRUE.equals(jdbc.sql("select enabled from user_mfa where user_id = :u").param("u", user).query(Boolean.class).optional().orElse(false));
+        if (!on) throw new ApiException(org.springframework.http.HttpStatus.FORBIDDEN, "MFA_REQUIRED", "Enable two-factor authentication to use the admin console");
+    }
 
     public UUID require(PlatformRole... allowed) {
         UUID user = CurrentUser.id();
@@ -25,6 +34,7 @@ public class PlatformAccess {
         if (role == null || !Set.of(allowed).contains(PlatformRole.valueOf(role))) {
             throw ApiException.forbidden();
         }
+        enforceMfa(user);
         return user;
     }
 
@@ -33,6 +43,7 @@ public class PlatformAccess {
         String role = jdbc.sql("select platform_role from users where id = :id and status = 'ACTIVE'")
                 .param("id", CurrentUser.id()).query(String.class).optional().orElse(null);
         if (role == null) throw ApiException.forbidden();
+        enforceMfa(CurrentUser.id());
         return PlatformRole.valueOf(role);
     }
 

@@ -34,7 +34,7 @@ public class SecurityConfig {
             .headers(h -> h.contentTypeOptions(Customizer.withDefaults())
                     .frameOptions(f -> f.deny()))
             .authorizeHttpRequests(a -> a
-                .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/auth/refresh", "/api/v1/auth/logout",
+                .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/auth/mfa/verify", "/api/v1/auth/refresh", "/api/v1/auth/logout",
                         "/api/v1/auth/password-reset/request", "/api/v1/auth/password-reset/confirm").permitAll()
                 .requestMatchers("/api/v1/public/**", "/b/**", "/m/**", "/pub/**").permitAll()
                 .requestMatchers("/actuator/health/**", "/actuator/info").permitAll()

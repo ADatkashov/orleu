@@ -11,7 +11,9 @@ public record SecurityProperties(
         Duration refreshTokenTtl,
         int maxFailedLogins,
         Duration lockoutDuration,
-        java.util.List<String> allowedOrigins) {
+        java.util.List<String> allowedOrigins,
+        String mfaKey,
+        boolean requireMfaForPlatformRoles) {
     public SecurityProperties {
         if (jwtSecret == null || jwtSecret.getBytes(java.nio.charset.StandardCharsets.UTF_8).length < 32) {
             throw new IllegalStateException("orleu.security.jwt-secret (ORLEU_JWT_SECRET) must be at least 32 bytes");
