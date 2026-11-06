@@ -1164,4 +1164,72 @@ class AppLocalizationsEn extends AppLocalizations {
   String retentionYears(String n) {
     return '$n years';
   }
+
+  @override
+  String get scheduleOpen => 'Working hours and time off';
+
+  @override
+  String get scheduleTitle => 'Working hours';
+
+  @override
+  String get scheduleFollow => 'Follow the location hours';
+
+  @override
+  String get scheduleFollowNote =>
+      'Without personal hours the specialist works whenever the location is open.';
+
+  @override
+  String get scheduleBreakHint => 'Add two ranges in one day to make a break.';
+
+  @override
+  String get scheduleDayOff => 'Day off';
+
+  @override
+  String get scheduleAddRange => 'Add hours';
+
+  @override
+  String get scheduleFrom => 'From';
+
+  @override
+  String get scheduleTo => 'To';
+
+  @override
+  String get scheduleSave => 'Save hours';
+
+  @override
+  String get scheduleSaved => 'Hours saved';
+
+  @override
+  String scheduleAffected(int n) {
+    return '$n upcoming bookings no longer fit these hours. They were not cancelled: move them in the calendar.';
+  }
+
+  @override
+  String get timeOffTitle => 'Time off';
+
+  @override
+  String get timeOffAdd => 'Add time off';
+
+  @override
+  String get timeOffReason => 'Reason (optional)';
+
+  @override
+  String get timeOffNone => 'No time off planned';
+
+  @override
+  String timeOffAffected(int n) {
+    return '$n bookings in this period';
+  }
+
+  @override
+  String get timeOffRemove => 'Remove';
+
+  @override
+  String get errOverlap => 'Hours of one day must not overlap';
+
+  @override
+  String get errRangeOrder => 'The end must be after the start';
+
+  @override
+  String get errTooManyRanges => 'At most six ranges per day';
 }

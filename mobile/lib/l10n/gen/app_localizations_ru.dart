@@ -1162,4 +1162,73 @@ class AppLocalizationsRu extends AppLocalizations {
   String retentionYears(String n) {
     return '$n г.';
   }
+
+  @override
+  String get scheduleOpen => 'Рабочие часы и отпуск';
+
+  @override
+  String get scheduleTitle => 'Рабочие часы';
+
+  @override
+  String get scheduleFollow => 'Как у филиала';
+
+  @override
+  String get scheduleFollowNote =>
+      'Без личных часов специалист работает всё время, пока открыт филиал.';
+
+  @override
+  String get scheduleBreakHint =>
+      'Добавьте два интервала в один день, чтобы сделать перерыв.';
+
+  @override
+  String get scheduleDayOff => 'Выходной';
+
+  @override
+  String get scheduleAddRange => 'Добавить часы';
+
+  @override
+  String get scheduleFrom => 'С';
+
+  @override
+  String get scheduleTo => 'До';
+
+  @override
+  String get scheduleSave => 'Сохранить часы';
+
+  @override
+  String get scheduleSaved => 'Часы сохранены';
+
+  @override
+  String scheduleAffected(int n) {
+    return 'Будущих записей, не попадающих в эти часы: $n. Они не отменены: перенесите их в календаре.';
+  }
+
+  @override
+  String get timeOffTitle => 'Отпуск и отсутствие';
+
+  @override
+  String get timeOffAdd => 'Добавить отсутствие';
+
+  @override
+  String get timeOffReason => 'Причина (необязательно)';
+
+  @override
+  String get timeOffNone => 'Отсутствий не запланировано';
+
+  @override
+  String timeOffAffected(int n) {
+    return 'Записей за этот период: $n';
+  }
+
+  @override
+  String get timeOffRemove => 'Удалить';
+
+  @override
+  String get errOverlap => 'Часы одного дня не должны пересекаться';
+
+  @override
+  String get errRangeOrder => 'Конец должен быть позже начала';
+
+  @override
+  String get errTooManyRanges => 'Не больше шести интервалов в день';
 }

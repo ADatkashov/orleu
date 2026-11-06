@@ -1161,4 +1161,73 @@ class AppLocalizationsKk extends AppLocalizations {
   String retentionYears(String n) {
     return '$n жыл';
   }
+
+  @override
+  String get scheduleOpen => 'Жұмыс уақыты және демалыс';
+
+  @override
+  String get scheduleTitle => 'Жұмыс уақыты';
+
+  @override
+  String get scheduleFollow => 'Филиалдағыдай';
+
+  @override
+  String get scheduleFollowNote =>
+      'Жеке уақытсыз маман филиал ашық кезде жұмыс істейді.';
+
+  @override
+  String get scheduleBreakHint =>
+      'Үзіліс жасау үшін бір күнге екі аралық қосыңыз.';
+
+  @override
+  String get scheduleDayOff => 'Демалыс күні';
+
+  @override
+  String get scheduleAddRange => 'Уақыт қосу';
+
+  @override
+  String get scheduleFrom => 'Бастап';
+
+  @override
+  String get scheduleTo => 'Дейін';
+
+  @override
+  String get scheduleSave => 'Уақытты сақтау';
+
+  @override
+  String get scheduleSaved => 'Уақыт сақталды';
+
+  @override
+  String scheduleAffected(int n) {
+    return 'Осы уақытқа сыймайтын алдағы жазылулар: $n. Олар бас тартылмады: күнтізбеде ауыстырыңыз.';
+  }
+
+  @override
+  String get timeOffTitle => 'Демалыс';
+
+  @override
+  String get timeOffAdd => 'Демалыс қосу';
+
+  @override
+  String get timeOffReason => 'Себебі (міндетті емес)';
+
+  @override
+  String get timeOffNone => 'Жоспарланған демалыс жоқ';
+
+  @override
+  String timeOffAffected(int n) {
+    return 'Осы кезеңдегі жазылулар: $n';
+  }
+
+  @override
+  String get timeOffRemove => 'Жою';
+
+  @override
+  String get errOverlap => 'Бір күннің уақыттары қиылыспауы керек';
+
+  @override
+  String get errRangeOrder => 'Аяқталуы басталуынан кейін болуы керек';
+
+  @override
+  String get errTooManyRanges => 'Күніне алты аралықтан артық болмайды';
 }

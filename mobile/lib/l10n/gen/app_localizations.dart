@@ -2265,6 +2265,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{n} years'**
   String retentionYears(String n);
+
+  /// No description provided for @scheduleOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours and time off'**
+  String get scheduleOpen;
+
+  /// No description provided for @scheduleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Working hours'**
+  String get scheduleTitle;
+
+  /// No description provided for @scheduleFollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow the location hours'**
+  String get scheduleFollow;
+
+  /// No description provided for @scheduleFollowNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Without personal hours the specialist works whenever the location is open.'**
+  String get scheduleFollowNote;
+
+  /// No description provided for @scheduleBreakHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add two ranges in one day to make a break.'**
+  String get scheduleBreakHint;
+
+  /// No description provided for @scheduleDayOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Day off'**
+  String get scheduleDayOff;
+
+  /// No description provided for @scheduleAddRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Add hours'**
+  String get scheduleAddRange;
+
+  /// No description provided for @scheduleFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get scheduleFrom;
+
+  /// No description provided for @scheduleTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get scheduleTo;
+
+  /// No description provided for @scheduleSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save hours'**
+  String get scheduleSave;
+
+  /// No description provided for @scheduleSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours saved'**
+  String get scheduleSaved;
+
+  /// No description provided for @scheduleAffected.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} upcoming bookings no longer fit these hours. They were not cancelled: move them in the calendar.'**
+  String scheduleAffected(int n);
+
+  /// No description provided for @timeOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time off'**
+  String get timeOffTitle;
+
+  /// No description provided for @timeOffAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add time off'**
+  String get timeOffAdd;
+
+  /// No description provided for @timeOffReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason (optional)'**
+  String get timeOffReason;
+
+  /// No description provided for @timeOffNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No time off planned'**
+  String get timeOffNone;
+
+  /// No description provided for @timeOffAffected.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} bookings in this period'**
+  String timeOffAffected(int n);
+
+  /// No description provided for @timeOffRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get timeOffRemove;
+
+  /// No description provided for @errOverlap.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours of one day must not overlap'**
+  String get errOverlap;
+
+  /// No description provided for @errRangeOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'The end must be after the start'**
+  String get errRangeOrder;
+
+  /// No description provided for @errTooManyRanges.
+  ///
+  /// In en, this message translates to:
+  /// **'At most six ranges per day'**
+  String get errTooManyRanges;
 }
 
 class _AppLocalizationsDelegate
