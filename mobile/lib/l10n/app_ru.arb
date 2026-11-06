@@ -185,5 +185,19 @@
   "editService": "Изменить услугу",
   "editLocation": "Изменить филиал",
   "editSpecialist": "Изменить специалиста",
-  "statsNote": "Оплачено = полученные деньги минус возвраты, а не сумма записей."
+  "statsNote": "Оплачено = полученные деньги минус возвраты, а не сумма записей.",
+  "reportsTitle": "Отчёты",
+  "reportPeriodDays": "{n} дн.",
+  "reportRevenueByDay": "Получено по дням (за вычетом возвратов)",
+  "reportTopServices": "Услуги",
+  "reportTopEmployees": "Специалисты",
+  "reportBranches": "Филиалы",
+  "reportPeakHours": "Самые загруженные часы",
+  "reportCustomers": "Новые и вернувшиеся клиенты",
+  "reportNew": "Новые",
+  "reportReturning": "Вернувшиеся",
+  "reportNoData": "За этот период данных пока нет",
+  "reportBookingsN": "Записей: {n}",
+  "reportReturningShare": "Вернулись {p}% клиентов",
+  "reportsNote": "Цифры считаются по записям и платежам за выбранный период. Отменённые записи не считаются спросом."
 }

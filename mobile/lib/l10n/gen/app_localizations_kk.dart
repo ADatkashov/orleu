@@ -578,4 +578,53 @@ class AppLocalizationsKk extends AppLocalizations {
   @override
   String get statsNote =>
       'Төленді = алынған ақша минус қайтарулар, жазылулар сомасы емес.';
+
+  @override
+  String get reportsTitle => 'Есептер';
+
+  @override
+  String reportPeriodDays(String n) {
+    return '$n күн';
+  }
+
+  @override
+  String get reportRevenueByDay => 'Күн сайынғы түскен төлем (қайтарымсыз)';
+
+  @override
+  String get reportTopServices => 'Қызметтер';
+
+  @override
+  String get reportTopEmployees => 'Мамандар';
+
+  @override
+  String get reportBranches => 'Филиалдар';
+
+  @override
+  String get reportPeakHours => 'Ең жүктелген сағаттар';
+
+  @override
+  String get reportCustomers => 'Жаңа және қайта келген клиенттер';
+
+  @override
+  String get reportNew => 'Жаңа';
+
+  @override
+  String get reportReturning => 'Қайта келген';
+
+  @override
+  String get reportNoData => 'Бұл кезеңде деректер әлі жоқ';
+
+  @override
+  String reportBookingsN(String n) {
+    return 'Жазылу: $n';
+  }
+
+  @override
+  String reportReturningShare(String p) {
+    return 'Клиенттердің $p% қайта келді';
+  }
+
+  @override
+  String get reportsNote =>
+      'Мәліметтер таңдалған кезеңдегі жазылулар мен төлемдер бойынша есептеледі. Бас тартылған жазылулар сұраныс болып саналмайды.';
 }

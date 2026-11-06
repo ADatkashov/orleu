@@ -579,4 +579,53 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get statsNote =>
       'Оплачено = полученные деньги минус возвраты, а не сумма записей.';
+
+  @override
+  String get reportsTitle => 'Отчёты';
+
+  @override
+  String reportPeriodDays(String n) {
+    return '$n дн.';
+  }
+
+  @override
+  String get reportRevenueByDay => 'Получено по дням (за вычетом возвратов)';
+
+  @override
+  String get reportTopServices => 'Услуги';
+
+  @override
+  String get reportTopEmployees => 'Специалисты';
+
+  @override
+  String get reportBranches => 'Филиалы';
+
+  @override
+  String get reportPeakHours => 'Самые загруженные часы';
+
+  @override
+  String get reportCustomers => 'Новые и вернувшиеся клиенты';
+
+  @override
+  String get reportNew => 'Новые';
+
+  @override
+  String get reportReturning => 'Вернувшиеся';
+
+  @override
+  String get reportNoData => 'За этот период данных пока нет';
+
+  @override
+  String reportBookingsN(String n) {
+    return 'Записей: $n';
+  }
+
+  @override
+  String reportReturningShare(String p) {
+    return 'Вернулись $p% клиентов';
+  }
+
+  @override
+  String get reportsNote =>
+      'Цифры считаются по записям и платежам за выбранный период. Отменённые записи не считаются спросом.';
 }

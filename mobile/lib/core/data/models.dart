@@ -70,6 +70,37 @@ class Summary {
       outstanding: _num(j['outstanding']), cancellationRate: _num(j['cancellationRate']), noShowRate: _num(j['noShowRate']), totalBookings: j['totalBookings'] ?? 0);
 }
 
+class BreakdownRow {
+  final String id, name;
+  final int bookings, completed, cancelled, noShows;
+  final double bookedValue, collected, refunded, netCollected;
+  const BreakdownRow({required this.id, required this.name, required this.bookings, required this.completed, required this.cancelled,
+      required this.noShows, required this.bookedValue, required this.collected, required this.refunded, required this.netCollected});
+  factory BreakdownRow.fromJson(Map<String, dynamic> j) => BreakdownRow(
+      id: '${j['id']}', name: j['name'] ?? '', bookings: j['bookings'] ?? 0, completed: j['completed'] ?? 0, cancelled: j['cancelled'] ?? 0,
+      noShows: j['noShows'] ?? 0, bookedValue: _num(j['bookedValue']), collected: _num(j['collected']), refunded: _num(j['refunded']),
+      netCollected: _num(j['netCollected']));
+}
+
+class DayPoint {
+  final DateTime date; // calendar day in the business timezone
+  final int bookings;
+  final double netCollected;
+  const DayPoint({required this.date, required this.bookings, required this.netCollected});
+  factory DayPoint.fromJson(Map<String, dynamic> j) {
+    final d = DateTime.parse(j['date']);
+    return DayPoint(date: DateTime(d.year, d.month, d.day), bookings: j['bookings'] ?? 0, netCollected: _num(j['netCollected']));
+  }
+}
+
+class CustomerMix {
+  final int newCustomers, returningCustomers;
+  final double returningShare;
+  const CustomerMix({required this.newCustomers, required this.returningCustomers, required this.returningShare});
+  factory CustomerMix.fromJson(Map<String, dynamic> j) => CustomerMix(
+      newCustomers: j['newCustomers'] ?? 0, returningCustomers: j['returningCustomers'] ?? 0, returningShare: _num(j['returningShare']));
+}
+
 class PlanUsage {
   final String planCode;
   final int employees, maxEmployees;
