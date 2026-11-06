@@ -132,9 +132,8 @@ void main() {
 
     testWidgets('sign out everywhere ends the local session', (tester) async {
       final (_, s) = await open(tester);
-      await tester.drag(find.byType(ListView).first, const Offset(0, -1200));
+      await tester.scrollUntilVisible(find.byKey(const Key('logout-all')), 300, scrollable: find.byType(Scrollable).first);
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.byKey(const Key('logout-all')));
       await tester.tap(find.byKey(const Key('logout-all')));
       await tester.pumpAndSettle();
       expect(s.refresh, isNull);

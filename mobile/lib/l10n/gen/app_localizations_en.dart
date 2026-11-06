@@ -1085,4 +1085,45 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errMfaRequired =>
       'Two-factor authentication is required for this account';
+
+  @override
+  String get histTitle => 'Recent sign-ins';
+
+  @override
+  String histAlertFailed(int n) {
+    return '$n failed sign-in attempts since your last successful sign-in.';
+  }
+
+  @override
+  String get histAlertNewDevice =>
+      'A sign-in from a new device was recorded in the last 7 days.';
+
+  @override
+  String get histAlertHint =>
+      'If this was not you, change your password and sign out on all devices.';
+
+  @override
+  String get histSUCCESS => 'Signed in';
+
+  @override
+  String get histFAILED_PASSWORD => 'Wrong password';
+
+  @override
+  String get histFAILED_MFA => 'Wrong code';
+
+  @override
+  String get histLOCKED => 'Blocked: too many attempts';
+
+  @override
+  String get histNewDevice => 'New device';
+
+  @override
+  String get histWithCode => 'with code';
+
+  @override
+  String get histNone => 'No sign-ins recorded yet';
+
+  @override
+  String get histNote =>
+      'Kept for 90 days. The device is recognised by its app or browser type, not proven.';
 }

@@ -1082,4 +1082,45 @@ class AppLocalizationsKk extends AppLocalizations {
   @override
   String get errMfaRequired =>
       'Бұл аккаунт үшін екі факторлы аутентификация міндетті';
+
+  @override
+  String get histTitle => 'Соңғы кірулер';
+
+  @override
+  String histAlertFailed(int n) {
+    return 'Соңғы сәтті кіруден кейінгі сәтсіз әрекеттер: $n.';
+  }
+
+  @override
+  String get histAlertNewDevice =>
+      'Соңғы 7 күнде жаңа құрылғыдан кіру тіркелді.';
+
+  @override
+  String get histAlertHint =>
+      'Егер бұл сіз болмасаңыз, құпиясөзді өзгертіп, барлық құрылғылардан шығыңыз.';
+
+  @override
+  String get histSUCCESS => 'Кірді';
+
+  @override
+  String get histFAILED_PASSWORD => 'Құпиясөз қате';
+
+  @override
+  String get histFAILED_MFA => 'Код қате';
+
+  @override
+  String get histLOCKED => 'Бұғатталды: әрекет тым көп';
+
+  @override
+  String get histNewDevice => 'Жаңа құрылғы';
+
+  @override
+  String get histWithCode => 'кодпен';
+
+  @override
+  String get histNone => 'Кірулер әлі тіркелмеген';
+
+  @override
+  String get histNote =>
+      '90 күн сақталады. Құрылғы қосымша немесе браузер түрі бойынша танылады, бұл дәлел емес.';
 }
