@@ -31,10 +31,12 @@ public class AuthService {
     private final SecurityProperties props;
     private final AuditService audit;
     private final MfaService mfa;
+    private final LoginHistoryService history;
 
     public AuthService(UserRepository users, RefreshTokenRepository refreshTokens, PasswordEncoder encoder,
-                       JwtEncoder jwtEncoder, SecurityProperties props, AuditService audit, MfaService mfa) {
+                       JwtEncoder jwtEncoder, SecurityProperties props, AuditService audit, MfaService mfa, LoginHistoryService history) {
         this.mfa = mfa;
+        this.history = history;
         this.users = users;
         this.refreshTokens = refreshTokens;
         this.encoder = encoder;
@@ -65,7 +67,7 @@ public class AuthService {
     }
 
     @Transactional(noRollbackFor = ApiException.class)
-    public LoginResponse login(LoginRequest r, String userAgent) {
+    public LoginResponse login(LoginRequest r, String userAgent, String ip) {
         User u = users.findByEmailIgnoreCase(r.email().trim()).orElse(null);
         if (u == null) {
             encoder.matches(r.password(), dummyHash);
@@ -73,6 +75,7 @@ public class AuthService {
         }
         Instant now = Instant.now();
         if (u.getLockedUntil() != null && u.getLockedUntil().isAfter(now)) {
+            history.record(u.getId(), LoginHistoryService.Outcome.LOCKED, false, ip, userAgent);
             throw new ApiException(HttpStatus.TOO_MANY_REQUESTS, "ACCOUNT_LOCKED",
                     "Too many failed attempts. Try again later.");
         }
@@ -84,6 +87,7 @@ public class AuthService {
                 audit.log(null, u.getId(), "ACCOUNT_LOCKED", "USER", u.getId(), null);
             }
             users.save(u);
+            history.record(u.getId(), LoginHistoryService.Outcome.FAILED_PASSWORD, false, ip, userAgent);
             throw invalidCredentials();
         }
         if (mfa.isEnabled(u.getId())) {
@@ -95,12 +99,21 @@ public class AuthService {
         u.setLockedUntil(null);
         users.save(u);
         audit.log(null, u.getId(), "LOGIN", "USER", u.getId(), null);
+        history.record(u.getId(), LoginHistoryService.Outcome.SUCCESS, false, ip, userAgent);
         return LoginResponse.of(issue(u, userAgent));
     }
 
     @Transactional(noRollbackFor = ApiException.class)
-    public TokenResponse verifyMfa(String mfaToken, String code, String userAgent) {
-        return issue(mfa.completeChallenge(mfaToken, code), userAgent);
+    public TokenResponse verifyMfa(String mfaToken, String code, String userAgent, String ip) {
+        User u;
+        try {
+            u = mfa.completeChallenge(mfaToken, code);
+        } catch (ApiException e) {
+            if ("INVALID_MFA_CODE".equals(e.code())) mfa.userOfChallenge(mfaToken).ifPresent(id -> history.record(id, LoginHistoryService.Outcome.FAILED_MFA, true, ip, userAgent));
+            throw e;
+        }
+        history.record(u.getId(), LoginHistoryService.Outcome.SUCCESS, true, ip, userAgent);
+        return issue(u, userAgent);
     }
 
     /** Rotates the refresh token. Presenting an already-used token revokes every session of that user. */

@@ -14,8 +14,10 @@ public class AuthController {
     private final UserRepository users;
     private final PasswordService passwords;
     private final MfaService mfa;
+    private final LoginHistoryService loginHistory;
 
-    public AuthController(AuthService auth, UserRepository users, PasswordService passwords, MfaService mfa) {
+    public AuthController(AuthService auth, UserRepository users, PasswordService passwords, MfaService mfa, LoginHistoryService loginHistory) {
+        this.loginHistory = loginHistory;
         this.mfa = mfa;
         this.passwords = passwords;
         this.auth = auth;
@@ -30,13 +32,16 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public LoginResponse login(@Valid @RequestBody LoginRequest r, HttpServletRequest req) {
-        return auth.login(r, req.getHeader("User-Agent"));
+        return auth.login(r, req.getHeader("User-Agent"), req.getRemoteAddr());
     }
 
     @PostMapping("/auth/mfa/verify")
     public TokenResponse verifyMfa(@Valid @RequestBody MfaVerifyRequest r, HttpServletRequest req) {
-        return auth.verifyMfa(r.mfaToken(), r.code(), req.getHeader("User-Agent"));
+        return auth.verifyMfa(r.mfaToken(), r.code(), req.getHeader("User-Agent"), req.getRemoteAddr());
     }
+
+    @GetMapping("/auth/login-history")
+    public LoginHistoryService.History loginHistory() { return loginHistory.history(CurrentUser.id()); }
 
     @GetMapping("/auth/mfa")
     public MfaService.Status mfaStatus() { return mfa.status(CurrentUser.id()); }
