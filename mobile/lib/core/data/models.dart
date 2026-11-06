@@ -166,6 +166,25 @@ class ImportReport {
       preview: [for (final p in (j['preview'] as List? ?? const [])) (p['fullName'] as String, p['phone'] as String)]);
 }
 
+class LoginEvent {
+  final String outcome;
+  final String? ip, userAgent;
+  final bool mfaUsed, newDevice;
+  final DateTime occurredAt;
+  const LoginEvent({required this.outcome, this.ip, this.userAgent, required this.mfaUsed, required this.newDevice, required this.occurredAt});
+  factory LoginEvent.fromJson(Map<String, dynamic> j) => LoginEvent(
+      outcome: j['outcome'], ip: j['ip'], userAgent: j['userAgent'], mfaUsed: j['mfaUsed'] == true, newDevice: j['newDevice'] == true, occurredAt: DateTime.parse(j['occurredAt']));
+}
+
+class LoginHistory {
+  final List<LoginEvent> events;
+  final int failedSinceLastSuccess;
+  final bool newDeviceRecently;
+  const LoginHistory(this.events, this.failedSinceLastSuccess, this.newDeviceRecently);
+  factory LoginHistory.fromJson(Map<String, dynamic> j) => LoginHistory(
+      [for (final e in (j['events'] as List)) LoginEvent.fromJson(e)], j['failedSinceLastSuccess'] ?? 0, j['newDeviceRecently'] == true);
+}
+
 class PlanUsage {
   final String planCode;
   final int employees, maxEmployees;

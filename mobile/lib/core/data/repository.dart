@@ -422,3 +422,8 @@ class MfaApi {
     ref.invalidate(mfaStatusProvider);
   }
 }
+
+final loginHistoryProvider = FutureProvider.autoDispose<LoginHistory>((ref) async {
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/auth/login-history'));
+  return LoginHistory.fromJson(r.data);
+});

@@ -2127,6 +2127,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Two-factor authentication is required for this account'**
   String get errMfaRequired;
+
+  /// No description provided for @histTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent sign-ins'**
+  String get histTitle;
+
+  /// No description provided for @histAlertFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} failed sign-in attempts since your last successful sign-in.'**
+  String histAlertFailed(int n);
+
+  /// No description provided for @histAlertNewDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'A sign-in from a new device was recorded in the last 7 days.'**
+  String get histAlertNewDevice;
+
+  /// No description provided for @histAlertHint.
+  ///
+  /// In en, this message translates to:
+  /// **'If this was not you, change your password and sign out on all devices.'**
+  String get histAlertHint;
+
+  /// No description provided for @histSUCCESS.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in'**
+  String get histSUCCESS;
+
+  /// No description provided for @histFAILED_PASSWORD.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong password'**
+  String get histFAILED_PASSWORD;
+
+  /// No description provided for @histFAILED_MFA.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong code'**
+  String get histFAILED_MFA;
+
+  /// No description provided for @histLOCKED.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked: too many attempts'**
+  String get histLOCKED;
+
+  /// No description provided for @histNewDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'New device'**
+  String get histNewDevice;
+
+  /// No description provided for @histWithCode.
+  ///
+  /// In en, this message translates to:
+  /// **'with code'**
+  String get histWithCode;
+
+  /// No description provided for @histNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No sign-ins recorded yet'**
+  String get histNone;
+
+  /// No description provided for @histNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept for 90 days. The device is recognised by its app or browser type, not proven.'**
+  String get histNote;
 }
 
 class _AppLocalizationsDelegate

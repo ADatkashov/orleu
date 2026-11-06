@@ -155,6 +155,11 @@ public class MfaService {
         return u;
     }
 
+    /** The user a (still unexpired) challenge belongs to, for the sign-in history of failed second-factor attempts. */
+    Optional<UUID> userOfChallenge(String token) {
+        return jdbc.sql("select user_id from mfa_challenges where token_hash = :h").param("h", hash(token)).query(UUID.class).optional();
+    }
+
     // ---------- codes ----------
 
     /** Accepts a current TOTP code (each time step only once) or an unused recovery code. */

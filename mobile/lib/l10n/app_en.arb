@@ -366,5 +366,18 @@
   "mfaVerify": "Verify",
   "errMfaCode": "The code is not correct",
   "errMfaChallenge": "The sign-in attempt expired. Please sign in again.",
-  "errMfaRequired": "Two-factor authentication is required for this account"
+  "errMfaRequired": "Two-factor authentication is required for this account",
+  "histTitle": "Recent sign-ins",
+  "histAlertFailed": "{n} failed sign-in attempts since your last successful sign-in.",
+  "@histAlertFailed": {"placeholders": {"n": {"type": "int"}}},
+  "histAlertNewDevice": "A sign-in from a new device was recorded in the last 7 days.",
+  "histAlertHint": "If this was not you, change your password and sign out on all devices.",
+  "histSUCCESS": "Signed in",
+  "histFAILED_PASSWORD": "Wrong password",
+  "histFAILED_MFA": "Wrong code",
+  "histLOCKED": "Blocked: too many attempts",
+  "histNewDevice": "New device",
+  "histWithCode": "with code",
+  "histNone": "No sign-ins recorded yet",
+  "histNote": "Kept for 90 days. The device is recognised by its app or browser type, not proven."
 }

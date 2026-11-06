@@ -60,6 +60,8 @@ class _AccountState extends ConsumerState<AccountScreen> {
         const SizedBox(height: AppSpacing.lg),
         const _MfaCard(),
         const SizedBox(height: AppSpacing.lg),
+        const _HistoryCard(),
+        const SizedBox(height: AppSpacing.lg),
         Text(l.sessionsTitle, style: t.textTheme.titleMedium),
         const SizedBox(height: AppSpacing.xs),
         Text(l.sessionsNote, style: t.textTheme.bodySmall),
@@ -217,6 +219,63 @@ class _DisableState extends ConsumerState<_DisableMfaDialog> {
           child: Text(l.mfaDisable),
         ),
       ],
+    );
+  }
+}
+
+/// Recent sign-ins of this account with an alert for failed attempts and new devices.
+class _HistoryCard extends ConsumerWidget {
+  const _HistoryCard();
+
+  String _outcome(AppLocalizations l, LoginEvent e) => switch (e.outcome) {
+        'SUCCESS' => e.mfaUsed ? '${l.histSUCCESS} (${l.histWithCode})' : l.histSUCCESS,
+        'FAILED_PASSWORD' => l.histFAILED_PASSWORD,
+        'FAILED_MFA' => l.histFAILED_MFA,
+        _ => l.histLOCKED,
+      };
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final t = Theme.of(context);
+    final data = ref.watch(loginHistoryProvider);
+    return data.when(
+      loading: () => const LinearProgressIndicator(),
+      error: (e, _) => ErrorRetry(error: e, onRetry: () => ref.invalidate(loginHistoryProvider)),
+      data: (h) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (h.failedSinceLastSuccess > 0 || h.newDeviceRecently)
+          Card(
+            key: const Key('historyAlert'),
+            color: AppColors.warning.withValues(alpha: 0.12),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                if (h.failedSinceLastSuccess > 0) Text(l.histAlertFailed(h.failedSinceLastSuccess)),
+                if (h.newDeviceRecently) Text(l.histAlertNewDevice),
+                const SizedBox(height: AppSpacing.xs),
+                Text(l.histAlertHint, style: t.textTheme.bodySmall),
+              ]),
+            ),
+          ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(l.histTitle, style: t.textTheme.titleMedium),
+        Text(l.histNote, style: t.textTheme.bodySmall),
+        const SizedBox(height: AppSpacing.xs),
+        if (h.events.isEmpty) Text(l.histNone),
+        for (final e in h.events.take(10)) Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Icon(e.outcome == 'SUCCESS' ? Icons.check_circle_outline : Icons.warning_amber_outlined, size: 18, color: e.outcome == 'SUCCESS' ? AppColors.success : AppColors.warning),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('${_outcome(l, e)}${e.newDevice ? ' · ${l.histNewDevice}' : ''}', style: t.textTheme.bodyMedium?.copyWith(fontWeight: e.newDevice ? FontWeight.w700 : null)),
+                Text('${DateFormat('dd.MM.yyyy HH:mm').format(e.occurredAt.toLocal())} · ${e.ip ?? '?'} · ${(e.userAgent ?? '').split(' ').first}', style: t.textTheme.bodySmall),
+              ]),
+            ),
+          ]),
+        ),
+      ]),
     );
   }
 }

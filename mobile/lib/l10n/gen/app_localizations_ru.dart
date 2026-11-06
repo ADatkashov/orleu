@@ -1084,4 +1084,45 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get errMfaRequired =>
       'Для этого аккаунта обязательна двухфакторная аутентификация';
+
+  @override
+  String get histTitle => 'Последние входы';
+
+  @override
+  String histAlertFailed(int n) {
+    return 'Неудачных попыток входа с прошлого успешного входа: $n.';
+  }
+
+  @override
+  String get histAlertNewDevice =>
+      'За последние 7 дней зафиксирован вход с нового устройства.';
+
+  @override
+  String get histAlertHint =>
+      'Если это были не вы, смените пароль и выйдите на всех устройствах.';
+
+  @override
+  String get histSUCCESS => 'Вход выполнен';
+
+  @override
+  String get histFAILED_PASSWORD => 'Неверный пароль';
+
+  @override
+  String get histFAILED_MFA => 'Неверный код';
+
+  @override
+  String get histLOCKED => 'Блокировка: слишком много попыток';
+
+  @override
+  String get histNewDevice => 'Новое устройство';
+
+  @override
+  String get histWithCode => 'с кодом';
+
+  @override
+  String get histNone => 'Входов пока не зафиксировано';
+
+  @override
+  String get histNote =>
+      'Хранится 90 дней. Устройство определяется по типу приложения или браузера, это не доказательство.';
 }
