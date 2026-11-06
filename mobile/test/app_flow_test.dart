@@ -126,7 +126,8 @@ void main() {
     await pumpApp(tester, adapter, store);
     await tester.tap(find.text('More').last);
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Sign out')); // the More list grew; the button is below the fold on a short phone
+    await tester.drag(find.byType(ListView).first, const Offset(0, -400)); // the More list grew; the button is below the fold on a short phone
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Sign out'));
     await tester.pumpAndSettle();
     expect(find.text('Sign in'), findsWidgets);
