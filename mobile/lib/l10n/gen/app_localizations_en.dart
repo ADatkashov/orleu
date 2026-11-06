@@ -742,4 +742,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sessionsNone => 'No active sessions';
+
+  @override
+  String get calDay => 'Day';
+
+  @override
+  String get calWeek => 'Week';
+
+  @override
+  String get calMonth => 'Month';
+
+  @override
+  String get filterAllSpecialists => 'All specialists';
+
+  @override
+  String get filterAllLocations => 'All locations';
+
+  @override
+  String calBookingsCount(int n) {
+    return '$n bookings';
+  }
 }

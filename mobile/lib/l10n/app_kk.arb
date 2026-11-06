@@ -233,5 +233,11 @@
   "sessionUnknownDevice": "Белгісіз құрылғы",
   "sessionSince": "{date} бастап",
   "signOutEverywhere": "Барлық құрылғылардан шығу",
-  "sessionsNone": "Белсенді сессиялар жоқ"
+  "sessionsNone": "Белсенді сессиялар жоқ",
+  "calDay": "Күн",
+  "calWeek": "Апта",
+  "calMonth": "Ай",
+  "filterAllSpecialists": "Барлық мамандар",
+  "filterAllLocations": "Барлық филиалдар",
+  "calBookingsCount": "Жазылу: {n}"
 }

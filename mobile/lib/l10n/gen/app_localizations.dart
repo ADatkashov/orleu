@@ -1503,6 +1503,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No active sessions'**
   String get sessionsNone;
+
+  /// No description provided for @calDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get calDay;
+
+  /// No description provided for @calWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get calWeek;
+
+  /// No description provided for @calMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get calMonth;
+
+  /// No description provided for @filterAllSpecialists.
+  ///
+  /// In en, this message translates to:
+  /// **'All specialists'**
+  String get filterAllSpecialists;
+
+  /// No description provided for @filterAllLocations.
+  ///
+  /// In en, this message translates to:
+  /// **'All locations'**
+  String get filterAllLocations;
+
+  /// No description provided for @calBookingsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} bookings'**
+  String calBookingsCount(int n);
 }
 
 class _AppLocalizationsDelegate

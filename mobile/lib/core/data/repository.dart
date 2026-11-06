@@ -45,6 +45,19 @@ final bookingsProvider = FutureProvider.autoDispose.family<List<Booking>, DateTi
   return (r.data as List).map((e) => Booking.fromJson(e, zone: b.timezone)).toList();
 });
 
+/// Bookings of the business-timezone calendar days [from, to) (wall dates, at most 92 days), optionally one specialist.
+typedef CalendarQuery = (DateTime from, DateTime to, String? employeeId);
+
+final bookingsRangeProvider = FutureProvider.autoDispose.family<List<Booking>, CalendarQuery>((ref, q) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/bookings', queryParameters: {
+        'from': instantFromWall(dayStart(q.$1), b.timezone).toIso8601String(),
+        'to': instantFromWall(dayStart(q.$2), b.timezone).toIso8601String(),
+        'employeeId': ?q.$3,
+      }));
+  return (r.data as List).map((e) => Booking.fromJson(e, zone: b.timezone)).toList();
+});
+
 final customersProvider = FutureProvider.autoDispose.family<List<Customer>, String>((ref, q) async {
   final b = await _biz(ref);
   final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/customers',
@@ -121,6 +134,7 @@ class BookingActions {
     final b = await _biz(ref);
     await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/${b.id}/bookings/$bookingId/transition', data: {'status': status}));
     ref.invalidate(bookingsProvider);
+    ref.invalidate(bookingsRangeProvider);
     ref.invalidate(todaySummaryProvider);
     ref.invalidate(summaryProvider);
   }
@@ -132,6 +146,7 @@ class BookingActions {
     await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/bookings/$bookingId/payments',
         data: {'amount': amount, 'method': method}, options: Options(headers: {'Idempotency-Key': idempotencyKey})));
     ref.invalidate(bookingsProvider);
+    ref.invalidate(bookingsRangeProvider);
     ref.invalidate(todaySummaryProvider);
     ref.invalidate(summaryProvider);
   }
@@ -144,6 +159,7 @@ class BookingActions {
           'customer': {'fullName': name, 'phone': phone}, 'notes': ?(notes == null || notes.isEmpty ? null : notes),
         }));
     ref.invalidate(bookingsProvider);
+    ref.invalidate(bookingsRangeProvider);
     ref.invalidate(todaySummaryProvider);
     ref.invalidate(customersProvider);
   }
@@ -153,6 +169,7 @@ class BookingActions {
     final id = await _id();
     await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/bookings/$bookingId/reschedule', data: {'startsAt': startsAtInstant.toUtc().toIso8601String()}));
     ref.invalidate(bookingsProvider);
+    ref.invalidate(bookingsRangeProvider);
   }
 
   /// Business-level customer messaging settings (reminder lead time in hours, 0 = off; language of customer messages).

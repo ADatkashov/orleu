@@ -739,4 +739,24 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sessionsNone => 'Нет активных сессий';
+
+  @override
+  String get calDay => 'День';
+
+  @override
+  String get calWeek => 'Неделя';
+
+  @override
+  String get calMonth => 'Месяц';
+
+  @override
+  String get filterAllSpecialists => 'Все специалисты';
+
+  @override
+  String get filterAllLocations => 'Все филиалы';
+
+  @override
+  String calBookingsCount(int n) {
+    return 'Записей: $n';
+  }
 }

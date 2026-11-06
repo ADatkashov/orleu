@@ -233,5 +233,11 @@
   "sessionUnknownDevice": "Неизвестное устройство",
   "sessionSince": "С {date}",
   "signOutEverywhere": "Выйти на всех устройствах",
-  "sessionsNone": "Нет активных сессий"
+  "sessionsNone": "Нет активных сессий",
+  "calDay": "День",
+  "calWeek": "Неделя",
+  "calMonth": "Месяц",
+  "filterAllSpecialists": "Все специалисты",
+  "filterAllLocations": "Все филиалы",
+  "calBookingsCount": "Записей: {n}"
 }
