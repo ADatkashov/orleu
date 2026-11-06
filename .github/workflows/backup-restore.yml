@@ -57,6 +57,6 @@ jobs:
           cp /tmp/ci.dump /tmp/bad.dump && cp /tmp/ci.dump.sha256 /tmp/bad.dump.sha256 && sed -i 's/ci.dump/bad.dump/' /tmp/bad.dump.sha256 && printf 'x' >> /tmp/bad.dump
           if scripts/restore.sh /tmp/bad.dump orleu_never; then echo "corrupted dump was accepted"; exit 1; fi
           if scripts/restore.sh /tmp/ci.dump orleu; then echo "restore into a non-empty database was accepted"; exit 1; fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with: { name: logs, path: "*.log" }
