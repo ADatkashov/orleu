@@ -121,6 +121,25 @@ class DeviceSession {
   factory DeviceSession.fromJson(Map<String, dynamic> j) => DeviceSession(id: j['id'], userAgent: j['userAgent'], createdAt: DateTime.parse(j['createdAt']));
 }
 
+class ReviewItem {
+  final String id, customerName, serviceName;
+  final int rating;
+  final String? comment;
+  final DateTime createdAt;
+  const ReviewItem({required this.id, required this.customerName, required this.serviceName, required this.rating, this.comment, required this.createdAt});
+  factory ReviewItem.fromJson(Map<String, dynamic> j) => ReviewItem(
+      id: j['id'], customerName: j['customerName'] ?? '', serviceName: j['serviceName'] ?? '', rating: j['rating'], comment: j['comment'], createdAt: DateTime.parse(j['createdAt']));
+}
+
+class ReviewSummary {
+  final int count;
+  final double? average;
+  final List<int> distribution; // index 0 = one star
+  const ReviewSummary({required this.count, this.average, required this.distribution});
+  factory ReviewSummary.fromJson(Map<String, dynamic> j) => ReviewSummary(
+      count: j['count'] ?? 0, average: j['average'] == null ? null : _num(j['average']), distribution: List<int>.from(j['distribution'] ?? const [0, 0, 0, 0, 0]));
+}
+
 class PlanUsage {
   final String planCode;
   final int employees, maxEmployees;

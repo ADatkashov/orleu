@@ -759,4 +759,23 @@ class AppLocalizationsRu extends AppLocalizations {
   String calBookingsCount(int n) {
     return 'Записей: $n';
   }
+
+  @override
+  String get reviewsNav => 'Отзывы';
+
+  @override
+  String get reviewsAverage => 'Средняя оценка';
+
+  @override
+  String reviewsCount(int n) {
+    return 'Отзывов: $n';
+  }
+
+  @override
+  String get reviewsNone =>
+      'Отзывов пока нет. Клиент может оценить состоявшийся визит по ссылке на свою запись.';
+
+  @override
+  String get reviewsNote =>
+      'Отзывы приходят только от состоявшихся визитов, бизнес не может их менять.';
 }

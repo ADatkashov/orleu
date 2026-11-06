@@ -762,4 +762,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String calBookingsCount(int n) {
     return '$n bookings';
   }
+
+  @override
+  String get reviewsNav => 'Reviews';
+
+  @override
+  String get reviewsAverage => 'Average rating';
+
+  @override
+  String reviewsCount(int n) {
+    return '$n reviews';
+  }
+
+  @override
+  String get reviewsNone =>
+      'No reviews yet. Customers can review a completed visit from their booking link.';
+
+  @override
+  String get reviewsNote =>
+      'Reviews come only from completed visits and cannot be edited by the business.';
 }

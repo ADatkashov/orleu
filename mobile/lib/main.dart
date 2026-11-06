@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
+import 'core/api/api_client.dart';
 
 void main() {
-  runApp(const ProviderScope(child: OrleuApp()));
+  runApp(const ProviderScope(retry: appRetry, child: OrleuApp()));
 }

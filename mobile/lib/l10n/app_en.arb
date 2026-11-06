@@ -262,5 +262,11 @@
   "filterAllSpecialists": "All specialists",
   "filterAllLocations": "All locations",
   "calBookingsCount": "{n} bookings",
-  "@calBookingsCount": {"placeholders": {"n": {"type": "int"}}}
+  "@calBookingsCount": {"placeholders": {"n": {"type": "int"}}},
+  "reviewsNav": "Reviews",
+  "reviewsAverage": "Average rating",
+  "reviewsCount": "{n} reviews",
+  "@reviewsCount": {"placeholders": {"n": {"type": "int"}}},
+  "reviewsNone": "No reviews yet. Customers can review a completed visit from their booking link.",
+  "reviewsNote": "Reviews come only from completed visits and cannot be edited by the business."
 }

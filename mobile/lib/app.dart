@@ -15,6 +15,7 @@ import 'features/home/home_screen.dart';
 import 'features/more/more_screen.dart';
 import 'features/more/messages_screen.dart';
 import 'features/more/account_screen.dart';
+import 'features/more/reviews_screen.dart';
 import 'features/setup/branches_screen.dart';
 import 'features/setup/employees_screen.dart';
 import 'features/setup/services_screen.dart';
@@ -71,6 +72,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(path: 'employees', builder: (_, _) => const EmployeesScreen()),
               GoRoute(path: 'messages', builder: (_, _) => const MessagesScreen()),
               GoRoute(path: 'account', builder: (_, _) => const AccountScreen()),
+              GoRoute(path: 'reviews', builder: (_, _) => const ReviewsScreen()),
             ]),
           ]),
         ],

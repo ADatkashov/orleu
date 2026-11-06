@@ -90,3 +90,9 @@ class ApiClient {
     }
   }
 }
+
+/// Provider retry policy. Riverpod 3 retries every failed provider up to 10 times by default, which keeps a screen on its
+/// skeleton for about a minute when the failure is permanent (403/404/500). Only short network blips are retried, briefly;
+/// everything else shows the error with its Retry button at once.
+Duration? appRetry(int retryCount, Object error) =>
+    retryCount < 3 && ApiError.from(error).isNetwork ? Duration(seconds: retryCount + 1) : null;

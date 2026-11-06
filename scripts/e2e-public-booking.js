@@ -75,8 +75,34 @@ const assert = (c, m) => { if (!c) throw new Error('ASSERT: ' + m); };
   await m.getByTestId('cancel').click();
   await m.getByTestId('msg').waitFor();
   assert(!(await m.getByTestId('cancel').count()), 'cancel button gone');
+  assert(!/\b(false|null|undefined)\b/.test(await m.locator('body').innerText()), 'no stray false/null text on the manage page');
   const after = await api(`/api/v1/businesses/${biz.id}/bookings?from=${from}&to=${to}`, 'GET', null, T);
   assert(after[0].status === 'CANCELLED', 'cancelled in backend');
+
+  // review: a second guest booking, completed by staff, is reviewed in the browser via its manage link
+  const when = new Date(Date.now() + 6 * 864e5); when.setUTCHours(12, 0, 0, 0);
+  const second = await api(`/api/v1/public/businesses/${slug}/bookings`, 'POST', { branchId: br.id, serviceId: svc.id, startsAt: when.toISOString(), customer: { fullName: 'Dana Guest', phone: '+77011234568' } });
+  const rv = await ctx.newPage();
+  rv.on('pageerror', (e) => problems.push('pageerror: ' + e.message));
+  await rv.goto(`${BASE}/m/${second.manageToken}`);
+  await rv.getByTestId('cancel').waitFor();
+  assert(!(await rv.getByTestId('review-box').count()), 'no review box before the visit happened');
+  for (const st of ['CHECKED_IN', 'IN_PROGRESS', 'COMPLETED']) await api(`/api/v1/businesses/${biz.id}/bookings/${second.bookingId}/transition`, 'POST', { status: st }, T);
+  await rv.reload();
+  await rv.getByTestId('review-box').waitFor();
+  assert(!/\b(false|null|undefined)\b/.test(await rv.locator('body').innerText()), 'no stray false/null text on the review page');
+  if (SHOTS) await rv.screenshot({ path: `${SHOTS}/7-review.png` });
+  assert(await rv.getByTestId('send-review').isDisabled(), 'send disabled until a star is chosen');
+  await rv.getByTestId('star-5').click();
+  await rv.getByTestId('comment').fill('Great <b>cut</b>');
+  await rv.getByTestId('send-review').click();
+  await rv.getByTestId('your-rating').waitFor();
+  assert(!(await rv.getByTestId('review-box').count()), 'review box gone after sending');
+  const reviews = await api(`/api/v1/businesses/${biz.id}/reviews`, 'GET', null, T);
+  assert(reviews.length === 1 && reviews[0].rating === 5 && reviews[0].comment === 'Great <b>cut</b>', 'review stored ' + JSON.stringify(reviews));
+  await page.goto(`${BASE}/b/${slug}`);
+  await page.getByTestId('rating').waitFor();
+  assert((await page.getByTestId('rating').textContent()).includes('5.0'), 'average shown on the booking page');
 
   // language switch re-renders in Russian
   await m.getByRole('button', { name: 'RU' }).click();
@@ -90,5 +116,5 @@ const assert = (c, m) => { if (!c) throw new Error('ASSERT: ' + m); };
 
   assert(problems.length === 0, 'browser problems: ' + problems.join(' | '));
   await browser.close();
-  console.log('E2E PASSED: guest booked, owner saw it, guest cancelled via link, RU switch, XSS probe inert');
+  console.log('E2E PASSED: guest booked, owner saw it, guest cancelled via link, completed visit reviewed (average shown on the page), RU switch, XSS probe inert');
 })().catch((e) => { console.error('E2E FAILED:', e.message); process.exit(1); });

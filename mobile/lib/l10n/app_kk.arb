@@ -239,5 +239,10 @@
   "calMonth": "Ай",
   "filterAllSpecialists": "Барлық мамандар",
   "filterAllLocations": "Барлық филиалдар",
-  "calBookingsCount": "Жазылу: {n}"
+  "calBookingsCount": "Жазылу: {n}",
+  "reviewsNav": "Пікірлер",
+  "reviewsAverage": "Орташа баға",
+  "reviewsCount": "Пікір: {n}",
+  "reviewsNone": "Пікір әлі жоқ. Клиент өз жазылуының сілтемесі арқылы өткен келуді бағалай алады.",
+  "reviewsNote": "Пікірлер тек өткен келулерден келеді, бизнес оларды өзгерте алмайды."
 }
