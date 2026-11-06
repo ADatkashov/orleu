@@ -30,7 +30,7 @@ _Last updated: 2026-11-05._
 | K | Subscription entitlements enforced by backend | DONE | limits; billing lifecycle is TODO |
 | L | Tenant isolation covered by tests | DONE | |
 | M | Flutter app: auth, navigation, localization, API | PARTIAL | reset/change-password/sessions screens done; no OTP/MFA; not run on a device |
-| N | Admin interface manages platform entities | PARTIAL | businesses, plans, audit; no users/payments/support/reviews |
+| N | Admin interface manages platform entities | PARTIAL | businesses, plans, audit, users, support tickets; no payments/reviews moderation |
 | O | CI builds and tests run | DONE | backend, e2e, docker-smoke, backup-restore, mobile |
 
 ## Phases (spec addendum §14)
@@ -91,6 +91,6 @@ Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real 
 3. ~~Reminders and notification templates (kk/ru/en) behind the outbox~~ — done up to the provider boundary (messages prepared, NOT_SENT); senders stay BLOCKED.
 4. ~~Password-reset / change-password / sessions screens in the app~~ — done (reset needs a mail provider to be usable; MFA/OTP still TODO).
 5. ~~Week/month calendar and filters~~ — done (drag-and-drop and resource columns remain TODO).
-6. Reviews (done: guest reviews of completed visits, average on the booking page, staff list) — customer portal (needs guest accounts), support tickets and admin sections (users, support) remain.
+6. ~~Reviews, support tickets, admin Users/Support~~ — done; customer portal (needs guest accounts), review moderation and ticket notifications remain.
 7. Load-test scenarios and a first measured baseline; ArchUnit checks.
 8. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.

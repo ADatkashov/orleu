@@ -778,4 +778,76 @@ class AppLocalizationsKk extends AppLocalizations {
   @override
   String get reviewsNote =>
       'Пікірлер тек өткен келулерден келеді, бизнес оларды өзгерте алмайды.';
+
+  @override
+  String get supportNav => 'Қолдау';
+
+  @override
+  String get supportIntro =>
+      'Төлем, техникалық немесе аккаунт мәселесі бойынша ORLEU командасына жазыңыз. Жауаптар осы жерде көрінеді.';
+
+  @override
+  String get supportNew => 'Жаңа өтініш';
+
+  @override
+  String get supportSubject => 'Тақырып';
+
+  @override
+  String get supportBody => 'Мәселені сипаттаңыз';
+
+  @override
+  String get supportCategory => 'Бөлім';
+
+  @override
+  String get catBILLING => 'Төлем';
+
+  @override
+  String get catTECHNICAL => 'Техникалық';
+
+  @override
+  String get catACCOUNT => 'Аккаунт';
+
+  @override
+  String get catOTHER => 'Басқа';
+
+  @override
+  String get supportCreate => 'Жіберу';
+
+  @override
+  String get supportNone => 'Өтініштер әлі жоқ';
+
+  @override
+  String get stOPEN => 'Қолдау жауабын күтуде';
+
+  @override
+  String get stANSWERED => 'Жауап бар';
+
+  @override
+  String get stCLOSED => 'Жабылған';
+
+  @override
+  String get supportReply => 'Сіздің жауабыңыз';
+
+  @override
+  String get supportSend => 'Жіберу';
+
+  @override
+  String get supportCloseTicket => 'Өтінішті жабу';
+
+  @override
+  String get supportClosedNote =>
+      'Өтініш жабылған. Көмек керек болса, жаңасын ашыңыз.';
+
+  @override
+  String get supportTeam => 'ORLEU қолдауы';
+
+  @override
+  String get supportYou => 'Сіз';
+
+  @override
+  String get errTicketClosed => 'Өтініш жабылған';
+
+  @override
+  String get errTooManyTickets =>
+      'Ашық өтініштер тым көп. Біразын жабыңыз немесе жауапты күтіңіз.';
 }

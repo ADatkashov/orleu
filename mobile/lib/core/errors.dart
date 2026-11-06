@@ -13,6 +13,8 @@ String errorText(BuildContext context, Object error) {
     'EMAIL_TAKEN' || 'ACCOUNT_EXISTS' => l.errEmailTaken,
     'ACCOUNT_LOCKED' => l.errAccountLocked,
     'WRONG_PASSWORD' => l.errWrongPassword,
+    'TICKET_CLOSED' => l.errTicketClosed,
+    'TOO_MANY_OPEN_TICKETS' => l.errTooManyTickets,
     'INVALID_RESET_TOKEN' => l.errResetToken,
     'SLUG_TAKEN' => l.errSlugTaken,
     'INVALID_TRANSITION' || 'PAYMENT_REQUIRED' => l.errInvalidTransition,

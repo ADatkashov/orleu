@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../core/data/auth_controller.dart';
 import '../core/design/theme.dart';
 import 'admin_screens.dart';
+import 'admin_support.dart';
 
 class _Refresh extends ChangeNotifier {
   void ping() => notifyListeners();
@@ -36,6 +37,10 @@ final adminRouterProvider = Provider<GoRouter>((ref) {
             GoRoute(path: ':id', builder: (_, state) => BusinessDetailScreen(id: state.pathParameters['id']!)),
           ]),
           GoRoute(path: '/plans', builder: (_, _) => const PlansScreen()),
+          GoRoute(path: '/users', builder: (_, _) => const AdminUsersScreen()),
+          GoRoute(path: '/support', builder: (_, _) => const AdminSupportScreen(), routes: [
+            GoRoute(path: ':id', builder: (_, state) => AdminTicketScreen(id: state.pathParameters['id']!)),
+          ]),
           GoRoute(path: '/audit', builder: (_, state) => AuditScreen(initialBusinessId: state.uri.queryParameters['businessId'] ?? '')),
         ],
       ),

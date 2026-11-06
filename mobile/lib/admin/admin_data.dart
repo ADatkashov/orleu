@@ -19,12 +19,15 @@ class S {
   static const filterBusiness = 'Business ID (optional)', filterAction = 'Action (optional)', invalidId = 'Not a valid UUID';
   static const readOnly = 'Read-only role: changes require SUPER_ADMIN.';
   static const system = 'system';
+  static const users = 'Users', support = 'Support', disable = 'Disable user', enable = 'Enable user', reply = 'Reply', send = 'Send', closeTicket = 'Close ticket', reopen = 'Reopen ticket';
 }
 
 class AdminMe {
   final String role;
   final bool canModify;
   const AdminMe(this.role, this.canModify);
+  /// Users and support tickets contain personal data: SUPER_ADMIN and PLATFORM_SUPPORT only (the server enforces it too).
+  bool get canSeePersonalData => role == 'SUPER_ADMIN' || role == 'PLATFORM_SUPPORT';
 }
 
 class AdminBusiness {

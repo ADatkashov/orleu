@@ -98,6 +98,8 @@ class AdminShell extends ConsumerWidget {
         final items = [
           (Icons.storefront_outlined, S.businesses, '/businesses'),
           (Icons.workspace_premium_outlined, S.plans, '/plans'),
+          if (m.canSeePersonalData) (Icons.people_outline, S.users, '/users'),
+          if (m.canSeePersonalData) (Icons.support_agent_outlined, S.support, '/support'),
           (Icons.fact_check_outlined, S.audit, '/audit'),
         ];
         final index = items.indexWhere((i) => location.startsWith(i.$3)).clamp(0, items.length - 1);
