@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -35,6 +36,20 @@ String newIdempotencyKey() {
 }
 
 /// Timezone of the current business (UTC until it is loaded; screens only render after the business gate anyway).
+/// The signed-in user's role in the current business (null until loaded), e.g. BUSINESS_OWNER, ACCOUNTANT.
+final myRoleProvider = FutureProvider<String?>((ref) async {
+  final b = await ref.watch(currentBusinessProvider.future);
+  if (b == null) return null;
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/me'));
+  for (final m in (r.data['memberships'] as List? ?? const [])) {
+    if (m['businessId'] == b.id) return m['role'] as String?;
+  }
+  return null;
+});
+
+/// Roles the server allows to export the ledger (FINANCE_EXPORT). The server enforces it; this only hides the button.
+bool canExportFinance(String? role) => const {'BUSINESS_OWNER', 'BUSINESS_ADMIN', 'ACCOUNTANT'}.contains(role);
+
 final businessZoneProvider = Provider<String>((ref) => ref.watch(currentBusinessProvider).value?.timezone ?? 'UTC');
 
 /// [day] is a calendar date in the BUSINESS timezone (time of day ignored).
@@ -190,6 +205,19 @@ class BookingActions {
     final r = await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$biz/customers/import', data: {'csv': csv, 'dryRun': dryRun}));
     if (!dryRun) ref.invalidate(customersProvider);
     return ImportReport.fromJson(r.data);
+  }
+
+  /// CSV of ledger entries for the last [days] days (business time). Returns the server's file name and the bytes.
+  Future<({String name, Uint8List bytes})> exportLedger({required int days, required bool semicolon}) async {
+    final b = await _biz(ref);
+    final now = nowWall(b.timezone);
+    final from = instantFromWall(DateTime(now.year, now.month, now.day - (days - 1)), b.timezone), to = instantFromWall(nextDay(now), b.timezone);
+    final r = await ref.read(apiClientProvider).run((d) => d.get<List<int>>('/api/v1/businesses/${b.id}/finance/export',
+        queryParameters: {'from': from.toIso8601String(), 'to': to.toIso8601String(), 'delimiter': semicolon ? 'semicolon' : 'comma'},
+        options: Options(responseType: ResponseType.bytes)));
+    final cd = r.headers.value('content-disposition') ?? '';
+    final name = RegExp(r'filename="?([^";]+)"?').firstMatch(cd)?.group(1) ?? 'orleu-ledger.csv';
+    return (name: name, bytes: Uint8List.fromList(r.data!));
   }
 
   /// Business-level customer messaging settings (reminder lead time in hours, 0 = off; language of customer messages).

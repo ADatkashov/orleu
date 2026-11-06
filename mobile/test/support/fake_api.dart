@@ -23,6 +23,9 @@ class FakeAdapter implements HttpClientAdapter {
     calls.add(o);
     final h = routes['${o.method} ${o.path}'];
     final r = h == null ? (status: 404, body: {'code': 'NOT_FOUND', 'message': 'x'}) : h(o);
+    if (r.body is String) { // raw text responses (e.g. CSV downloads)
+      return ResponseBody.fromString(r.body as String, r.status, headers: {Headers.contentTypeHeader: ['text/csv'], 'content-disposition': ['attachment; filename="orleu-ledger-test.csv"']});
+    }
     return ResponseBody.fromString(jsonEncode(r.body), r.status, headers: {Headers.contentTypeHeader: ['application/json']});
   }
 

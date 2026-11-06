@@ -83,7 +83,7 @@ AI assistant (only with real testable use cases), forecasting (labelled estimate
 | 7 | Release engineering (App Store / Play, crash reporting, staged rollout, rollback) | TODO / BLOCKED on store accounts |
 
 ## Kazakhstan-specific
-Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real payment integrations (BLOCKED), local SMS and numbers (E.164 DONE; SMS BLOCKED), Kazakhstan document/address formats (TODO), accounting export (TODO). No claim of fiscal-receipt/tax compliance is made anywhere.
+Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real payment integrations (BLOCKED), local SMS and numbers (E.164 DONE; SMS BLOCKED), Kazakhstan document/address formats (TODO), accounting export (basic ledger CSV DONE; no 1C/other formats, no fiscal data). No claim of fiscal-receipt/tax compliance is made anywhere.
 
 ## Next up (my ordering; revisit after each merge)
 1. ~~Customer CRM profile + visit history and catalog edit/deactivate~~ — done (core of DoD I).

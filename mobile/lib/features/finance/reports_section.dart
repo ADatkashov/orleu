@@ -6,6 +6,7 @@ import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
 import '../../core/widgets/common.dart';
 import '../../l10n/gen/app_localizations.dart';
+import 'export_section.dart';
 
 /// Period selector, daily cash chart, breakdown tables, peak hours and new-vs-returning customers.
 /// Every number comes from the backend reports; nothing is computed from UI state except bar heights.
@@ -35,6 +36,8 @@ class ReportsSection extends ConsumerWidget {
       _Block(title: l.reportPeakHours, child: const _Peak()),
       _Block(title: l.reportCustomers, child: const _Mix()),
       Text(l.reportsNote, style: t.textTheme.bodySmall),
+      const SizedBox(height: AppSpacing.md),
+      const ExportSection(),
     ]);
   }
 }

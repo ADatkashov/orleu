@@ -988,4 +988,32 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errImportEncoding =>
       'The file is not UTF-8. In Excel choose \"CSV UTF-8\" when saving.';
+
+  @override
+  String get exportTitle => 'Export for accounting';
+
+  @override
+  String get exportNote =>
+      'CSV of all payments and refunds in the selected period (refunds negative, business time). It contains no customer names or phone numbers and is not a fiscal document.';
+
+  @override
+  String get exportComma => 'Comma';
+
+  @override
+  String get exportSemicolon => 'Semicolon (Excel RU/KZ)';
+
+  @override
+  String get exportButton => 'Export CSV';
+
+  @override
+  String get exportSaved => 'File saved';
+
+  @override
+  String get exportCancelled => 'Not saved';
+
+  @override
+  String get errExportTooLarge => 'Too many entries: choose a shorter period';
+
+  @override
+  String get errExportForbidden => 'Your role cannot export financial data';
 }
