@@ -50,6 +50,7 @@
     return [
       h('div', { class: 'brand' }, h('b', {}, 'ORLEU'), langSwitch(render)),
       h('h1', {}, S.profile.name),
+      S.profile.reviewCount > 0 && h('p', { class: 'muted small', 'data-testid': 'rating' }, '★ ' + Number(S.profile.averageRating).toFixed(1) + ' (' + S.profile.reviewCount + ' ' + t('reviewsCount') + ')'),
       S.profile.description && h('p', { class: 'muted' }, S.profile.description),
       [S.profile.city, S.profile.address].filter(Boolean).length > 0 && h('p', { class: 'muted small' }, [S.profile.city, S.profile.address].filter(Boolean).join(', ')),
       S.step <= total && !S.result && h('div', { class: 'steps', role: 'progressbar', 'aria-valuemin': 1, 'aria-valuemax': total, 'aria-valuenow': S.step, 'aria-label': t('step') },

@@ -36,6 +36,7 @@ class MoreScreen extends ConsumerWidget {
           (Icons.storefront_outlined, l.branches, '/more/branches'),
           (Icons.content_cut, l.services, '/more/services'),
           (Icons.badge_outlined, l.employees, '/more/employees'),
+          (Icons.star_outline, l.reviewsNav, '/more/reviews'),
           (Icons.sms_outlined, l.messagesNav, '/more/messages'),
           (Icons.lock_outline, l.accountNav, '/more/account'),
         ]) Padding(

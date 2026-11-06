@@ -759,4 +759,23 @@ class AppLocalizationsKk extends AppLocalizations {
   String calBookingsCount(int n) {
     return 'Жазылу: $n';
   }
+
+  @override
+  String get reviewsNav => 'Пікірлер';
+
+  @override
+  String get reviewsAverage => 'Орташа баға';
+
+  @override
+  String reviewsCount(int n) {
+    return 'Пікір: $n';
+  }
+
+  @override
+  String get reviewsNone =>
+      'Пікір әлі жоқ. Клиент өз жазылуының сілтемесі арқылы өткен келуді бағалай алады.';
+
+  @override
+  String get reviewsNote =>
+      'Пікірлер тек өткен келулерден келеді, бизнес оларды өзгерте алмайды.';
 }

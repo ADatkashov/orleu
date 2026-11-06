@@ -1539,6 +1539,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{n} bookings'**
   String calBookingsCount(int n);
+
+  /// No description provided for @reviewsNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviewsNav;
+
+  /// No description provided for @reviewsAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average rating'**
+  String get reviewsAverage;
+
+  /// No description provided for @reviewsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} reviews'**
+  String reviewsCount(int n);
+
+  /// No description provided for @reviewsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet. Customers can review a completed visit from their booking link.'**
+  String get reviewsNone;
+
+  /// No description provided for @reviewsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews come only from completed visits and cannot be edited by the business.'**
+  String get reviewsNote;
 }
 
 class _AppLocalizationsDelegate

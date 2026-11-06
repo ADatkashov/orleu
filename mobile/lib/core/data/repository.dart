@@ -324,3 +324,11 @@ Future<void> revokeSession(WidgetRef ref, String id) async {
   await ref.read(apiClientProvider).run((d) => d.delete('/api/v1/auth/sessions/$id'));
   ref.invalidate(sessionsProvider);
 }
+
+final reviewsProvider = FutureProvider.autoDispose<(ReviewSummary, List<ReviewItem>)>((ref) async {
+  final b = await _biz(ref);
+  final api = ref.watch(apiClientProvider);
+  final sum = await api.run((d) => d.get('/api/v1/businesses/${b.id}/reviews/summary'));
+  final list = await api.run((d) => d.get('/api/v1/businesses/${b.id}/reviews'));
+  return (ReviewSummary.fromJson(sum.data), (list.data as List).map((e) => ReviewItem.fromJson(e)).toList());
+});

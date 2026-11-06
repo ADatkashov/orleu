@@ -224,7 +224,8 @@ public class BookingService {
 
     public record ManageView(String businessName, String serviceName, java.time.Instant startsAt, BookingStatus status,
                              BigDecimal price, BigDecimal depositAmount, BigDecimal remainingBalance, String currency,
-                             boolean canCancel, Instant cancelUntil) {}
+                             boolean canCancel, Instant cancelUntil,
+                             boolean canReview, Integer reviewRating) {}
 
     @Transactional(readOnly = true)
     public ManageView manageView(String rawToken) {
@@ -254,8 +255,10 @@ public class BookingService {
         Instant cancelUntil = b.getStartsAt().minus(Duration.ofHours(biz.getCancellationDeadlineHours()));
         boolean open = b.getStatus() == BookingStatus.PENDING || b.getStatus() == BookingStatus.AWAITING_PAYMENT || b.getStatus() == BookingStatus.CONFIRMED;
         boolean canCancel = open && (b.getStatus() == BookingStatus.AWAITING_PAYMENT || Instant.now().isBefore(cancelUntil));
+        Integer rating = jdbc.sql("select rating from reviews where booking_id = :id").param("id", b.getId()).query(Integer.class).optional().orElse(null);
         return new ManageView(biz.getName(), svc, b.getStartsAt(), b.getStatus(), b.getPrice(), b.getDepositAmount(),
-                Money.scale(b.getPrice().subtract(paid).max(BigDecimal.ZERO)), b.getCurrency(), canCancel, cancelUntil);
+                Money.scale(b.getPrice().subtract(paid).max(BigDecimal.ZERO)), b.getCurrency(), canCancel, cancelUntil,
+                b.getStatus() == BookingStatus.COMPLETED && rating == null, rating);
     }
 
     private Booking byToken(String raw) {
@@ -271,7 +274,7 @@ public class BookingService {
         return java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(raw);
     }
 
-    static String hashToken(String token) {
+    public static String hashToken(String token) {
         try {
             return java.util.HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256")
                     .digest(token.getBytes(java.nio.charset.StandardCharsets.UTF_8)));

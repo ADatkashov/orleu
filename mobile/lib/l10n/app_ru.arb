@@ -239,5 +239,10 @@
   "calMonth": "Месяц",
   "filterAllSpecialists": "Все специалисты",
   "filterAllLocations": "Все филиалы",
-  "calBookingsCount": "Записей: {n}"
+  "calBookingsCount": "Записей: {n}",
+  "reviewsNav": "Отзывы",
+  "reviewsAverage": "Средняя оценка",
+  "reviewsCount": "Отзывов: {n}",
+  "reviewsNone": "Отзывов пока нет. Клиент может оценить состоявшийся визит по ссылке на свою запись.",
+  "reviewsNote": "Отзывы приходят только от состоявшихся визитов, бизнес не может их менять."
 }

@@ -46,7 +46,7 @@ Gaps: OTP/phone login, MFA, e-mail invitations, branch-level permissions, employ
 
 ### Phase 3 — Operations: PARTIAL
 - DONE: calendar day view + actions, public booking page, platform admin (core), customer self-cancel.
-- DONE: week/month calendar with specialist/location filters. TODO: drag-and-drop, resource columns, analytics charts, staff performance, customer portal (history, reschedule, favourites), reviews and ratings, support tickets, reconciliation views.
+- DONE: week/month calendar with specialist/location filters. TODO: drag-and-drop, resource columns, analytics charts, staff performance, customer portal (history, reschedule, favourites), support tickets, review replies/moderation, reconciliation views.
 
 ### Phase 4 — Business growth: TODO
 Marketing campaigns, loyalty, referrals, gift cards, packages, memberships, QR codes, widgets, promo landing pages (consent rules apply).
@@ -91,6 +91,6 @@ Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real 
 3. ~~Reminders and notification templates (kk/ru/en) behind the outbox~~ — done up to the provider boundary (messages prepared, NOT_SENT); senders stay BLOCKED.
 4. ~~Password-reset / change-password / sessions screens in the app~~ — done (reset needs a mail provider to be usable; MFA/OTP still TODO).
 5. ~~Week/month calendar and filters~~ — done (drag-and-drop and resource columns remain TODO).
-6. Reviews + customer portal; support tickets + admin sections (users, support).
+6. Reviews (done: guest reviews of completed visits, average on the booking page, staff list) — customer portal (needs guest accounts), support tickets and admin sections (users, support) remain.
 7. Load-test scenarios and a first measured baseline; ArchUnit checks.
 8. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.

@@ -36,7 +36,8 @@ import java.util.UUID;
 public class PublicBookingController {
     public record PublicEmployee(UUID id, String displayName, List<UUID> branchIds, List<UUID> serviceIds) {}
     public record PublicProfile(String slug, String name, String description, String city, String address, String currency,
-                                String timezone, BigDecimal depositPercent, List<BranchView> branches, List<ServiceView> services, List<PublicEmployee> employees) {}
+                                String timezone, BigDecimal depositPercent, List<BranchView> branches, List<ServiceView> services, List<PublicEmployee> employees,
+                                int reviewCount, Double averageRating) {}
     public record PublicBookingRequest(@NotNull UUID branchId, @NotNull UUID serviceId, UUID employeeId, @NotNull Instant startsAt,
                                        @Valid @NotNull CustomerInput customer) {}
     public record PublicBookingConfirmation(UUID bookingId, String status, Instant startsAt, BigDecimal price, BigDecimal depositAmount,
@@ -50,10 +51,12 @@ public class PublicBookingController {
     private final CustomerService customerService;
     private final BookingService bookingService;
     private final JdbcClient jdbc;
+    private final com.orleu.reviews.ReviewService reviews;
 
     public PublicBookingController(BusinessRepository businesses, BranchRepository branches, ServiceRepository services,
                                    AvailabilityService availability, CustomerService customerService,
-                                   BookingService bookingService, JdbcClient jdbc) {
+                                   BookingService bookingService, JdbcClient jdbc, com.orleu.reviews.ReviewService reviews) {
+        this.reviews = reviews;
         this.businesses = businesses; this.branches = branches; this.services = services;
         this.availability = availability; this.customerService = customerService;
         this.bookingService = bookingService; this.jdbc = jdbc;
@@ -70,10 +73,11 @@ public class PublicBookingController {
                             jdbc.sql("select branch_id from employee_branches where employee_id = :e").param("e", id).query(UUID.class).list(),
                             jdbc.sql("select service_id from employee_services where employee_id = :e").param("e", id).query(UUID.class).list());
                 }).list();
+        var rating = reviews.summaryUnchecked(b.getId());
         return new PublicProfile(b.getSlug(), b.getName(), b.getDescription(), b.getCity(), b.getAddress(), b.getCurrency(), b.getTimezone(), b.getDepositPercent(),
                 branches.findByBusinessIdOrderByName(b.getId()).stream().filter(x -> x.isActive()).map(BranchView::of).toList(),
                 services.findByBusinessIdAndActiveTrueAndOnlineBookableTrueOrderByName(b.getId()).stream().map(ServiceView::of).toList(),
-                emps);
+                emps, rating.count(), rating.average());
     }
 
     @GetMapping("/availability")
