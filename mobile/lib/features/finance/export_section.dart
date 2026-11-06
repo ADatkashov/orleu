@@ -10,9 +10,9 @@ import '../../core/design/tokens.dart';
 import '../../core/errors.dart';
 import '../../l10n/gen/app_localizations.dart';
 
-/// Saves bytes through the platform "save file" dialog (browser download on web). Replaced in tests.
+/// Saves bytes through the platform "save file" dialog (browser download on web); the MIME type follows the file extension. Replaced in tests.
 final csvSaverProvider = Provider<Future<bool> Function(String name, Uint8List bytes)>((ref) => (name, bytes) async {
-      final uri = await FilePicker.saveFile(fileName: name, bytes: bytes, mimeType: 'text/csv');
+      final uri = await FilePicker.saveFile(fileName: name, bytes: bytes, mimeType: name.endsWith('.json') ? 'application/json' : 'text/csv');
       return uri != null;
     });
 

@@ -25,8 +25,8 @@ class MessagesScreen extends ConsumerWidget {
     final biz = ref.watch(currentBusinessProvider).value;
     final msgs = ref.watch(customerMessagesProvider);
     final zone = ref.watch(businessZoneProvider);
-    Future<void> save({int? hours, String? lang}) async {
-      final ok = await guarded(context, () => ref.read(bookingActionsProvider).updateMessaging(reminderHours: hours, customerLocale: lang));
+    Future<void> save({int? hours, String? lang, int? retention}) async {
+      final ok = await guarded(context, () => ref.read(bookingActionsProvider).updateMessaging(reminderHours: hours, customerLocale: lang, retentionMonths: retention));
       if (ok && context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.messagesSaved)));
     }
 
@@ -55,6 +55,21 @@ class MessagesScreen extends ConsumerWidget {
             segments: [for (final e in _langs.entries) ButtonSegment(value: e.key, label: Text(e.value))],
             selected: {biz.customerLocale},
             onSelectionChanged: (s) => save(lang: s.first),
+          ),
+        ],
+        if (biz != null) ...[
+          const SizedBox(height: AppSpacing.lg),
+          Text(l.retentionTitle, style: t.textTheme.titleSmall),
+          const SizedBox(height: AppSpacing.xs),
+          Text(l.retentionNote, style: t.textTheme.bodySmall),
+          const SizedBox(height: AppSpacing.sm),
+          SegmentedButton<int>(
+            key: const Key('retention'),
+            showSelectedIcon: false,
+            emptySelectionAllowed: true,
+            segments: [for (final m in const [0, 24, 36, 60]) ButtonSegment(value: m, label: Text(m == 0 ? l.retentionOff : l.retentionYears('${m ~/ 12}')))],
+            selected: const [0, 24, 36, 60].contains(biz.customerRetentionMonths) ? {biz.customerRetentionMonths} : {},
+            onSelectionChanged: (s) { if (s.isNotEmpty) save(retention: s.first); },
           ),
         ],
         const SizedBox(height: AppSpacing.lg),

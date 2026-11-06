@@ -2199,6 +2199,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Kept for 90 days. The device is recognised by its app or browser type, not proven.'**
   String get histNote;
+
+  /// No description provided for @privacyExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export client data'**
+  String get privacyExport;
+
+  /// No description provided for @privacyDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete personal data'**
+  String get privacyDelete;
+
+  /// No description provided for @privacyDeleteWarn.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes the name, phone, e-mail, notes and messages of this client for good and cannot be undone. Bookings and payments stay for your accounting, without personal data.'**
+  String get privacyDeleteWarn;
+
+  /// No description provided for @privacyConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete for good'**
+  String get privacyConfirm;
+
+  /// No description provided for @privacyDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal data deleted'**
+  String get privacyDone;
+
+  /// No description provided for @errHasUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel the upcoming bookings of this client first'**
+  String get errHasUpcoming;
+
+  /// No description provided for @privacySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'File saved'**
+  String get privacySaved;
+
+  /// No description provided for @retentionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic deletion of inactive clients'**
+  String get retentionTitle;
+
+  /// No description provided for @retentionNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymise clients who had no booking for this long (never those with upcoming bookings). Off by default. Check what the law requires in your country.'**
+  String get retentionNote;
+
+  /// No description provided for @retentionOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get retentionOff;
+
+  /// No description provided for @retentionYears.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} years'**
+  String retentionYears(String n);
 }
 
 class _AppLocalizationsDelegate

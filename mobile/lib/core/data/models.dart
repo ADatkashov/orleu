@@ -7,11 +7,13 @@ class Business {
   final String id, name, slug, currency, planCode, timezone, customerLocale;
   final bool published;
   final int reminderHours;
+  /// 0 = automatic anonymisation of inactive clients is off.
+  final int customerRetentionMonths;
   const Business({required this.id, required this.name, required this.slug, required this.currency, required this.planCode, required this.published, this.timezone = 'UTC',
-      this.reminderHours = 24, this.customerLocale = 'ru'});
+      this.reminderHours = 24, this.customerLocale = 'ru', this.customerRetentionMonths = 0});
   factory Business.fromJson(Map<String, dynamic> j) => Business(
       id: j['id'], name: j['name'], slug: j['slug'], currency: j['currency'] ?? 'KZT', planCode: j['planCode'] ?? 'FREE', published: j['published'] == true, timezone: j['timezone'] ?? 'UTC',
-      reminderHours: j['reminderHours'] ?? 24, customerLocale: j['customerLocale'] ?? 'ru');
+      reminderHours: j['reminderHours'] ?? 24, customerLocale: j['customerLocale'] ?? 'ru', customerRetentionMonths: j['customerRetentionMonths'] ?? 0);
 }
 
 class Financials {

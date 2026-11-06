@@ -221,10 +221,25 @@ class BookingActions {
   }
 
   /// Business-level customer messaging settings (reminder lead time in hours, 0 = off; language of customer messages).
-  Future<void> updateMessaging({int? reminderHours, String? customerLocale}) async {
+  Future<void> updateMessaging({int? reminderHours, String? customerLocale, int? retentionMonths}) async {
     final biz = await _id();
-    await ref.read(apiClientProvider).run((d) => d.patch('/api/v1/businesses/$biz/settings', data: {'reminderHours': ?reminderHours, 'customerLocale': ?customerLocale}));
+    await ref.read(apiClientProvider).run((d) => d.patch('/api/v1/businesses/$biz/settings', data: {'reminderHours': ?reminderHours, 'customerLocale': ?customerLocale, 'customerRetentionMonths': ?retentionMonths}));
     ref.invalidate(currentBusinessProvider);
+  }
+
+  /// Everything held about one client as JSON bytes (the server audits the export).
+  Future<({String name, Uint8List bytes})> exportCustomer(String customerId) async {
+    final biz = await _id();
+    final r = await ref.read(apiClientProvider).run((d) => d.get<List<int>>('/api/v1/businesses/$biz/customers/$customerId/export', options: Options(responseType: ResponseType.bytes)));
+    return (name: 'customer-$customerId.json', bytes: Uint8List.fromList(r.data!));
+  }
+
+  /// Irreversible: removes the client's personal data; bookings and payments stay without it.
+  Future<void> anonymizeCustomer(String customerId) async {
+    final biz = await _id();
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$biz/customers/$customerId/anonymize'));
+    ref.invalidate(customerProfileProvider);
+    ref.invalidate(customersProvider);
   }
 
   Future<void> updateCustomer(String id, {String? fullName, String? email, String? notes, bool? marketingOptIn}) async {

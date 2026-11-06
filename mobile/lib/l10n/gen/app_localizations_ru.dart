@@ -1125,4 +1125,41 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get histNote =>
       'Хранится 90 дней. Устройство определяется по типу приложения или браузера, это не доказательство.';
+
+  @override
+  String get privacyExport => 'Выгрузить данные клиента';
+
+  @override
+  String get privacyDelete => 'Удалить персональные данные';
+
+  @override
+  String get privacyDeleteWarn =>
+      'Имя, телефон, e-mail, заметки и сообщения этого клиента будут удалены навсегда, отменить нельзя. Записи и платежи останутся для вашей отчётности, но без персональных данных.';
+
+  @override
+  String get privacyConfirm => 'Удалить навсегда';
+
+  @override
+  String get privacyDone => 'Персональные данные удалены';
+
+  @override
+  String get errHasUpcoming => 'Сначала отмените будущие записи клиента';
+
+  @override
+  String get privacySaved => 'Файл сохранён';
+
+  @override
+  String get retentionTitle => 'Автоудаление неактивных клиентов';
+
+  @override
+  String get retentionNote =>
+      'Обезличивать клиентов, у которых не было записей так долго (кроме тех, у кого есть будущие записи). По умолчанию выключено. Уточните требования закона вашей страны.';
+
+  @override
+  String get retentionOff => 'Выкл.';
+
+  @override
+  String retentionYears(String n) {
+    return '$n г.';
+  }
 }
