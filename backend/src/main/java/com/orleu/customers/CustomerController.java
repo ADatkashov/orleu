@@ -10,8 +10,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/businesses/{businessId}/customers")
 public class CustomerController {
+    public record ImportRequest(@jakarta.validation.constraints.NotNull String csv, boolean dryRun) {}
+
     private final CustomerService service;
-    public CustomerController(CustomerService service) { this.service = service; }
+    private final CustomerImportService importer;
+    public CustomerController(CustomerService service, CustomerImportService importer) { this.service = service; this.importer = importer; }
 
     @PostMapping @ResponseStatus(HttpStatus.CREATED)
     public CustomerView create(@PathVariable UUID businessId, @Valid @RequestBody CustomerInput in) { return service.create(businessId, in); }
@@ -36,4 +39,8 @@ public class CustomerController {
 
     @PostMapping("/{id}/unblock")
     public CustomerView unblock(@PathVariable UUID businessId, @PathVariable UUID id) { return service.setBlocked(businessId, id, false); }
+
+    /** CSV text in the JSON body (the clients read the file themselves). dryRun=true reports without changing anything. */
+    @PostMapping("/import")
+    public CustomerImportService.ImportResult importCsv(@PathVariable UUID businessId, @Valid @RequestBody ImportRequest r) { return importer.run(businessId, r.csv(), r.dryRun()); }
 }
