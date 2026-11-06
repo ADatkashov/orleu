@@ -1231,4 +1231,65 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get errTooManyRanges => 'Не больше шести интервалов в день';
+
+  @override
+  String get promosNav => 'Промокоды';
+
+  @override
+  String get promosNone =>
+      'Промокодов пока нет. Создайте промокод — гости смогут ввести его при записи.';
+
+  @override
+  String get promoAdd => 'Новый промокод';
+
+  @override
+  String get promoCode => 'Код';
+
+  @override
+  String get promoKindPercent => 'Процент';
+
+  @override
+  String get promoKindFixed => 'Фиксированная сумма';
+
+  @override
+  String get promoValue => 'Размер скидки';
+
+  @override
+  String get promoMaxUses => 'Макс. использований (необязательно)';
+
+  @override
+  String get promoUntil => 'Действует до (необязательно)';
+
+  @override
+  String get promoAnyService => 'Любая услуга';
+
+  @override
+  String get promoCodeOptional => 'Промокод (необязательно)';
+
+  @override
+  String get promoEnabled => 'Включён';
+
+  @override
+  String promoUsed(String used, String max) {
+    return 'Использован $used$max';
+  }
+
+  @override
+  String get promoOff => 'Выкл.';
+
+  @override
+  String promoDiscountOf(String value) {
+    return 'Скидка $value';
+  }
+
+  @override
+  String promoValidUntilLabel(String date) {
+    return 'до $date';
+  }
+
+  @override
+  String get errPromo => 'Промокод недействителен.';
+
+  @override
+  String get errCodeExists => 'Такой код уже существует.';
 }

@@ -1232,4 +1232,65 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errTooManyRanges => 'At most six ranges per day';
+
+  @override
+  String get promosNav => 'Promo codes';
+
+  @override
+  String get promosNone =>
+      'No promo codes yet. Create one and guests can enter it when booking.';
+
+  @override
+  String get promoAdd => 'New promo code';
+
+  @override
+  String get promoCode => 'Code';
+
+  @override
+  String get promoKindPercent => 'Percent';
+
+  @override
+  String get promoKindFixed => 'Fixed amount';
+
+  @override
+  String get promoValue => 'Discount value';
+
+  @override
+  String get promoMaxUses => 'Max uses (optional)';
+
+  @override
+  String get promoUntil => 'Valid until (optional)';
+
+  @override
+  String get promoAnyService => 'Any service';
+
+  @override
+  String get promoCodeOptional => 'Promo code (optional)';
+
+  @override
+  String get promoEnabled => 'Enabled';
+
+  @override
+  String promoUsed(String used, String max) {
+    return 'Used $used$max';
+  }
+
+  @override
+  String get promoOff => 'Off';
+
+  @override
+  String promoDiscountOf(String value) {
+    return '$value off';
+  }
+
+  @override
+  String promoValidUntilLabel(String date) {
+    return 'until $date';
+  }
+
+  @override
+  String get errPromo => 'This promo code is not valid.';
+
+  @override
+  String get errCodeExists => 'This code already exists.';
 }

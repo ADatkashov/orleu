@@ -14,14 +14,14 @@ public final class BookingDtos {
 
     public record CreateBookingRequest(
             @NotNull UUID branchId, @NotNull UUID serviceId, UUID employeeId, @NotNull Instant startsAt,
-            UUID customerId, @Valid CustomerInput customer, @Size(max = 2000) String notes) {}
+            UUID customerId, @Valid CustomerInput customer, @Size(max = 2000) String notes, @Size(max = 32) String promoCode) {}
 
     public record RescheduleRequest(@NotNull Instant startsAt, UUID employeeId) {}
 
     public record TransitionRequest(@NotNull BookingStatus status, @Size(max = 300) String reason) {}
 
     public record Financials(BigDecimal price, BigDecimal depositAmount, BigDecimal paid, BigDecimal refunded,
-                             BigDecimal netPaid, BigDecimal remaining, String paymentStatus) {}
+                             BigDecimal netPaid, BigDecimal remaining, String paymentStatus, BigDecimal discount) {}
 
     public record BookingView(UUID id, UUID branchId, UUID serviceId, String serviceName, UUID employeeId, String employeeName,
                               UUID customerId, String customerName, String customerPhone, Instant startsAt, Instant endsAt,

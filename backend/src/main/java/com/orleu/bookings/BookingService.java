@@ -4,6 +4,7 @@ import com.orleu.audit.AuditService;
 import com.orleu.auth.CurrentUser;
 import com.orleu.bookings.BookingDtos.*;
 import com.orleu.business.Business;
+import com.orleu.promo.PromoService;
 import com.orleu.business.BusinessRepository;
 import com.orleu.catalog.BranchRepository;
 import com.orleu.catalog.EmployeeRepository;
@@ -42,14 +43,15 @@ public class BookingService {
     private final AuditService audit;
     private final JdbcClient jdbc;
     private final OutboxService outbox;
+    private final PromoService promos;
 
     public BookingService(TenantAccess access, BookingRepository bookings, BusinessRepository businesses,
                           ServiceRepository services, BranchRepository branches, CustomerRepository customers,
                           CustomerService customerService, AvailabilityService availability, BookingQueries queries,
-                          AuditService audit, JdbcClient jdbc, OutboxService outbox) {
+                          AuditService audit, JdbcClient jdbc, OutboxService outbox, PromoService promos) {
         this.access = access; this.bookings = bookings; this.businesses = businesses; this.services = services;
         this.branches = branches; this.customers = customers; this.customerService = customerService;
-        this.availability = availability; this.queries = queries; this.audit = audit; this.jdbc = jdbc; this.outbox = outbox;
+        this.availability = availability; this.queries = queries; this.audit = audit; this.jdbc = jdbc; this.outbox = outbox; this.promos = promos;
     }
 
     // ---------- staff-facing ----------
@@ -65,7 +67,7 @@ public class BookingService {
         } else {
             throw ApiException.badRequest("CUSTOMER_REQUIRED", "customerId or customer is required");
         }
-        Booking b = place(businessId, r.branchId(), r.serviceId(), r.employeeId(), customer, r.startsAt(), r.notes(), "STAFF", false);
+        Booking b = place(businessId, r.branchId(), r.serviceId(), r.employeeId(), customer, r.startsAt(), r.notes(), "STAFF", false, r.promoCode());
         return queries.find(businessId, b.getId()).orElseThrow();
     }
 
@@ -130,7 +132,7 @@ public class BookingService {
      */
     @Transactional
     public Booking place(UUID businessId, UUID branchId, UUID serviceId, UUID employeeId, Customer customer,
-                         Instant startsAt, String notes, String source, boolean applyOnlineRules) {
+                         Instant startsAt, String notes, String source, boolean applyOnlineRules, String promoCode) {
         Business biz = businesses.findById(businessId).orElseThrow(() -> ApiException.notFound("Business"));
         branches.findByIdAndBusinessId(branchId, businessId).filter(x -> x.isActive()).orElseThrow(() -> ApiException.notFound("Branch"));
         ServiceOffering svc = services.findByIdAndBusinessId(serviceId, businessId).filter(ServiceOffering::isActive)
@@ -140,7 +142,9 @@ public class BookingService {
 
         UUID chosen = pickEmployee(businessId, branchId, serviceId, employeeId, startsAt, null, applyOnlineRules);
 
-        BigDecimal price = Money.scale(svc.getPrice());
+        BigDecimal listPrice = Money.scale(svc.getPrice());
+        PromoService.Applied promo = promoCode == null || promoCode.isBlank() ? null : promos.preview(businessId, promoCode, serviceId, listPrice);
+        BigDecimal price = promo != null ? promo.finalPrice() : listPrice;
         BigDecimal pct = svc.getDepositPercent() != null ? svc.getDepositPercent() : biz.getDepositPercent();
         BigDecimal deposit = Money.percentOf(price, pct);
 
@@ -155,6 +159,7 @@ public class BookingService {
         b.setBlockedUntil(b.getEndsAt().plus(Duration.ofMinutes(svc.getBufferMinutes())));
         b.setPrice(price);
         b.setDepositAmount(deposit);
+        if (promo != null) { b.setPromoCodeId(promo.promoId()); b.setDiscountAmount(promo.discount()); }
         b.setCurrency(biz.getCurrency());
         b.setNotes(notes);
         b.setSource(source);
@@ -171,6 +176,7 @@ public class BookingService {
         } catch (DataIntegrityViolationException e) {
             throw slotTaken();
         }
+        if (promo != null) promos.redeem(businessId, promo.promoId()); // atomic; a failure rolls the whole booking back
         b.setRawManageToken(rawToken);
         history(businessId, b.getId(), null, b.getStatus(), "PUBLIC".equals(source) ? null : CurrentUser.id(), null);
         outbox.publish(businessId, "BOOKING_CREATED", b.getId(), "BOOKING_CREATED:" + b.getId());
