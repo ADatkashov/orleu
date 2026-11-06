@@ -39,7 +39,7 @@ public class PublicBookingController {
                                 String timezone, BigDecimal depositPercent, List<BranchView> branches, List<ServiceView> services, List<PublicEmployee> employees,
                                 int reviewCount, Double averageRating) {}
     public record PublicBookingRequest(@NotNull UUID branchId, @NotNull UUID serviceId, UUID employeeId, @NotNull Instant startsAt,
-                                       @Valid @NotNull CustomerInput customer) {}
+                                       @Valid @NotNull CustomerInput customer, @jakarta.validation.constraints.Size(max = 32) String promoCode) {}
     public record PublicBookingConfirmation(UUID bookingId, String status, Instant startsAt, BigDecimal price, BigDecimal depositAmount,
                                             BigDecimal remainingBalance, String currency, Instant holdExpiresAt,
                                             String manageToken) {}
@@ -52,11 +52,13 @@ public class PublicBookingController {
     private final BookingService bookingService;
     private final JdbcClient jdbc;
     private final com.orleu.reviews.ReviewService reviews;
+    private final com.orleu.promo.PromoService promos;
 
     public PublicBookingController(BusinessRepository businesses, BranchRepository branches, ServiceRepository services,
                                    AvailabilityService availability, CustomerService customerService,
-                                   BookingService bookingService, JdbcClient jdbc, com.orleu.reviews.ReviewService reviews) {
-        this.reviews = reviews;
+                                   BookingService bookingService, JdbcClient jdbc, com.orleu.reviews.ReviewService reviews,
+                                   com.orleu.promo.PromoService promos) {
+        this.reviews = reviews; this.promos = promos;
         this.businesses = businesses; this.branches = branches; this.services = services;
         this.availability = availability; this.customerService = customerService;
         this.bookingService = bookingService; this.jdbc = jdbc;
@@ -87,13 +89,26 @@ public class PublicBookingController {
         return availability.slots(b.getId(), branchId, serviceId, employeeId, date, Instant.now(), null, true);
     }
 
+    public record PromoPreview(BigDecimal listPrice, BigDecimal discount, BigDecimal price, BigDecimal depositAmount) {}
+
+    /** What a promo code would do to the price of this service (does not consume a redemption). */
+    @GetMapping("/promo-check")
+    public PromoPreview promoCheck(@PathVariable String slug, @RequestParam UUID serviceId, @RequestParam String code) {
+        Business b = published(slug);
+        var svc = services.findByIdAndBusinessId(serviceId, b.getId()).filter(x -> x.isActive() && x.isOnlineBookable()).orElseThrow(() -> ApiException.notFound("Service"));
+        BigDecimal list = com.orleu.common.Money.scale(svc.getPrice());
+        var applied = promos.preview(b.getId(), code, serviceId, list);
+        BigDecimal pct = svc.getDepositPercent() != null ? svc.getDepositPercent() : b.getDepositPercent();
+        return new PromoPreview(list, applied.discount(), applied.finalPrice(), com.orleu.common.Money.percentOf(applied.finalPrice(), pct));
+    }
+
     @PostMapping("/bookings") @ResponseStatus(HttpStatus.CREATED)
     @Transactional
     public PublicBookingConfirmation book(@PathVariable String slug, @Valid @RequestBody PublicBookingRequest r) {
         Business b = published(slug);
         Customer customer = customerService.upsert(b.getId(), r.customer());
         Booking booking = bookingService.place(b.getId(), r.branchId(), r.serviceId(), r.employeeId(), customer, r.startsAt(),
-                null, "PUBLIC", true);
+                null, "PUBLIC", true, r.promoCode());
         return new PublicBookingConfirmation(booking.getId(), booking.getStatus().name(), booking.getStartsAt(), booking.getPrice(),
                 booking.getDepositAmount(), booking.getPrice(), booking.getCurrency(), booking.getHoldExpiresAt(),
                 booking.getRawManageToken());

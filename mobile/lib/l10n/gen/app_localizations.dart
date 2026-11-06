@@ -2391,6 +2391,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'At most six ranges per day'**
   String get errTooManyRanges;
+
+  /// No description provided for @promosNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Promo codes'**
+  String get promosNav;
+
+  /// No description provided for @promosNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No promo codes yet. Create one and guests can enter it when booking.'**
+  String get promosNone;
+
+  /// No description provided for @promoAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'New promo code'**
+  String get promoAdd;
+
+  /// No description provided for @promoCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get promoCode;
+
+  /// No description provided for @promoKindPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Percent'**
+  String get promoKindPercent;
+
+  /// No description provided for @promoKindFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixed amount'**
+  String get promoKindFixed;
+
+  /// No description provided for @promoValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount value'**
+  String get promoValue;
+
+  /// No description provided for @promoMaxUses.
+  ///
+  /// In en, this message translates to:
+  /// **'Max uses (optional)'**
+  String get promoMaxUses;
+
+  /// No description provided for @promoUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until (optional)'**
+  String get promoUntil;
+
+  /// No description provided for @promoAnyService.
+  ///
+  /// In en, this message translates to:
+  /// **'Any service'**
+  String get promoAnyService;
+
+  /// No description provided for @promoCodeOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Promo code (optional)'**
+  String get promoCodeOptional;
+
+  /// No description provided for @promoEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get promoEnabled;
+
+  /// No description provided for @promoUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Used {used}{max}'**
+  String promoUsed(String used, String max);
+
+  /// No description provided for @promoOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get promoOff;
+
+  /// No description provided for @promoDiscountOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} off'**
+  String promoDiscountOf(String value);
+
+  /// No description provided for @promoValidUntilLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'until {date}'**
+  String promoValidUntilLabel(String date);
+
+  /// No description provided for @errPromo.
+  ///
+  /// In en, this message translates to:
+  /// **'This promo code is not valid.'**
+  String get errPromo;
+
+  /// No description provided for @errCodeExists.
+  ///
+  /// In en, this message translates to:
+  /// **'This code already exists.'**
+  String get errCodeExists;
 }
 
 class _AppLocalizationsDelegate

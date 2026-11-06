@@ -18,7 +18,7 @@ public class BookingQueries {
     private static final String BASE = """
         select b.id, b.branch_id, b.service_id, s.name as service_name, b.employee_id, e.display_name as employee_name,
                b.customer_id, c.full_name as customer_name, c.phone as customer_phone, b.starts_at, b.ends_at, b.status,
-               b.currency, b.notes, b.hold_expires_at, b.price, b.deposit_amount,
+               b.currency, b.notes, b.hold_expires_at, b.price, b.deposit_amount, b.discount_amount,
                coalesce((select sum(l.amount) from ledger_entries l where l.booking_id = b.id and l.entry_type = 'PAYMENT'), 0) as paid,
                coalesce((select sum(l.amount) from ledger_entries l where l.booking_id = b.id and l.entry_type = 'REFUND'), 0) as refunded
         from bookings b
@@ -60,10 +60,10 @@ public class BookingQueries {
                 rs.getTimestamp("starts_at").toInstant(), rs.getTimestamp("ends_at").toInstant(),
                 BookingStatus.valueOf(rs.getString("status")), rs.getString("currency"), rs.getString("notes"),
                 rs.getTimestamp("hold_expires_at") == null ? null : rs.getTimestamp("hold_expires_at").toInstant(),
-                financials(price, deposit, paid, refunded));
+                financials(price, deposit, paid, refunded, rs.getBigDecimal("discount_amount")));
     }
 
-    public static Financials financials(BigDecimal price, BigDecimal deposit, BigDecimal paid, BigDecimal refunded) {
+    public static Financials financials(BigDecimal price, BigDecimal deposit, BigDecimal paid, BigDecimal refunded, BigDecimal discount) {
         BigDecimal net = Money.scale(paid.subtract(refunded));
         BigDecimal remaining = Money.scale(price.subtract(net).max(BigDecimal.ZERO));
         String status;
@@ -72,6 +72,6 @@ public class BookingQueries {
         else if (net.compareTo(price) >= 0) status = "PAID";
         else if (net.compareTo(deposit) >= 0 && deposit.signum() > 0) status = "DEPOSIT_PAID";
         else status = "PARTIALLY_PAID";
-        return new Financials(price, deposit, Money.scale(paid), Money.scale(refunded), net, remaining, status);
+        return new Financials(price, deposit, Money.scale(paid), Money.scale(refunded), net, remaining, status, Money.scale(discount));
     }
 }

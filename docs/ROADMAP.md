@@ -41,7 +41,7 @@ Gaps: OTP/phone login, MFA, e-mail invitations, branch-level permissions, (done:
 ### Phase 2 — Commercial core: PARTIAL
 - DONE: deposits (decimal-safe), immutable ledger, manual payments/refunds with idempotency, plans + entitlements, outbox + in-app notifications.
 - PARTIAL: CRM (basic customer records), subscription lifecycle (manual plan assignment, expiry → FREE).
-- TODO: promo codes/discounts, partial-refund approval workflow, reconciliation, invoices/receipts, trial/grace/renewal/proration, usage metering, notification templates kk/ru/en, reminders before appointments (prepared, not delivered — see above).
+- DONE (promo codes/discounts, see IMPLEMENTATION_STATUS). TODO: partial-refund approval workflow, reconciliation, invoices/receipts, trial/grace/renewal/proration, usage metering, notification templates kk/ru/en, reminders before appointments (prepared, not delivered — see above).
 - BLOCKED: payment providers, SMS/e-mail/WhatsApp/push delivery.
 
 ### Phase 3 — Operations: PARTIAL
@@ -93,4 +93,5 @@ Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real 
 5. ~~Week/month calendar and filters~~ — done (drag-and-drop and resource columns remain TODO).
 6. ~~Reviews, support tickets, admin Users/Support~~ — done; customer portal (needs guest accounts), review moderation and ticket notifications remain.
 7. ~~Load-test scenarios and a first measured baseline; ArchUnit checks~~ — done (baseline is single-run, same-machine; see `docs/LOAD_TESTING.md`).
-8. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.
+8. ~~Promo codes / discounts~~ — done (percent or fixed, validity window, usage limit, per-service; no per-customer limits, stacking or automatic discounts yet).
+9. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.

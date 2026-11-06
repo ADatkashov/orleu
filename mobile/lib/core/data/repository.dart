@@ -168,11 +168,12 @@ class BookingActions {
   }
 
   Future<void> createBooking({required String branchId, required String serviceId, String? employeeId, required DateTime startsAtInstant,
-      required String name, required String phone, String? notes}) async {
+      required String name, required String phone, String? notes, String? promoCode}) async {
     final id = await _id();
     await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$id/bookings', data: {
           'branchId': branchId, 'serviceId': serviceId, 'employeeId': ?employeeId, 'startsAt': startsAtInstant.toUtc().toIso8601String(),
           'customer': {'fullName': name, 'phone': phone}, 'notes': ?(notes == null || notes.isEmpty ? null : notes),
+          'promoCode': ?(promoCode == null || promoCode.trim().isEmpty ? null : promoCode.trim()),
         }));
     ref.invalidate(bookingsProvider);
     ref.invalidate(bookingsRangeProvider);
@@ -412,6 +413,24 @@ final sessionsProvider = FutureProvider.autoDispose<List<DeviceSession>>((ref) a
 Future<void> revokeSession(WidgetRef ref, String id) async {
   await ref.read(apiClientProvider).run((d) => d.delete('/api/v1/auth/sessions/$id'));
   ref.invalidate(sessionsProvider);
+}
+
+final promosProvider = FutureProvider.autoDispose<List<PromoItem>>((ref) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/promo-codes'));
+  return (r.data as List).map((e) => PromoItem.fromJson(e)).toList();
+});
+
+Future<void> createPromo(WidgetRef ref, Map<String, Object?> body) async {
+  final b = await ref.read(currentBusinessProvider.future);
+  await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/${b!.id}/promo-codes', data: body));
+  ref.invalidate(promosProvider);
+}
+
+Future<void> setPromoActive(WidgetRef ref, String id, bool active) async {
+  final b = await ref.read(currentBusinessProvider.future);
+  await ref.read(apiClientProvider).run((d) => d.patch('/api/v1/businesses/${b!.id}/promo-codes/$id', data: {'active': active}));
+  ref.invalidate(promosProvider);
 }
 
 final reviewsProvider = FutureProvider.autoDispose<(ReviewSummary, List<ReviewItem>)>((ref) async {

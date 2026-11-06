@@ -24,6 +24,8 @@ public class Booking {
     @Enumerated(EnumType.STRING) private BookingStatus status;
     private BigDecimal price;
     @Column(name = "deposit_amount") private BigDecimal depositAmount;
+    @Column(name = "promo_code_id") private UUID promoCodeId;
+    @Column(name = "discount_amount") private BigDecimal discountAmount = BigDecimal.ZERO;
     private String currency;
     @Column(name = "hold_expires_at") private Instant holdExpiresAt;
     private String notes;

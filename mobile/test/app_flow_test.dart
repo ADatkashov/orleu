@@ -110,6 +110,7 @@ void main() {
   testWidgets('language switch changes the UI language and persists the choice in state', (tester) async {
     final store = MemoryTokenStore()..access = 'a'..refresh = 'r';
     await pumpApp(tester, FakeAdapter(businessRoutes()), store);
+    setPhone(tester, 390, 2400); // the More list is long: make the language control reachable without scrolling
     await tester.tap(find.text('More').last);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Русский'));

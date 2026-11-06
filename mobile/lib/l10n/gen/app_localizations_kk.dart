@@ -1230,4 +1230,65 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get errTooManyRanges => 'Күніне алты аралықтан артық болмайды';
+
+  @override
+  String get promosNav => 'Промокодтар';
+
+  @override
+  String get promosNone =>
+      'Промокод әлі жоқ. Промокод жасаңыз — қонақтар жазылу кезінде енгізе алады.';
+
+  @override
+  String get promoAdd => 'Жаңа промокод';
+
+  @override
+  String get promoCode => 'Код';
+
+  @override
+  String get promoKindPercent => 'Пайыз';
+
+  @override
+  String get promoKindFixed => 'Тіркелген сома';
+
+  @override
+  String get promoValue => 'Жеңілдік мөлшері';
+
+  @override
+  String get promoMaxUses => 'Ең көп қолдану (міндетті емес)';
+
+  @override
+  String get promoUntil => 'Жарамды мерзімі (міндетті емес)';
+
+  @override
+  String get promoAnyService => 'Кез келген қызмет';
+
+  @override
+  String get promoCodeOptional => 'Промокод (міндетті емес)';
+
+  @override
+  String get promoEnabled => 'Қосулы';
+
+  @override
+  String promoUsed(String used, String max) {
+    return 'Қолданылды $used$max';
+  }
+
+  @override
+  String get promoOff => 'Өшірулі';
+
+  @override
+  String promoDiscountOf(String value) {
+    return 'Жеңілдік $value';
+  }
+
+  @override
+  String promoValidUntilLabel(String date) {
+    return '$date дейін';
+  }
+
+  @override
+  String get errPromo => 'Промокод жарамсыз.';
+
+  @override
+  String get errCodeExists => 'Мұндай код бар.';
 }

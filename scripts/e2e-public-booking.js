@@ -24,12 +24,14 @@ const assert = (c, m) => { if (!c) throw new Error('ASSERT: ' + m); };
   const emp = await api(`/api/v1/businesses/${biz.id}/employees`, 'POST', { displayName: 'Master Dana' }, T);
   await api(`/api/v1/businesses/${biz.id}/employees/${emp.id}/assignments`, 'PUT', { branchIds: [br.id], serviceIds: [svc.id] }, T);
   await api(`/api/v1/businesses/${biz.id}/publish`, 'POST', null, T);
+  await api(`/api/v1/businesses/${biz.id}/promo-codes`, 'POST', { code: 'E2E10', kind: 'PERCENT', value: '10' }, T);
 
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, locale: 'en-US' });
   const page = await ctx.newPage();
   const problems = [];
-  page.on('console', (m) => { if (m.type() === 'error') problems.push('console: ' + m.text()); });
+  let expect400 = false; // the deliberate wrong-promo-code step makes the browser log one 400
+  page.on('console', (m) => { if (m.type() === 'error' && !(expect400 && /status of 400/.test(m.text()))) problems.push('console: ' + m.text()); });
   page.on('pageerror', (e) => problems.push('pageerror: ' + e.message));
   const shot = async (n) => { if (SHOTS) await page.screenshot({ path: `${SHOTS}/${n}.png` }); };
 
@@ -53,6 +55,15 @@ const assert = (c, m) => { if (!c) throw new Error('ASSERT: ' + m); };
   await page.getByTestId('to-review').click();
   await page.getByTestId('confirm').waitFor();
   await shot('4-review');
+  expect400 = true;
+  await page.getByTestId('promo').fill('WRONG');
+  await page.getByTestId('applyPromo').click();
+  await page.getByText('not valid').waitFor();
+  expect400 = false;
+  await page.getByTestId('promo').fill('e2e10');
+  await page.getByTestId('applyPromo').click();
+  await page.getByText('18,000').first().waitFor();
+  await shot('4b-review-promo');
   await page.getByTestId('confirm').click();
   await page.getByTestId('done').waitFor();
   await shot('5-done');
@@ -63,7 +74,7 @@ const assert = (c, m) => { if (!c) throw new Error('ASSERT: ' + m); };
   // owner sees the guest booking with normalised phone
   const from = new Date(Date.now() - 864e5).toISOString(), to = new Date(Date.now() + 10 * 864e5).toISOString();
   const list = await api(`/api/v1/businesses/${biz.id}/bookings?from=${from}&to=${to}`, 'GET', null, T);
-  assert(list.length === 1 && list[0].customerPhone === '+77011234567' && list[0].status === 'CONFIRMED', 'owner view ' + JSON.stringify(list));
+  assert(list.length === 1 && list[0].customerPhone === '+77011234567' && list[0].status === 'CONFIRMED' && Number(list[0].financials.price) === 18000 && Number(list[0].financials.discount) === 2000, 'owner view ' + JSON.stringify(list));
 
   // manage page: view, then cancel
   const m = await ctx.newPage();

@@ -309,3 +309,15 @@ class CustomerProfile {
       customer: Customer.fromJson(j['customer']), marketingOptIn: j['customer']['marketingOptIn'] == true, notes: j['customer']['notes'],
       stats: CustomerStats.fromJson(j['stats'], zone: zone), bookings: [for (final b in (j['bookings'] as List)) BookingLine.fromJson(b, zone: zone)]);
 }
+
+class PromoItem {
+  final String id, code, kind;
+  final double value;
+  final String? validUntil; // ISO date, business-local
+  final int? maxUses;
+  final int usedCount;
+  final bool active;
+  const PromoItem({required this.id, required this.code, required this.kind, required this.value, this.validUntil, this.maxUses, required this.usedCount, required this.active});
+  factory PromoItem.fromJson(Map<String, dynamic> j) => PromoItem(id: j['id'], code: j['code'], kind: j['kind'], value: _num(j['value']),
+      validUntil: j['validUntil'], maxUses: j['maxUses'], usedCount: j['usedCount'] ?? 0, active: j['active'] ?? true);
+}

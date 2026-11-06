@@ -77,6 +77,24 @@ void main() {
     expect(find.text('Booking created'), findsOneWidget);
   });
 
+  testWidgets('a promo code typed by staff is sent with the booking', (tester) async {
+    final env = Env();
+    await openCalendar(tester, env);
+    await tester.tap(find.byKey(const Key('newBooking')));
+    await tester.pumpAndSettle();
+    await pickFirst(tester, const Key('selService'), 'Haircut');
+    await tester.tap(find.byKey(Key('slot-${tomorrow10.toUtc().toIso8601String()}')));
+    await tester.pump();
+    await tester.enterText(find.byKey(const Key('clientName')), 'Aigerim');
+    await tester.enterText(find.byKey(const Key('clientPhone')), '8 701 123 45 67');
+    await tester.enterText(find.byKey(const Key('bookingPromo')), ' summer15 ');
+    await tester.ensureVisible(find.byKey(const Key('createBooking')));
+    await tester.tap(find.byKey(const Key('createBooking')));
+    await tester.pumpAndSettle();
+    final body = env.adapter.calls.firstWhere((c) => c.method == 'POST' && c.path == '/api/v1/businesses/b1/bookings').data as Map;
+    expect(body['promoCode'], 'summer15');
+  });
+
   testWidgets('create button needs a chosen time and the phone must be valid', (tester) async {
     final env = Env();
     await openCalendar(tester, env);

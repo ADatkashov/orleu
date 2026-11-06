@@ -3,7 +3,7 @@
   const slug = document.body.dataset.slug;
   const root = document.getElementById('app');
   const S = { profile: null, step: 1, service: null, branch: null, employee: null /* null = any */, date: null, slots: null, slot: null,
-    name: '', phone: '', email: '', marketing: false, error: '', busy: false, result: null };
+    name: '', phone: '', email: '', marketing: false, promoInput: '', promo: null, error: '', busy: false, result: null };
 
   const PHONE = /^\+[1-9]\d{7,14}$/;
   function normPhone(raw) {
@@ -131,30 +131,47 @@
   }
   function stepReview() {
     const pct = depositFor();
-    const price = Number(S.service.price);
-    const dep = pct ? Math.round(price * pct) / 100 : null;
+    const price = S.promo ? Number(S.promo.price) : Number(S.service.price);
+    const dep = S.promo ? Number(S.promo.depositAmount) : (pct ? Math.round(price * pct) / 100 : null);
     const row = (k, v) => h('div', { class: 'row' }, h('span', { class: 'muted' }, k), h('span', {}, v));
     return [
       h('h2', {}, t('review')),
       h('div', { class: 'card' },
         row(t('service'), S.service.name), row(t('where'), S.branch.name),
         row(t('who'), S.employee ? S.employee.displayName : t('anyMaster')),
-        row(t('when'), fmtDateTime(S.slot.start)), row(t('price'), money(price, S.profile.currency)),
+        row(t('when'), fmtDateTime(S.slot.start)),
+        S.promo ? row(t('discount'), '−' + money(S.promo.discount, S.profile.currency)) : null,
+        row(t('price'), money(price, S.profile.currency)),
         dep ? row(t('deposit'), money(dep, S.profile.currency)) : null),
+      h('div', { class: 'row' },
+        h('input', { type: 'text', 'data-testid': 'promo', maxlength: 32, placeholder: t('promo'), value: S.promoInput, 'aria-label': t('promo'),
+          oninput: (ev) => { S.promoInput = ev.target.value; } }),
+        h('button', { class: 'btn ghost', type: 'button', 'data-testid': 'applyPromo', onclick: applyPromo }, t('applyPromo'))),
       err(),
       h('button', { class: 'btn', type: 'button', disabled: S.busy, 'data-testid': 'confirm', onclick: confirm }, t('confirm')),
       backBtn(4),
     ];
+  }
+  async function applyPromo() {
+    S.error = ''; S.promo = null;
+    const code = S.promoInput.trim();
+    if (code) {
+      try { S.promo = Object.assign({ code }, await api(`/api/v1/public/businesses/${encodeURIComponent(slug)}/promo-check?serviceId=${S.service.id}&code=${encodeURIComponent(code)}`)); }
+      catch (e) { S.error = errText(e); }
+    }
+    render();
   }
   async function confirm() {
     S.busy = true; S.error = ''; render();
     const body = { branchId: S.branch.id, serviceId: S.service.id, startsAt: S.slot.start,
       customer: { fullName: S.name, phone: S.phone, email: S.email || null, marketingOptIn: S.marketing } };
     if (S.employee) body.employeeId = S.employee.id;
+    if (S.promo) body.promoCode = S.promo.code;
     try {
       S.result = await api(`/api/v1/public/businesses/${encodeURIComponent(slug)}/bookings`, { method: 'POST', body: JSON.stringify(body) });
     } catch (e) {
       S.error = errText(e);
+      if (e.code === 'PROMO_INVALID') S.promo = null;
       if (e.code === 'SLOT_UNAVAILABLE') { S.busy = false; S.step = 3; return loadSlots(); }
     }
     S.busy = false; render();

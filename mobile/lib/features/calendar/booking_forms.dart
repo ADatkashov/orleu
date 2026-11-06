@@ -17,7 +17,7 @@ class NewBookingSheet extends ConsumerStatefulWidget {
 
 class _NewBookingState extends ConsumerState<NewBookingSheet> {
   final _form = GlobalKey<FormState>();
-  final _name = TextEditingController(), _phone = TextEditingController(), _notes = TextEditingController();
+  final _name = TextEditingController(), _phone = TextEditingController(), _notes = TextEditingController(), _promo = TextEditingController();
   String? _serviceId, _branchId, _employeeId; // _employeeId null = any
   Slot? _slot;
   bool _busy = false;
@@ -96,6 +96,8 @@ class _NewBookingState extends ConsumerState<NewBookingSheet> {
                   validator: (v) => v == null || !phoneE164.hasMatch(normalizePhone(v)) ? l.validationPhone : null),
               const SizedBox(height: AppSpacing.md),
               TextFormField(controller: _notes, decoration: deco(l.notesOptional), maxLines: 2),
+              const SizedBox(height: AppSpacing.md),
+              TextFormField(key: const Key('bookingPromo'), controller: _promo, textCapitalization: TextCapitalization.characters, decoration: deco(l.promoCodeOptional)),
               FormError(_error),
               const SizedBox(height: AppSpacing.lg),
               FilledButton(
@@ -105,7 +107,7 @@ class _NewBookingState extends ConsumerState<NewBookingSheet> {
                   setState(() => _busy = true);
                   final err = await attempt(context, () => ref.read(bookingActionsProvider).createBooking(
                         branchId: _branchId!, serviceId: _serviceId!, employeeId: _employeeId, startsAtInstant: _slot!.instant,
-                        name: _name.text.trim(), phone: normalizePhone(_phone.text), notes: _notes.text.trim()));
+                        name: _name.text.trim(), phone: normalizePhone(_phone.text), notes: _notes.text.trim(), promoCode: _promo.text));
                   if (!context.mounted) return;
                   if (err == null) {
                     Navigator.pop(context);

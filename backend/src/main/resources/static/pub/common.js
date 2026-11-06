@@ -37,6 +37,7 @@
   }
   function errText(e) {
     if (e.code === 'SLOT_UNAVAILABLE') return t('errSlot');
+    if (e.code === 'PROMO_INVALID') return t('errPromo');
     if (e.status === 404) return t('errNotFound');
     if (e.status === 429) return t('errRate');
     if (e.status === 403) return t('errBlocked');

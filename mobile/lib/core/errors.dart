@@ -33,6 +33,8 @@ String errorText(BuildContext context, Object error) {
     'NOT_READY_TO_PUBLISH' => l.errNotReady,
     'BUSINESS_SUSPENDED' => l.errSuspended,
     'SLOT_UNAVAILABLE' => l.errSlot,
+    'PROMO_INVALID' => l.errPromo,
+    'CODE_EXISTS' => l.errCodeExists,
     'OVERPAYMENT' => l.errOverpayment,
     'INVALID_NAME' => l.validationRequired,
     'FORBIDDEN' => l.errBlockedCustomer,
