@@ -660,4 +660,83 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get messagesSaved => 'Сақталды';
+
+  @override
+  String get forgotPassword => 'Құпиясөзді ұмыттыңыз ба?';
+
+  @override
+  String get resetIntro =>
+      'Құпиясөзді қалпына келтіру кодын сұрау үшін аккаунттың e-mail мекенжайын енгізіңіз.';
+
+  @override
+  String get resetRequest => 'Код сұрау';
+
+  @override
+  String get resetRequested =>
+      'Егер бұл e-mail үшін аккаунт бар болса, қалпына келтіру коды сұралды. Алған кодты енгізіп, жаңа құпиясөз таңдаңыз.';
+
+  @override
+  String get resetCode => 'Қалпына келтіру коды';
+
+  @override
+  String get newPassword => 'Жаңа құпиясөз';
+
+  @override
+  String get resetConfirm => 'Жаңа құпиясөзді сақтау';
+
+  @override
+  String get resetDone => 'Құпиясөз өзгертілді. Жаңа құпиясөзбен кіріңіз.';
+
+  @override
+  String get backToSignIn => 'Кіруге оралу';
+
+  @override
+  String get errWrongPassword => 'Ағымдағы құпиясөз қате';
+
+  @override
+  String get errResetToken =>
+      'Қалпына келтіру коды жарамсыз немесе мерзімі өтті';
+
+  @override
+  String get accountNav => 'Аккаунт және қауіпсіздік';
+
+  @override
+  String get changePassword => 'Құпиясөзді өзгерту';
+
+  @override
+  String get currentPassword => 'Ағымдағы құпиясөз';
+
+  @override
+  String get confirmPassword => 'Жаңа құпиясөзді қайталаңыз';
+
+  @override
+  String get passwordsDiffer => 'Құпиясөздер сәйкес келмейді';
+
+  @override
+  String get passwordChanged =>
+      'Құпиясөз өзгертілді. Басқа құрылғылардан шығарылды.';
+
+  @override
+  String get sessionsTitle => 'Кірген құрылғылар';
+
+  @override
+  String get sessionsNote =>
+      'Құпиясөзді өзгерту басқа барлық құрылғылардан шығарады. Осы құрылғының сессиясын аяқтасаңыз, осында да шығасыз.';
+
+  @override
+  String get sessionRevoke => 'Шығу';
+
+  @override
+  String get sessionUnknownDevice => 'Белгісіз құрылғы';
+
+  @override
+  String sessionSince(String date) {
+    return '$date бастап';
+  }
+
+  @override
+  String get signOutEverywhere => 'Барлық құрылғылардан шығу';
+
+  @override
+  String get sessionsNone => 'Белсенді сессиялар жоқ';
 }

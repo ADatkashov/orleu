@@ -113,6 +113,14 @@ class CustomerMessage {
       createdAt: DateTime.parse(j['createdAt']));
 }
 
+class DeviceSession {
+  final String id;
+  final String? userAgent;
+  final DateTime createdAt;
+  const DeviceSession({required this.id, this.userAgent, required this.createdAt});
+  factory DeviceSession.fromJson(Map<String, dynamic> j) => DeviceSession(id: j['id'], userAgent: j['userAgent'], createdAt: DateTime.parse(j['createdAt']));
+}
+
 class PlanUsage {
   final String planCode;
   final int employees, maxEmployees;

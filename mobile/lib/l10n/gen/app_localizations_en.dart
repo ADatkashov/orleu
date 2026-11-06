@@ -663,4 +663,83 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get messagesSaved => 'Saved';
+
+  @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String get resetIntro =>
+      'Enter your account e-mail to request a password reset code.';
+
+  @override
+  String get resetRequest => 'Request reset code';
+
+  @override
+  String get resetRequested =>
+      'If an account exists for this e-mail, a reset code was requested. Enter the code you received and choose a new password.';
+
+  @override
+  String get resetCode => 'Reset code';
+
+  @override
+  String get newPassword => 'New password';
+
+  @override
+  String get resetConfirm => 'Set new password';
+
+  @override
+  String get resetDone =>
+      'Your password was changed. Sign in with the new password.';
+
+  @override
+  String get backToSignIn => 'Back to sign in';
+
+  @override
+  String get errWrongPassword => 'The current password is incorrect';
+
+  @override
+  String get errResetToken => 'This reset code is invalid or has expired';
+
+  @override
+  String get accountNav => 'Account & security';
+
+  @override
+  String get changePassword => 'Change password';
+
+  @override
+  String get currentPassword => 'Current password';
+
+  @override
+  String get confirmPassword => 'Repeat new password';
+
+  @override
+  String get passwordsDiffer => 'Passwords do not match';
+
+  @override
+  String get passwordChanged =>
+      'Password changed. Other devices were signed out.';
+
+  @override
+  String get sessionsTitle => 'Signed-in devices';
+
+  @override
+  String get sessionsNote =>
+      'Changing your password signs out all other devices. Revoking the session of this device signs you out here too.';
+
+  @override
+  String get sessionRevoke => 'Sign out';
+
+  @override
+  String get sessionUnknownDevice => 'Unknown device';
+
+  @override
+  String sessionSince(String date) {
+    return 'Since $date';
+  }
+
+  @override
+  String get signOutEverywhere => 'Sign out on all devices';
+
+  @override
+  String get sessionsNone => 'No active sessions';
 }

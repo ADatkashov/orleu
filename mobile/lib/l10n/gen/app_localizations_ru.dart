@@ -661,4 +661,82 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get messagesSaved => 'Сохранено';
+
+  @override
+  String get forgotPassword => 'Забыли пароль?';
+
+  @override
+  String get resetIntro =>
+      'Введите e-mail аккаунта, чтобы запросить код сброса пароля.';
+
+  @override
+  String get resetRequest => 'Запросить код';
+
+  @override
+  String get resetRequested =>
+      'Если для этого e-mail есть аккаунт, код сброса запрошен. Введите полученный код и задайте новый пароль.';
+
+  @override
+  String get resetCode => 'Код сброса';
+
+  @override
+  String get newPassword => 'Новый пароль';
+
+  @override
+  String get resetConfirm => 'Сохранить новый пароль';
+
+  @override
+  String get resetDone => 'Пароль изменён. Войдите с новым паролем.';
+
+  @override
+  String get backToSignIn => 'Назад ко входу';
+
+  @override
+  String get errWrongPassword => 'Текущий пароль указан неверно';
+
+  @override
+  String get errResetToken => 'Код сброса недействителен или истёк';
+
+  @override
+  String get accountNav => 'Аккаунт и безопасность';
+
+  @override
+  String get changePassword => 'Сменить пароль';
+
+  @override
+  String get currentPassword => 'Текущий пароль';
+
+  @override
+  String get confirmPassword => 'Повторите новый пароль';
+
+  @override
+  String get passwordsDiffer => 'Пароли не совпадают';
+
+  @override
+  String get passwordChanged =>
+      'Пароль изменён. Остальные устройства разлогинены.';
+
+  @override
+  String get sessionsTitle => 'Устройства с входом';
+
+  @override
+  String get sessionsNote =>
+      'Смена пароля разлогинивает все остальные устройства. Если завершить сессию этого устройства, вы выйдете и здесь.';
+
+  @override
+  String get sessionRevoke => 'Выйти';
+
+  @override
+  String get sessionUnknownDevice => 'Неизвестное устройство';
+
+  @override
+  String sessionSince(String date) {
+    return 'С $date';
+  }
+
+  @override
+  String get signOutEverywhere => 'Выйти на всех устройствах';
+
+  @override
+  String get sessionsNone => 'Нет активных сессий';
 }

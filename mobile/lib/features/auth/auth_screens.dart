@@ -88,6 +88,7 @@ class _LoginState extends ConsumerState<LoginScreen> {
           const SizedBox(height: AppSpacing.lg),
           FilledButton(onPressed: _busy ? null : _submit, child: _busy ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)) : Text(l.signIn)),
           TextButton(onPressed: () => context.go('/register'), child: Text(l.noAccountYet)),
+          TextButton(key: const Key('forgot'), onPressed: () => context.go('/forgot'), child: Text(l.forgotPassword)),
         ]),
       ),
     ]);
@@ -142,6 +143,76 @@ class _RegisterState extends ConsumerState<RegisterScreen> {
           TextButton(onPressed: () => context.go('/login'), child: Text(l.haveAccount)),
         ]),
       ),
+    ]);
+  }
+}
+
+/// Two steps: ask for a reset code, then enter the code with a new password.
+/// The server answers the request identically for known and unknown e-mails, so the copy never says an e-mail was sent.
+class ForgotPasswordScreen extends ConsumerStatefulWidget {
+  const ForgotPasswordScreen({super.key});
+  @override
+  ConsumerState<ForgotPasswordScreen> createState() => _ForgotState();
+}
+
+class _ForgotState extends ConsumerState<ForgotPasswordScreen> {
+  final _email = TextEditingController(), _token = TextEditingController(), _password = TextEditingController();
+  bool _requested = false, _done = false, _busy = false;
+  String? _error;
+
+  Future<void> _run(Future<void> Function() action, void Function() onOk) async {
+    setState(() { _busy = true; _error = null; });
+    try {
+      await action();
+      if (mounted) setState(onOk);
+    } catch (e) {
+      if (mounted) setState(() => _error = errorText(context, e));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final auth = ref.read(authControllerProvider.notifier);
+    return _AuthScaffold(children: [
+      if (_done) ...[
+        Text(l.resetDone, key: const Key('resetDone')),
+        const SizedBox(height: AppSpacing.lg),
+        FilledButton(onPressed: () => context.go('/login'), child: Text(l.signIn)),
+      ] else if (!_requested) ...[
+        Text(l.resetIntro),
+        const SizedBox(height: AppSpacing.md),
+        TextField(controller: _email, keyboardType: TextInputType.emailAddress, decoration: InputDecoration(labelText: l.email)),
+        if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.md), child: Text(_error!, key: const Key('authError'), style: TextStyle(color: Theme.of(context).colorScheme.error))),
+        const SizedBox(height: AppSpacing.lg),
+        FilledButton(
+          onPressed: _busy ? null : () {
+            if (!_emailRe.hasMatch(_email.text.trim())) { setState(() => _error = l.validationEmail); return; }
+            _run(() => auth.requestPasswordReset(_email.text.trim()), () => _requested = true);
+          },
+          child: Text(l.resetRequest),
+        ),
+        TextButton(onPressed: () => context.go('/login'), child: Text(l.backToSignIn)),
+      ] else ...[
+        Text(l.resetRequested, key: const Key('resetRequested')),
+        const SizedBox(height: AppSpacing.md),
+        TextField(controller: _token, decoration: InputDecoration(labelText: l.resetCode)),
+        const SizedBox(height: AppSpacing.md),
+        TextField(controller: _password, obscureText: true, decoration: InputDecoration(labelText: l.newPassword)),
+        if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.md), child: Text(_error!, key: const Key('authError'), style: TextStyle(color: Theme.of(context).colorScheme.error))),
+        const SizedBox(height: AppSpacing.lg),
+        FilledButton(
+          onPressed: _busy ? null : () {
+            if (_token.text.trim().length < 20) { setState(() => _error = l.errResetToken); return; }
+            if (_password.text.length < 10) { setState(() => _error = l.validationPasswordShort); return; }
+            _run(() => auth.confirmPasswordReset(_token.text.trim(), _password.text), () => _done = true);
+          },
+          child: Text(l.resetConfirm),
+        ),
+        TextButton(onPressed: () => context.go('/login'), child: Text(l.backToSignIn)),
+      ],
     ]);
   }
 }
