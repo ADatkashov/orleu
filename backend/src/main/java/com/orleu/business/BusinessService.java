@@ -92,6 +92,11 @@ public class BusinessService {
         if (r.cancellationDeadlineHours() != null) b.setCancellationDeadlineHours(r.cancellationDeadlineHours());
         if (r.reminderHours() != null) b.setReminderHours(r.reminderHours());
         if (r.customerLocale() != null) b.setCustomerLocale(r.customerLocale());
+        if (r.customerRetentionMonths() != null) {
+            int m = r.customerRetentionMonths();
+            if (m != 0 && m < 12) throw ApiException.badRequest("INVALID_RETENTION", "Retention must be 0 (off) or 12-120 months");
+            b.setCustomerRetentionMonths(m == 0 ? null : m);
+        }
         audit.log(businessId, CurrentUser.id(), "BUSINESS_SETTINGS_UPDATED", "BUSINESS", businessId, null);
         return BusinessView.of(b);
     }

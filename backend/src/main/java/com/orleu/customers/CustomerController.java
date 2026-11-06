@@ -14,7 +14,8 @@ public class CustomerController {
 
     private final CustomerService service;
     private final CustomerImportService importer;
-    public CustomerController(CustomerService service, CustomerImportService importer) { this.service = service; this.importer = importer; }
+    private final CustomerPrivacyService privacy;
+    public CustomerController(CustomerService service, CustomerImportService importer, CustomerPrivacyService privacy) { this.service = service; this.importer = importer; this.privacy = privacy; }
 
     @PostMapping @ResponseStatus(HttpStatus.CREATED)
     public CustomerView create(@PathVariable UUID businessId, @Valid @RequestBody CustomerInput in) { return service.create(businessId, in); }
@@ -43,4 +44,17 @@ public class CustomerController {
     /** CSV text in the JSON body (the clients read the file themselves). dryRun=true reports without changing anything. */
     @PostMapping("/import")
     public CustomerImportService.ImportResult importCsv(@PathVariable UUID businessId, @Valid @RequestBody ImportRequest r) { return importer.run(businessId, r.csv(), r.dryRun()); }
+
+    /** Everything held about one customer, as a JSON download (audited). */
+    @GetMapping("/{id}/export")
+    public org.springframework.http.ResponseEntity<java.util.Map<String, Object>> export(@PathVariable UUID businessId, @PathVariable UUID id) {
+        return org.springframework.http.ResponseEntity.ok()
+                .cacheControl(org.springframework.http.CacheControl.noStore())
+                .header("Content-Disposition", "attachment; filename=\"customer-" + id + ".json\"")
+                .body(privacy.export(businessId, id));
+    }
+
+    /** Irreversibly removes the customer's personal data (bookings and the ledger stay, anonymous). Owner/admin only. */
+    @PostMapping("/{id}/anonymize") @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void anonymize(@PathVariable UUID businessId, @PathVariable UUID id) { privacy.anonymize(businessId, id); }
 }
