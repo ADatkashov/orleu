@@ -119,6 +119,8 @@ void main() {
 
     testWidgets('sessions are listed and one can be revoked', (tester) async {
       final (a, _) = await open(tester);
+      await tester.drag(find.byType(ListView).first, const Offset(0, -900)); // the sessions list is below the password form and the MFA card
+      await tester.pumpAndSettle();
       expect(find.text('Orleu Android'), findsOneWidget);
       expect(find.text('Unknown device'), findsOneWidget);
       await tester.ensureVisible(find.byKey(const Key('revoke-s2')));
@@ -130,6 +132,8 @@ void main() {
 
     testWidgets('sign out everywhere ends the local session', (tester) async {
       final (_, s) = await open(tester);
+      await tester.drag(find.byType(ListView).first, const Offset(0, -1200));
+      await tester.pumpAndSettle();
       await tester.ensureVisible(find.byKey(const Key('logout-all')));
       await tester.tap(find.byKey(const Key('logout-all')));
       await tester.pumpAndSettle();

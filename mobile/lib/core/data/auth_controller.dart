@@ -4,6 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../api/api_client.dart';
 import '../api/token_store.dart';
 
+/// Thrown by [AuthController.login] when the password was right but the account has a second factor: ask for the code, then call verifyMfa.
+class MfaRequired implements Exception {
+  final String token;
+  const MfaRequired(this.token);
+}
+
 enum AuthStatus { unknown, authenticated, unauthenticated }
 
 final tokenStoreProvider = Provider<TokenStore>((ref) => SecureTokenStore());
@@ -37,12 +43,15 @@ class AuthController extends Notifier<AuthStatus> {
 
   Future<void> login(String email, String password) => _authenticate('/api/v1/auth/login', {'email': email, 'password': password});
 
+  Future<void> verifyMfa(String mfaToken, String code) => _authenticate('/api/v1/auth/mfa/verify', {'mfaToken': mfaToken, 'code': code});
+
   Future<void> register(String email, String password, String fullName) =>
       _authenticate('/api/v1/auth/register', {'email': email, 'password': password, 'fullName': fullName});
 
   Future<void> _authenticate(String path, Map<String, Object> body) async {
     final api = ref.read(apiClientProvider);
     final r = await api.run((d) => d.post(path, data: body, options: _noAuth));
+    if (r.data['mfaRequired'] == true) throw MfaRequired(r.data['mfaToken'] as String);
     await ref.read(tokenStoreProvider).save(access: r.data['accessToken'], refresh: r.data['refreshToken']);
     state = AuthStatus.authenticated;
   }

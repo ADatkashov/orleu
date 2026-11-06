@@ -391,3 +391,34 @@ final notificationsProvider = FutureProvider.autoDispose<List<AppNotification>>(
 });
 
 final unreadNotificationsProvider = Provider.autoDispose<int>((ref) => ref.watch(notificationsProvider).value?.where((n) => !n.read).length ?? 0);
+
+class MfaStatus {
+  final bool enabled;
+  final int recoveryCodesLeft;
+  const MfaStatus(this.enabled, this.recoveryCodesLeft);
+}
+
+final mfaStatusProvider = FutureProvider.autoDispose<MfaStatus>((ref) async {
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/auth/mfa'));
+  return MfaStatus(r.data['enabled'] == true, r.data['recoveryCodesLeft'] ?? 0);
+});
+
+class MfaApi {
+  final WidgetRef ref;
+  MfaApi(this.ref);
+  Future<({String secret, String uri})> setup() async {
+    final r = await ref.read(apiClientProvider).run((d) => d.post('/api/v1/auth/mfa/setup'));
+    return (secret: r.data['secret'] as String, uri: r.data['otpauthUri'] as String);
+  }
+
+  Future<List<String>> enable(String code) async {
+    final r = await ref.read(apiClientProvider).run((d) => d.post('/api/v1/auth/mfa/enable', data: {'code': code}));
+    ref.invalidate(mfaStatusProvider);
+    return List<String>.from(r.data['recoveryCodes']);
+  }
+
+  Future<void> disable(String password, String code) async {
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/auth/mfa/disable', data: {'password': password, 'code': code}));
+    ref.invalidate(mfaStatusProvider);
+  }
+}

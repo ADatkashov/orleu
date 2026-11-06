@@ -1016,4 +1016,72 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get errExportForbidden =>
       'Ваша роль не позволяет выгружать финансовые данные';
+
+  @override
+  String get mfaTitle => 'Двухфакторная аутентификация';
+
+  @override
+  String get mfaIntro =>
+      'Защитите аккаунт кодом из приложения-аутентификатора (Google Authenticator, Microsoft Authenticator, Aegis и т. п.). Для входа понадобятся пароль и код.';
+
+  @override
+  String get mfaOff => 'Выкл.';
+
+  @override
+  String mfaOn(int n) {
+    return 'Вкл. · резервных кодов: $n';
+  }
+
+  @override
+  String get mfaEnable => 'Включить';
+
+  @override
+  String get mfaDisable => 'Выключить';
+
+  @override
+  String get mfaSetupKey => 'Ключ настройки';
+
+  @override
+  String get mfaSetupHint =>
+      'В приложении-аутентификаторе добавьте аккаунт с этим ключом (по времени), затем введите 6-значный код оттуда.';
+
+  @override
+  String get mfaCopy => 'Скопировать ключ';
+
+  @override
+  String get mfaCode => '6-значный код';
+
+  @override
+  String get mfaConfirm => 'Подтвердить';
+
+  @override
+  String get mfaRecoveryTitle => 'Резервные коды';
+
+  @override
+  String get mfaRecoveryNote =>
+      'Сохраните эти коды в надёжном месте. Каждый работает один раз, если вы потеряете телефон. Показаны только сейчас.';
+
+  @override
+  String get mfaSaved => 'Я сохранил(а)';
+
+  @override
+  String get mfaDisableHint =>
+      'Введите пароль и текущий код (или резервный код).';
+
+  @override
+  String get mfaLoginTitle =>
+      'Введите код из приложения-аутентификатора или резервный код.';
+
+  @override
+  String get mfaVerify => 'Проверить';
+
+  @override
+  String get errMfaCode => 'Неверный код';
+
+  @override
+  String get errMfaChallenge => 'Время попытки входа истекло. Войдите заново.';
+
+  @override
+  String get errMfaRequired =>
+      'Для этого аккаунта обязательна двухфакторная аутентификация';
 }

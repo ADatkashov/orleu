@@ -1016,4 +1016,73 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errExportForbidden => 'Your role cannot export financial data';
+
+  @override
+  String get mfaTitle => 'Two-factor authentication';
+
+  @override
+  String get mfaIntro =>
+      'Protect your account with a code from an authenticator app (Google Authenticator, Microsoft Authenticator, Aegis, …). Sign-in then needs your password and a code.';
+
+  @override
+  String get mfaOff => 'Off';
+
+  @override
+  String mfaOn(int n) {
+    return 'On · $n recovery codes left';
+  }
+
+  @override
+  String get mfaEnable => 'Turn on';
+
+  @override
+  String get mfaDisable => 'Turn off';
+
+  @override
+  String get mfaSetupKey => 'Setup key';
+
+  @override
+  String get mfaSetupHint =>
+      'In your authenticator app add an account with this key (time-based), then enter the 6-digit code it shows.';
+
+  @override
+  String get mfaCopy => 'Copy key';
+
+  @override
+  String get mfaCode => '6-digit code';
+
+  @override
+  String get mfaConfirm => 'Confirm';
+
+  @override
+  String get mfaRecoveryTitle => 'Recovery codes';
+
+  @override
+  String get mfaRecoveryNote =>
+      'Store these codes somewhere safe. Each works once if you lose your phone. They are shown only now.';
+
+  @override
+  String get mfaSaved => 'I saved them';
+
+  @override
+  String get mfaDisableHint =>
+      'Enter your password and a current code (or a recovery code).';
+
+  @override
+  String get mfaLoginTitle =>
+      'Enter the code from your authenticator app, or a recovery code.';
+
+  @override
+  String get mfaVerify => 'Verify';
+
+  @override
+  String get errMfaCode => 'The code is not correct';
+
+  @override
+  String get errMfaChallenge =>
+      'The sign-in attempt expired. Please sign in again.';
+
+  @override
+  String get errMfaRequired =>
+      'Two-factor authentication is required for this account';
 }
