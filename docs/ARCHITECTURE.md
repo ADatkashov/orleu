@@ -1,6 +1,9 @@
 # Architecture (as implemented)
 
-Modular monolith, one Spring Boot app, packages by module under `com.orleu`: `auth`, `tenancy`, `business`, `catalog`, `customers`, `scheduling`, `bookings`, `payments`, `subscriptions`, `analytics`, `publicapi`, `audit`, `common`. Modules talk through services; read models use `JdbcClient`, writes use JPA. No automated module-dependency check exists yet.
+Modular monolith, one Spring Boot app, packages by module under `com.orleu`: `auth`, `tenancy`, `business`, `catalog`, `customers`, `scheduling`, `bookings`, `payments`, `subscriptions`, `analytics`, `publicapi`, `audit`, `notifications`, `reviews`, `support`, `admin`, `common`. Modules talk through services; read models use `JdbcClient`, writes use JPA.
+
+## Enforced module boundaries (ArchUnit, `backend/src/test/java/com/orleu/arch/ArchitectureTest.java`)
+These run in `./gradlew test` and therefore in CI: no cyclic dependencies between modules; `auth` depends on no business module (the `/me` endpoint that joins identity with memberships lives in `business`); `common` depends on no feature module; nothing depends on `publicapi` (the guest entry layer); controllers are not called by other classes; no field injection, `System.out`/`System.err` or `java.util.logging`. The cycle rule was red when introduced (auth ↔ business ↔ tenancy) and went green after the `/me` move. **Not enforced yet**: a layered rule between controller/service/repository inside a module, and "no uncontrolled shared database access" (modules still read each other's tables through `JdbcClient` in read models, e.g. analytics and admin).
 
 ## Key decisions
 - **Double-booking**: `EXCLUDE USING gist (employee_id WITH =, tstzrange(starts_at, blocked_until) WITH &&) WHERE status IN (active)`. The Java availability check decides what to offer; the constraint is the final arbiter (race → 409 `SLOT_UNAVAILABLE`).

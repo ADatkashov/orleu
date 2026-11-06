@@ -1,8 +1,6 @@
 package com.orleu.auth;
 
 import com.orleu.auth.AuthDtos.*;
-import com.orleu.tenancy.MembershipRepository;
-import com.orleu.business.BusinessRepository;
 import com.orleu.common.ApiException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -14,16 +12,12 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService auth;
     private final UserRepository users;
-    private final MembershipRepository memberships;
-    private final BusinessRepository businesses;
     private final PasswordService passwords;
 
-    public AuthController(AuthService auth, UserRepository users, MembershipRepository memberships, BusinessRepository businesses, PasswordService passwords) {
+    public AuthController(AuthService auth, UserRepository users, PasswordService passwords) {
         this.passwords = passwords;
         this.auth = auth;
         this.users = users;
-        this.memberships = memberships;
-        this.businesses = businesses;
     }
 
     @PostMapping("/auth/register")
@@ -73,15 +67,4 @@ public class AuthController {
     @DeleteMapping("/auth/sessions/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void revokeSession(@PathVariable java.util.UUID id) { passwords.revokeSession(CurrentUser.id(), id); }
-
-    @GetMapping("/me")
-    public MeResponse me() {
-        var id = CurrentUser.id();
-        User u = users.findById(id).orElseThrow(() -> ApiException.notFound("User"));
-        var views = memberships.findByUserIdAndStatus(id, "ACTIVE").stream()
-                .map(m -> new MembershipView(m.getBusinessId(),
-                        businesses.findById(m.getBusinessId()).map(b -> b.getName()).orElse(""), m.getRole().name()))
-                .toList();
-        return new MeResponse(u.getId(), u.getEmail(), u.getFullName(), u.getLocale(), views);
-    }
 }

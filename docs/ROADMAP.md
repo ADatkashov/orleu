@@ -58,7 +58,7 @@ AI assistant (only with real testable use cases), forecasting (labelled estimate
 | Area | Status |
 |---|---|
 | Tests (backend integration, concurrency, tenant isolation, Flutter widget, real-browser E2E) | DONE, growing |
-| Load tests (availability, booking, calendar, customer search, dashboard) | TODO |
+| Load tests (availability, booking, calendar, customer search, dashboard) | PARTIAL — script + first single-machine baseline (`docs/LOAD_TESTING.md`); no CI job, no soak/large-tenant runs, no capacity claims |
 | Migration tests beyond "applies from scratch and Flyway validates" | PARTIAL |
 | Security: threat model | PARTIAL (`docs/SECURITY.md`); MFA, webhook signing/replay protection, file upload validation, secret rotation, data retention, export authorization: TODO |
 | PostgreSQL row-level security | TODO (decision: defence in depth, not a replacement) |
@@ -68,7 +68,7 @@ AI assistant (only with real testable use cases), forecasting (labelled estimate
 | Flutter design system, kk/ru/en localization | DONE for implemented screens; bundled Inter/Manrope font TODO; screen-reader/dynamic-text audit TODO |
 | Mobile quality: deep links, push, offline cache, device sessions UI, store builds, crash reporting | TODO |
 | Documentation set (spec §32) | PARTIAL: `IMPLEMENTATION_STATUS`, `SECURITY`, `ARCHITECTURE`, `DEPLOYMENT`, `OPERATIONS`, `BACKUP_AND_RECOVERY` exist; the other listed files are not written (write each when the area has real content, never from imagination) |
-| Architecture checks (no cyclic module deps) | TODO (ArchUnit) |
+| Architecture checks (no cyclic module deps) | DONE for module cycles and boundaries (ArchUnit in CI); layered rules and shared-table access rules TODO |
 | Privacy: consent history, data export, account deletion, retention | TODO; legal review required before any compliance claim |
 
 ## The 7 pre-launch directions (addendum follow-up)
@@ -92,5 +92,5 @@ Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real 
 4. ~~Password-reset / change-password / sessions screens in the app~~ — done (reset needs a mail provider to be usable; MFA/OTP still TODO).
 5. ~~Week/month calendar and filters~~ — done (drag-and-drop and resource columns remain TODO).
 6. ~~Reviews, support tickets, admin Users/Support~~ — done; customer portal (needs guest accounts), review moderation and ticket notifications remain.
-7. Load-test scenarios and a first measured baseline; ArchUnit checks.
+7. ~~Load-test scenarios and a first measured baseline; ArchUnit checks~~ — done (baseline is single-run, same-machine; see `docs/LOAD_TESTING.md`).
 8. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.
