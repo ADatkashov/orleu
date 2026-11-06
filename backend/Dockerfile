@@ -1,10 +1,10 @@
 # Built and smoke-tested in CI (.github/workflows/docker.yml).
-FROM eclipse-temurin:21-jdk AS build
+FROM eclipse-temurin:25-jdk AS build
 WORKDIR /src
 COPY . .
 RUN ./gradlew --no-daemon bootJar -x test
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:25-jre
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --system --uid 10001 orleu
