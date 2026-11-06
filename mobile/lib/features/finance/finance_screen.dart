@@ -5,6 +5,7 @@ import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
 import '../../core/widgets/common.dart';
 import '../../l10n/gen/app_localizations.dart';
+import 'reports_section.dart';
 
 class FinanceScreen extends ConsumerWidget {
   const FinanceScreen({super.key});
@@ -47,6 +48,8 @@ class FinanceScreen extends ConsumerWidget {
             ]),
             const SizedBox(height: AppSpacing.md),
             Text(l.financeNote, style: t.textTheme.bodySmall),
+            const SizedBox(height: AppSpacing.lg),
+            const ReportsSection(),
           ]),
         ),
       ),

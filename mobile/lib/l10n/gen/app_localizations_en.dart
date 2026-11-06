@@ -581,4 +581,53 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get statsNote =>
       'Paid = cash collected minus refunds, not booked value.';
+
+  @override
+  String get reportsTitle => 'Reports';
+
+  @override
+  String reportPeriodDays(String n) {
+    return '$n days';
+  }
+
+  @override
+  String get reportRevenueByDay => 'Cash collected per day (net of refunds)';
+
+  @override
+  String get reportTopServices => 'Services';
+
+  @override
+  String get reportTopEmployees => 'Specialists';
+
+  @override
+  String get reportBranches => 'Branches';
+
+  @override
+  String get reportPeakHours => 'Busiest hours';
+
+  @override
+  String get reportCustomers => 'New vs returning customers';
+
+  @override
+  String get reportNew => 'New';
+
+  @override
+  String get reportReturning => 'Returning';
+
+  @override
+  String get reportNoData => 'No data for this period yet';
+
+  @override
+  String reportBookingsN(String n) {
+    return '$n bookings';
+  }
+
+  @override
+  String reportReturningShare(String p) {
+    return '$p% of customers returned';
+  }
+
+  @override
+  String get reportsNote =>
+      'Figures come from recorded bookings and payments for the selected period. Cancelled bookings are not counted as demand.';
 }

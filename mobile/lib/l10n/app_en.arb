@@ -202,5 +202,22 @@
   "editService": "Edit service",
   "editLocation": "Edit location",
   "editSpecialist": "Edit specialist",
-  "statsNote": "Paid = cash collected minus refunds, not booked value."
+  "statsNote": "Paid = cash collected minus refunds, not booked value.",
+  "reportsTitle": "Reports",
+  "reportPeriodDays": "{n} days",
+  "@reportPeriodDays": {"placeholders": {"n": {"type": "String"}}},
+  "reportRevenueByDay": "Cash collected per day (net of refunds)",
+  "reportTopServices": "Services",
+  "reportTopEmployees": "Specialists",
+  "reportBranches": "Branches",
+  "reportPeakHours": "Busiest hours",
+  "reportCustomers": "New vs returning customers",
+  "reportNew": "New",
+  "reportReturning": "Returning",
+  "reportNoData": "No data for this period yet",
+  "reportBookingsN": "{n} bookings",
+  "@reportBookingsN": {"placeholders": {"n": {"type": "String"}}},
+  "reportReturningShare": "{p}% of customers returned",
+  "@reportReturningShare": {"placeholders": {"p": {"type": "String"}}},
+  "reportsNote": "Figures come from recorded bookings and payments for the selected period. Cancelled bookings are not counted as demand."
 }

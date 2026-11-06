@@ -244,3 +244,43 @@ class BookingActions {
 }
 
 final bookingActionsProvider = Provider<BookingActions>((ref) => BookingActions(ref));
+
+/// Report period in days (7/30/90) selected on the finance screen.
+class ReportDays extends Notifier<int> {
+  @override
+  int build() => 30;
+  void set(int days) => state = days;
+}
+
+final reportDaysProvider = NotifierProvider<ReportDays, int>(ReportDays.new);
+
+typedef _Range = ({String from, String to});
+
+Future<_Range> _reportRange(Ref ref) async {
+  final b = await _biz(ref);
+  final days = ref.watch(reportDaysProvider);
+  final now = nowWall(b.timezone);
+  return (
+    from: instantFromWall(DateTime(now.year, now.month, now.day - (days - 1)), b.timezone).toIso8601String(),
+    to: instantFromWall(nextDay(now), b.timezone).toIso8601String(),
+  );
+}
+
+Future<dynamic> _report(Ref ref, String what, [Map<String, dynamic> extra = const {}]) async {
+  final b = await _biz(ref);
+  final r = await _reportRange(ref);
+  final res = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/analytics/$what',
+      queryParameters: {'from': r.from, 'to': r.to, ...extra}));
+  return res.data;
+}
+
+final breakdownProvider = FutureProvider.autoDispose.family<List<BreakdownRow>, String>((ref, by) async =>
+    ((await _report(ref, 'breakdown', {'by': by})) as List).map((e) => BreakdownRow.fromJson(e)).toList());
+
+final timeseriesProvider = FutureProvider.autoDispose<List<DayPoint>>((ref) async =>
+    ((await _report(ref, 'timeseries')) as List).map((e) => DayPoint.fromJson(e)).toList());
+
+final peakHoursProvider = FutureProvider.autoDispose<List<int>>((ref) async =>
+    ((await _report(ref, 'peak-hours')) as List).map((e) => (e as num).toInt()).toList());
+
+final customerMixProvider = FutureProvider.autoDispose<CustomerMix>((ref) async => CustomerMix.fromJson(await _report(ref, 'customers')));

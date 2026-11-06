@@ -1215,6 +1215,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Paid = cash collected minus refunds, not booked value.'**
   String get statsNote;
+
+  /// No description provided for @reportsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reportsTitle;
+
+  /// No description provided for @reportPeriodDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} days'**
+  String reportPeriodDays(String n);
+
+  /// No description provided for @reportRevenueByDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash collected per day (net of refunds)'**
+  String get reportRevenueByDay;
+
+  /// No description provided for @reportTopServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get reportTopServices;
+
+  /// No description provided for @reportTopEmployees.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialists'**
+  String get reportTopEmployees;
+
+  /// No description provided for @reportBranches.
+  ///
+  /// In en, this message translates to:
+  /// **'Branches'**
+  String get reportBranches;
+
+  /// No description provided for @reportPeakHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Busiest hours'**
+  String get reportPeakHours;
+
+  /// No description provided for @reportCustomers.
+  ///
+  /// In en, this message translates to:
+  /// **'New vs returning customers'**
+  String get reportCustomers;
+
+  /// No description provided for @reportNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get reportNew;
+
+  /// No description provided for @reportReturning.
+  ///
+  /// In en, this message translates to:
+  /// **'Returning'**
+  String get reportReturning;
+
+  /// No description provided for @reportNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data for this period yet'**
+  String get reportNoData;
+
+  /// No description provided for @reportBookingsN.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} bookings'**
+  String reportBookingsN(String n);
+
+  /// No description provided for @reportReturningShare.
+  ///
+  /// In en, this message translates to:
+  /// **'{p}% of customers returned'**
+  String reportReturningShare(String p);
+
+  /// No description provided for @reportsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Figures come from recorded bookings and payments for the selected period. Cancelled bookings are not counted as demand.'**
+  String get reportsNote;
 }
 
 class _AppLocalizationsDelegate

@@ -185,5 +185,19 @@
   "editService": "Қызметті өзгерту",
   "editLocation": "Филиалды өзгерту",
   "editSpecialist": "Маманды өзгерту",
-  "statsNote": "Төленді = алынған ақша минус қайтарулар, жазылулар сомасы емес."
+  "statsNote": "Төленді = алынған ақша минус қайтарулар, жазылулар сомасы емес.",
+  "reportsTitle": "Есептер",
+  "reportPeriodDays": "{n} күн",
+  "reportRevenueByDay": "Күн сайынғы түскен төлем (қайтарымсыз)",
+  "reportTopServices": "Қызметтер",
+  "reportTopEmployees": "Мамандар",
+  "reportBranches": "Филиалдар",
+  "reportPeakHours": "Ең жүктелген сағаттар",
+  "reportCustomers": "Жаңа және қайта келген клиенттер",
+  "reportNew": "Жаңа",
+  "reportReturning": "Қайта келген",
+  "reportNoData": "Бұл кезеңде деректер әлі жоқ",
+  "reportBookingsN": "Жазылу: {n}",
+  "reportReturningShare": "Клиенттердің {p}% қайта келді",
+  "reportsNote": "Мәліметтер таңдалған кезеңдегі жазылулар мен төлемдер бойынша есептеледі. Бас тартылған жазылулар сұраныс болып саналмайды."
 }
