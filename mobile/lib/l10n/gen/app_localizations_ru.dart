@@ -778,4 +778,76 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get reviewsNote =>
       'Отзывы приходят только от состоявшихся визитов, бизнес не может их менять.';
+
+  @override
+  String get supportNav => 'Поддержка';
+
+  @override
+  String get supportIntro =>
+      'Напишите команде ORLEU о проблеме с оплатой, технической проблеме или аккаунтом. Ответы появятся здесь.';
+
+  @override
+  String get supportNew => 'Новое обращение';
+
+  @override
+  String get supportSubject => 'Тема';
+
+  @override
+  String get supportBody => 'Опишите проблему';
+
+  @override
+  String get supportCategory => 'Раздел';
+
+  @override
+  String get catBILLING => 'Оплата';
+
+  @override
+  String get catTECHNICAL => 'Техническое';
+
+  @override
+  String get catACCOUNT => 'Аккаунт';
+
+  @override
+  String get catOTHER => 'Другое';
+
+  @override
+  String get supportCreate => 'Отправить';
+
+  @override
+  String get supportNone => 'Обращений пока нет';
+
+  @override
+  String get stOPEN => 'Ждёт ответа поддержки';
+
+  @override
+  String get stANSWERED => 'Есть ответ';
+
+  @override
+  String get stCLOSED => 'Закрыто';
+
+  @override
+  String get supportReply => 'Ваш ответ';
+
+  @override
+  String get supportSend => 'Отправить';
+
+  @override
+  String get supportCloseTicket => 'Закрыть обращение';
+
+  @override
+  String get supportClosedNote =>
+      'Обращение закрыто. Если нужна помощь, создайте новое.';
+
+  @override
+  String get supportTeam => 'Поддержка ORLEU';
+
+  @override
+  String get supportYou => 'Вы';
+
+  @override
+  String get errTicketClosed => 'Обращение закрыто';
+
+  @override
+  String get errTooManyTickets =>
+      'Слишком много открытых обращений. Закройте часть или дождитесь ответов.';
 }

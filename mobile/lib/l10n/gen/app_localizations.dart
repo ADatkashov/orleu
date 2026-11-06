@@ -1569,6 +1569,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reviews come only from completed visits and cannot be edited by the business.'**
   String get reviewsNote;
+
+  /// No description provided for @supportNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get supportNav;
+
+  /// No description provided for @supportIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Write to the ORLEU team about billing, technical or account problems. Answers appear here.'**
+  String get supportIntro;
+
+  /// No description provided for @supportNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New request'**
+  String get supportNew;
+
+  /// No description provided for @supportSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
+  String get supportSubject;
+
+  /// No description provided for @supportBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the problem'**
+  String get supportBody;
+
+  /// No description provided for @supportCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Topic'**
+  String get supportCategory;
+
+  /// No description provided for @catBILLING.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing'**
+  String get catBILLING;
+
+  /// No description provided for @catTECHNICAL.
+  ///
+  /// In en, this message translates to:
+  /// **'Technical'**
+  String get catTECHNICAL;
+
+  /// No description provided for @catACCOUNT.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get catACCOUNT;
+
+  /// No description provided for @catOTHER.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get catOTHER;
+
+  /// No description provided for @supportCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Send request'**
+  String get supportCreate;
+
+  /// No description provided for @supportNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No requests yet'**
+  String get supportNone;
+
+  /// No description provided for @stOPEN.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for support'**
+  String get stOPEN;
+
+  /// No description provided for @stANSWERED.
+  ///
+  /// In en, this message translates to:
+  /// **'Answered'**
+  String get stANSWERED;
+
+  /// No description provided for @stCLOSED.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get stCLOSED;
+
+  /// No description provided for @supportReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reply'**
+  String get supportReply;
+
+  /// No description provided for @supportSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get supportSend;
+
+  /// No description provided for @supportCloseTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Close request'**
+  String get supportCloseTicket;
+
+  /// No description provided for @supportClosedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This request is closed. Open a new one if you still need help.'**
+  String get supportClosedNote;
+
+  /// No description provided for @supportTeam.
+  ///
+  /// In en, this message translates to:
+  /// **'ORLEU support'**
+  String get supportTeam;
+
+  /// No description provided for @supportYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get supportYou;
+
+  /// No description provided for @errTicketClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'This request is closed'**
+  String get errTicketClosed;
+
+  /// No description provided for @errTooManyTickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many open requests. Close some or wait for answers.'**
+  String get errTooManyTickets;
 }
 
 class _AppLocalizationsDelegate

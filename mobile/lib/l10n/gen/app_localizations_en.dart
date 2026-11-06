@@ -781,4 +781,76 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get reviewsNote =>
       'Reviews come only from completed visits and cannot be edited by the business.';
+
+  @override
+  String get supportNav => 'Support';
+
+  @override
+  String get supportIntro =>
+      'Write to the ORLEU team about billing, technical or account problems. Answers appear here.';
+
+  @override
+  String get supportNew => 'New request';
+
+  @override
+  String get supportSubject => 'Subject';
+
+  @override
+  String get supportBody => 'Describe the problem';
+
+  @override
+  String get supportCategory => 'Topic';
+
+  @override
+  String get catBILLING => 'Billing';
+
+  @override
+  String get catTECHNICAL => 'Technical';
+
+  @override
+  String get catACCOUNT => 'Account';
+
+  @override
+  String get catOTHER => 'Other';
+
+  @override
+  String get supportCreate => 'Send request';
+
+  @override
+  String get supportNone => 'No requests yet';
+
+  @override
+  String get stOPEN => 'Waiting for support';
+
+  @override
+  String get stANSWERED => 'Answered';
+
+  @override
+  String get stCLOSED => 'Closed';
+
+  @override
+  String get supportReply => 'Your reply';
+
+  @override
+  String get supportSend => 'Send';
+
+  @override
+  String get supportCloseTicket => 'Close request';
+
+  @override
+  String get supportClosedNote =>
+      'This request is closed. Open a new one if you still need help.';
+
+  @override
+  String get supportTeam => 'ORLEU support';
+
+  @override
+  String get supportYou => 'You';
+
+  @override
+  String get errTicketClosed => 'This request is closed';
+
+  @override
+  String get errTooManyTickets =>
+      'Too many open requests. Close some or wait for answers.';
 }

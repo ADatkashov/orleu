@@ -16,6 +16,9 @@ String adminError(Object error) {
     'FORBIDDEN' => 'You do not have permission for this action.',
     'INVALID_CREDENTIALS' => 'Wrong e-mail or password.',
     'ACCOUNT_LOCKED' => 'Too many attempts. Try again later.',
+    'TICKET_CLOSED' => 'This ticket is closed. Reopen it first.',
+    'CANNOT_DISABLE_SELF' => 'You cannot disable your own account.',
+    'INVALID_MESSAGE' => 'The message must be 1-4000 characters.',
     _ => 'Something went wrong. Please try again.',
   };
 }
