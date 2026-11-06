@@ -850,4 +850,53 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get errTooManyTickets =>
       'Слишком много открытых обращений. Закройте часть или дождитесь ответов.';
+
+  @override
+  String get notifTitle => 'Уведомления';
+
+  @override
+  String get notifMarkAll => 'Отметить всё прочитанным';
+
+  @override
+  String get notifNone => 'Уведомлений пока нет';
+
+  @override
+  String get notifBOOKING_CREATED => 'Новая запись';
+
+  @override
+  String get notifBOOKING_CONFIRMED => 'Запись подтверждена';
+
+  @override
+  String get notifBOOKING_CANCELLED => 'Запись отменена';
+
+  @override
+  String get notifBOOKING_RESCHEDULED => 'Запись перенесена';
+
+  @override
+  String get notifBOOKING_EXPIRED => 'Неоплаченная запись истекла';
+
+  @override
+  String get notifBOOKING_CHECKED_IN => 'Клиент пришёл';
+
+  @override
+  String get notifBOOKING_IN_PROGRESS => 'Визит начался';
+
+  @override
+  String get notifBOOKING_COMPLETED => 'Визит завершён';
+
+  @override
+  String get notifBOOKING_NO_SHOW => 'Клиент не пришёл';
+
+  @override
+  String get notifBOOKING_REMINDER => 'Подготовлено напоминание клиенту';
+
+  @override
+  String get notifPAYMENT_RECEIVED => 'Платёж записан';
+
+  @override
+  String get notifSUPPORT_REPLIED =>
+      'Поддержка ORLEU ответила на ваше обращение';
+
+  @override
+  String get notifOther => 'Обновление';
 }

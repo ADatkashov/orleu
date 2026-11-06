@@ -1,5 +1,6 @@
 package com.orleu.it;
 
+import com.orleu.notifications.OutboxProcessor;
 import com.orleu.support.AbstractIT;
 import com.orleu.support.Fixture;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,8 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SupportIT extends AbstractIT {
+    @org.springframework.beans.factory.annotation.Autowired OutboxProcessor processor;
+
     private String platformUser(String role) {
         String token = newUser(role.toLowerCase());
         jdbc.update("update users set platform_role = ? where lower(email) = lower(?)", role, get(token, "/api/v1/me").text("email"));
@@ -103,5 +106,24 @@ class SupportIT extends AbstractIT {
         UUID self = UUID.fromString(get(root, "/api/v1/me").text("id"));
         assertEquals(400, post(root, "/api/v1/admin/users/%s/disable", null, self).status(), "cannot lock yourself out");
         assertEquals(404, post(root, "/api/v1/admin/users/%s/disable", null, UUID.randomUUID()).status());
+    }
+
+    @Test void aSupportReplyNotifiesTheBusinessOwnersButNotOtherStaffRoles() {
+        jdbc.update("delete from outbox_events where status = 'PENDING'");
+        Fixture f = Fixture.create(this, 1, false);
+        String support = platformUser("PLATFORM_SUPPORT");
+        UUID id = UUID.fromString(open(f, "Help", "details").body().path("ticket").path("id").asText());
+        assertEquals(0, get(f.ownerToken, "/api/v1/businesses/%s/notifications", f.businessId).body().size(), "creating a ticket notifies nobody");
+        post(support, "/api/v1/admin/support/tickets/%s/reply", Map.of("body", "Done"), id);
+        processor.processDue();
+        Res owner = get(f.ownerToken, "/api/v1/businesses/%s/notifications", f.businessId);
+        assertEquals(1, owner.body().size());
+        assertEquals("SUPPORT_REPLIED", owner.body().get(0).path("eventType").asText());
+        assertTrue(owner.body().get(0).path("bookingId").isNull() || owner.body().get(0).path("bookingId").isMissingNode());
+
+        String receptionist = newUser("recep");
+        String email = get(receptionist, "/api/v1/me").text("email");
+        assertEquals(201, post(f.ownerToken, "/api/v1/businesses/%s/members", Map.of("email", email, "role", "RECEPTIONIST"), f.businessId).status());
+        assertEquals(0, get(receptionist, "/api/v1/businesses/%s/notifications", f.businessId).body().size(), "receptionists do not see support notifications");
     }
 }

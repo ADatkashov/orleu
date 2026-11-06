@@ -850,4 +850,52 @@ class AppLocalizationsKk extends AppLocalizations {
   @override
   String get errTooManyTickets =>
       'Ашық өтініштер тым көп. Біразын жабыңыз немесе жауапты күтіңіз.';
+
+  @override
+  String get notifTitle => 'Хабарландырулар';
+
+  @override
+  String get notifMarkAll => 'Барлығын оқылған деп белгілеу';
+
+  @override
+  String get notifNone => 'Хабарландырулар әлі жоқ';
+
+  @override
+  String get notifBOOKING_CREATED => 'Жаңа жазылу';
+
+  @override
+  String get notifBOOKING_CONFIRMED => 'Жазылу расталды';
+
+  @override
+  String get notifBOOKING_CANCELLED => 'Жазылудан бас тартылды';
+
+  @override
+  String get notifBOOKING_RESCHEDULED => 'Жазылу ауыстырылды';
+
+  @override
+  String get notifBOOKING_EXPIRED => 'Төленбеген жазылу мерзімі өтті';
+
+  @override
+  String get notifBOOKING_CHECKED_IN => 'Клиент келді';
+
+  @override
+  String get notifBOOKING_IN_PROGRESS => 'Келу басталды';
+
+  @override
+  String get notifBOOKING_COMPLETED => 'Келу аяқталды';
+
+  @override
+  String get notifBOOKING_NO_SHOW => 'Клиент келмеді';
+
+  @override
+  String get notifBOOKING_REMINDER => 'Клиентке еске салу дайындалды';
+
+  @override
+  String get notifPAYMENT_RECEIVED => 'Төлем тіркелді';
+
+  @override
+  String get notifSUPPORT_REPLIED => 'ORLEU қолдауы өтінішіңізге жауап берді';
+
+  @override
+  String get notifOther => 'Жаңарту';
 }

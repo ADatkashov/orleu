@@ -267,5 +267,21 @@
   "supportTeam": "Поддержка ORLEU",
   "supportYou": "Вы",
   "errTicketClosed": "Обращение закрыто",
-  "errTooManyTickets": "Слишком много открытых обращений. Закройте часть или дождитесь ответов."
+  "errTooManyTickets": "Слишком много открытых обращений. Закройте часть или дождитесь ответов.",
+  "notifTitle": "Уведомления",
+  "notifMarkAll": "Отметить всё прочитанным",
+  "notifNone": "Уведомлений пока нет",
+  "notifBOOKING_CREATED": "Новая запись",
+  "notifBOOKING_CONFIRMED": "Запись подтверждена",
+  "notifBOOKING_CANCELLED": "Запись отменена",
+  "notifBOOKING_RESCHEDULED": "Запись перенесена",
+  "notifBOOKING_EXPIRED": "Неоплаченная запись истекла",
+  "notifBOOKING_CHECKED_IN": "Клиент пришёл",
+  "notifBOOKING_IN_PROGRESS": "Визит начался",
+  "notifBOOKING_COMPLETED": "Визит завершён",
+  "notifBOOKING_NO_SHOW": "Клиент не пришёл",
+  "notifBOOKING_REMINDER": "Подготовлено напоминание клиенту",
+  "notifPAYMENT_RECEIVED": "Платёж записан",
+  "notifSUPPORT_REPLIED": "Поддержка ORLEU ответила на ваше обращение",
+  "notifOther": "Обновление"
 }

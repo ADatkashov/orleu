@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
@@ -172,6 +173,18 @@ class BookingActions {
     ref.invalidate(bookingsRangeProvider);
   }
 
+  Future<void> markNotificationRead(String id) async {
+    final biz = await _id();
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$biz/notifications/$id/read'));
+    ref.invalidate(notificationsProvider);
+  }
+
+  Future<void> markAllNotificationsRead() async {
+    final biz = await _id();
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$biz/notifications/read-all'));
+    ref.invalidate(notificationsProvider);
+  }
+
   /// Business-level customer messaging settings (reminder lead time in hours, 0 = off; language of customer messages).
   Future<void> updateMessaging({int? reminderHours, String? customerLocale}) async {
     final biz = await _id();
@@ -332,3 +345,14 @@ final reviewsProvider = FutureProvider.autoDispose<(ReviewSummary, List<ReviewIt
   final list = await api.run((d) => d.get('/api/v1/businesses/${b.id}/reviews'));
   return (ReviewSummary.fromJson(sum.data), (list.data as List).map((e) => ReviewItem.fromJson(e)).toList());
 });
+
+/// Notifications of the business. Refreshed every minute while something watches it (the home bell), and on pull-to-refresh.
+final notificationsProvider = FutureProvider.autoDispose<List<AppNotification>>((ref) async {
+  final b = await _biz(ref);
+  final timer = Timer(const Duration(seconds: 60), ref.invalidateSelf);
+  ref.onDispose(timer.cancel);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/notifications'));
+  return (r.data as List).map((e) => AppNotification.fromJson(e)).toList();
+});
+
+final unreadNotificationsProvider = Provider.autoDispose<int>((ref) => ref.watch(notificationsProvider).value?.where((n) => !n.read).length ?? 0);

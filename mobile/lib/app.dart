@@ -15,6 +15,7 @@ import 'features/home/home_screen.dart';
 import 'features/more/more_screen.dart';
 import 'features/more/messages_screen.dart';
 import 'features/more/account_screen.dart';
+import 'features/home/notifications_screen.dart';
 import 'features/more/reviews_screen.dart';
 import 'features/more/support_screen.dart';
 import 'features/setup/branches_screen.dart';
@@ -54,6 +55,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
       GoRoute(path: '/forgot', builder: (_, _) => const ForgotPasswordScreen()),
+      GoRoute(path: '/notifications', builder: (_, _) => const NotificationsScreen()),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => AppShell(shell: shell),
         branches: [

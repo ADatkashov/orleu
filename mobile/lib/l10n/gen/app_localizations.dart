@@ -1707,6 +1707,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Too many open requests. Close some or wait for answers.'**
   String get errTooManyTickets;
+
+  /// No description provided for @notifTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifTitle;
+
+  /// No description provided for @notifMarkAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get notifMarkAll;
+
+  /// No description provided for @notifNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get notifNone;
+
+  /// No description provided for @notifBOOKING_CREATED.
+  ///
+  /// In en, this message translates to:
+  /// **'New booking'**
+  String get notifBOOKING_CREATED;
+
+  /// No description provided for @notifBOOKING_CONFIRMED.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking confirmed'**
+  String get notifBOOKING_CONFIRMED;
+
+  /// No description provided for @notifBOOKING_CANCELLED.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking cancelled'**
+  String get notifBOOKING_CANCELLED;
+
+  /// No description provided for @notifBOOKING_RESCHEDULED.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking rescheduled'**
+  String get notifBOOKING_RESCHEDULED;
+
+  /// No description provided for @notifBOOKING_EXPIRED.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpaid booking expired'**
+  String get notifBOOKING_EXPIRED;
+
+  /// No description provided for @notifBOOKING_CHECKED_IN.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer arrived'**
+  String get notifBOOKING_CHECKED_IN;
+
+  /// No description provided for @notifBOOKING_IN_PROGRESS.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit started'**
+  String get notifBOOKING_IN_PROGRESS;
+
+  /// No description provided for @notifBOOKING_COMPLETED.
+  ///
+  /// In en, this message translates to:
+  /// **'Visit completed'**
+  String get notifBOOKING_COMPLETED;
+
+  /// No description provided for @notifBOOKING_NO_SHOW.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer did not show up'**
+  String get notifBOOKING_NO_SHOW;
+
+  /// No description provided for @notifBOOKING_REMINDER.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder prepared for a customer'**
+  String get notifBOOKING_REMINDER;
+
+  /// No description provided for @notifPAYMENT_RECEIVED.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment recorded'**
+  String get notifPAYMENT_RECEIVED;
+
+  /// No description provided for @notifSUPPORT_REPLIED.
+  ///
+  /// In en, this message translates to:
+  /// **'ORLEU support replied to your request'**
+  String get notifSUPPORT_REPLIED;
+
+  /// No description provided for @notifOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get notifOther;
 }
 
 class _AppLocalizationsDelegate

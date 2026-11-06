@@ -853,4 +853,52 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errTooManyTickets =>
       'Too many open requests. Close some or wait for answers.';
+
+  @override
+  String get notifTitle => 'Notifications';
+
+  @override
+  String get notifMarkAll => 'Mark all as read';
+
+  @override
+  String get notifNone => 'No notifications yet';
+
+  @override
+  String get notifBOOKING_CREATED => 'New booking';
+
+  @override
+  String get notifBOOKING_CONFIRMED => 'Booking confirmed';
+
+  @override
+  String get notifBOOKING_CANCELLED => 'Booking cancelled';
+
+  @override
+  String get notifBOOKING_RESCHEDULED => 'Booking rescheduled';
+
+  @override
+  String get notifBOOKING_EXPIRED => 'Unpaid booking expired';
+
+  @override
+  String get notifBOOKING_CHECKED_IN => 'Customer arrived';
+
+  @override
+  String get notifBOOKING_IN_PROGRESS => 'Visit started';
+
+  @override
+  String get notifBOOKING_COMPLETED => 'Visit completed';
+
+  @override
+  String get notifBOOKING_NO_SHOW => 'Customer did not show up';
+
+  @override
+  String get notifBOOKING_REMINDER => 'Reminder prepared for a customer';
+
+  @override
+  String get notifPAYMENT_RECEIVED => 'Payment recorded';
+
+  @override
+  String get notifSUPPORT_REPLIED => 'ORLEU support replied to your request';
+
+  @override
+  String get notifOther => 'Update';
 }
