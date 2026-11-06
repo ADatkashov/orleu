@@ -219,5 +219,16 @@
   "@reportBookingsN": {"placeholders": {"n": {"type": "String"}}},
   "reportReturningShare": "{p}% of customers returned",
   "@reportReturningShare": {"placeholders": {"p": {"type": "String"}}},
-  "reportsNote": "Figures come from recorded bookings and payments for the selected period. Cancelled bookings are not counted as demand."
+  "reportsNote": "Figures come from recorded bookings and payments for the selected period. Cancelled bookings are not counted as demand.",
+  "messagesNav": "Customer messages",
+  "messagesReminder": "Remind customers before the visit",
+  "messagesReminderOff": "Off",
+  "messagesReminderHours": "{n} h before",
+  "@messagesReminderHours": {"placeholders": {"n": {"type": "String"}}},
+  "messagesLanguage": "Language of customer messages",
+  "messagesPrepared": "Prepared messages",
+  "messagesNone": "No messages prepared yet",
+  "messagesNotSent": "Not sent",
+  "messagesNote": "Sending by SMS or e-mail is not connected yet: messages are prepared and listed here, but nothing is delivered to customers.",
+  "messagesSaved": "Saved"
 }

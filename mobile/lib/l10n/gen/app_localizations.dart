@@ -1299,6 +1299,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Figures come from recorded bookings and payments for the selected period. Cancelled bookings are not counted as demand.'**
   String get reportsNote;
+
+  /// No description provided for @messagesNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer messages'**
+  String get messagesNav;
+
+  /// No description provided for @messagesReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind customers before the visit'**
+  String get messagesReminder;
+
+  /// No description provided for @messagesReminderOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get messagesReminderOff;
+
+  /// No description provided for @messagesReminderHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} h before'**
+  String messagesReminderHours(String n);
+
+  /// No description provided for @messagesLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language of customer messages'**
+  String get messagesLanguage;
+
+  /// No description provided for @messagesPrepared.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepared messages'**
+  String get messagesPrepared;
+
+  /// No description provided for @messagesNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages prepared yet'**
+  String get messagesNone;
+
+  /// No description provided for @messagesNotSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sent'**
+  String get messagesNotSent;
+
+  /// No description provided for @messagesNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending by SMS or e-mail is not connected yet: messages are prepared and listed here, but nothing is delivered to customers.'**
+  String get messagesNote;
+
+  /// No description provided for @messagesSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get messagesSaved;
 }
 
 class _AppLocalizationsDelegate

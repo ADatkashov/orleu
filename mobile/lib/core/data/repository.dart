@@ -155,6 +155,13 @@ class BookingActions {
     ref.invalidate(bookingsProvider);
   }
 
+  /// Business-level customer messaging settings (reminder lead time in hours, 0 = off; language of customer messages).
+  Future<void> updateMessaging({int? reminderHours, String? customerLocale}) async {
+    final biz = await _id();
+    await ref.read(apiClientProvider).run((d) => d.patch('/api/v1/businesses/$biz/settings', data: {'reminderHours': ?reminderHours, 'customerLocale': ?customerLocale}));
+    ref.invalidate(currentBusinessProvider);
+  }
+
   Future<void> updateCustomer(String id, {String? fullName, String? email, String? notes, bool? marketingOptIn}) async {
     final biz = await _id();
     await ref.read(apiClientProvider).run((d) => d.patch('/api/v1/businesses/$biz/customers/$id',
@@ -284,3 +291,9 @@ final peakHoursProvider = FutureProvider.autoDispose<List<int>>((ref) async =>
     ((await _report(ref, 'peak-hours')) as List).map((e) => (e as num).toInt()).toList());
 
 final customerMixProvider = FutureProvider.autoDispose<CustomerMix>((ref) async => CustomerMix.fromJson(await _report(ref, 'customers')));
+
+final customerMessagesProvider = FutureProvider.autoDispose<List<CustomerMessage>>((ref) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/notifications/customer-messages'));
+  return (r.data as List).map((e) => CustomerMessage.fromJson(e)).toList();
+});

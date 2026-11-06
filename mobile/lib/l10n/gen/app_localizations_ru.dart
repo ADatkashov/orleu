@@ -628,4 +628,37 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get reportsNote =>
       'Цифры считаются по записям и платежам за выбранный период. Отменённые записи не считаются спросом.';
+
+  @override
+  String get messagesNav => 'Сообщения клиентам';
+
+  @override
+  String get messagesReminder => 'Напоминать клиентам до визита';
+
+  @override
+  String get messagesReminderOff => 'Выкл.';
+
+  @override
+  String messagesReminderHours(String n) {
+    return 'за $n ч';
+  }
+
+  @override
+  String get messagesLanguage => 'Язык сообщений клиентам';
+
+  @override
+  String get messagesPrepared => 'Подготовленные сообщения';
+
+  @override
+  String get messagesNone => 'Подготовленных сообщений пока нет';
+
+  @override
+  String get messagesNotSent => 'Не отправлено';
+
+  @override
+  String get messagesNote =>
+      'Отправка по SMS или e-mail ещё не подключена: сообщения готовятся и показаны здесь, но клиентам ничего не доставляется.';
+
+  @override
+  String get messagesSaved => 'Сохранено';
 }

@@ -41,7 +41,7 @@ Gaps: OTP/phone login, MFA, e-mail invitations, branch-level permissions, employ
 ### Phase 2 — Commercial core: PARTIAL
 - DONE: deposits (decimal-safe), immutable ledger, manual payments/refunds with idempotency, plans + entitlements, outbox + in-app notifications.
 - PARTIAL: CRM (basic customer records), subscription lifecycle (manual plan assignment, expiry → FREE).
-- TODO: promo codes/discounts, partial-refund approval workflow, reconciliation, invoices/receipts, trial/grace/renewal/proration, usage metering, notification templates kk/ru/en, reminders before appointments.
+- TODO: promo codes/discounts, partial-refund approval workflow, reconciliation, invoices/receipts, trial/grace/renewal/proration, usage metering, notification templates kk/ru/en, reminders before appointments (prepared, not delivered — see above).
 - BLOCKED: payment providers, SMS/e-mail/WhatsApp/push delivery.
 
 ### Phase 3 — Operations: PARTIAL
@@ -88,7 +88,7 @@ Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real 
 ## Next up (my ordering; revisit after each merge)
 1. ~~Customer CRM profile + visit history and catalog edit/deactivate~~ — done (core of DoD I).
 2. ~~Analytics breakdowns and charts~~ — done (DoD J; forecasting, utilisation, LTV, funnel remain).
-3. Reminders and notification templates (kk/ru/en) behind the existing outbox; provider-specific senders stay BLOCKED.
+3. ~~Reminders and notification templates (kk/ru/en) behind the outbox~~ — done up to the provider boundary (messages prepared, NOT_SENT); senders stay BLOCKED.
 4. Password-reset / change-password / sessions screens in the app — closes DoD M.
 5. Week/month calendar and filters.
 6. Reviews + customer portal; support tickets + admin sections (users, support).

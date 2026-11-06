@@ -630,4 +630,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get reportsNote =>
       'Figures come from recorded bookings and payments for the selected period. Cancelled bookings are not counted as demand.';
+
+  @override
+  String get messagesNav => 'Customer messages';
+
+  @override
+  String get messagesReminder => 'Remind customers before the visit';
+
+  @override
+  String get messagesReminderOff => 'Off';
+
+  @override
+  String messagesReminderHours(String n) {
+    return '$n h before';
+  }
+
+  @override
+  String get messagesLanguage => 'Language of customer messages';
+
+  @override
+  String get messagesPrepared => 'Prepared messages';
+
+  @override
+  String get messagesNone => 'No messages prepared yet';
+
+  @override
+  String get messagesNotSent => 'Not sent';
+
+  @override
+  String get messagesNote =>
+      'Sending by SMS or e-mail is not connected yet: messages are prepared and listed here, but nothing is delivered to customers.';
+
+  @override
+  String get messagesSaved => 'Saved';
 }

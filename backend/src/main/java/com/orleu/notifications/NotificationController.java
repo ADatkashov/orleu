@@ -40,4 +40,18 @@ public class NotificationController {
                 .param("id", id).param("b", businessId).update();
         if (n == 0) throw ApiException.notFound("Notification");
     }
+
+    public record MessageView(UUID id, String messageType, UUID bookingId, String locale, String recipientPhone, String body, String status, Instant createdAt) {}
+
+    /** The customer messages the system has prepared. Status NOT_SENT = no delivery provider is configured yet. */
+    @GetMapping("/customer-messages")
+    public List<MessageView> customerMessages(@PathVariable UUID businessId) {
+        access.require(businessId, Permission.CUSTOMERS_VIEW); // contains customer phone numbers
+        return jdbc.sql("""
+            select id, message_type, booking_id, locale, recipient_phone, body, status, created_at from customer_messages
+            where business_id = :b order by created_at desc limit 100
+            """).param("b", businessId)
+            .query((rs, i) -> new MessageView(rs.getObject(1, UUID.class), rs.getString(2), rs.getObject(3, UUID.class), rs.getString(4),
+                    rs.getString(5), rs.getString(6), rs.getString(7), rs.getTimestamp(8).toInstant())).list();
+    }
 }

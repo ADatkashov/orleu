@@ -36,6 +36,7 @@ class MoreScreen extends ConsumerWidget {
           (Icons.storefront_outlined, l.branches, '/more/branches'),
           (Icons.content_cut, l.services, '/more/services'),
           (Icons.badge_outlined, l.employees, '/more/employees'),
+          (Icons.sms_outlined, l.messagesNav, '/more/messages'),
         ]) Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.sm),
           child: Card(child: ListTile(leading: Icon(e.$1), title: Text(e.$2), trailing: const Icon(Icons.chevron_right), onTap: () => context.push(e.$3))),
