@@ -152,6 +152,20 @@ class AppNotification {
       createdAt: DateTime.parse(j['createdAt']), startsAtInstant: j['startsAt'] == null ? null : DateTime.parse(j['startsAt']), read: j['read'] == true);
 }
 
+class ImportReport {
+  final bool dryRun, issuesTruncated;
+  final int totalRows, created, existing, duplicatesInFile, invalid;
+  final List<(int, String)> issues; // (row, reason code)
+  final List<(String, String)> preview; // (name, phone)
+  const ImportReport({required this.dryRun, required this.issuesTruncated, required this.totalRows, required this.created, required this.existing,
+      required this.duplicatesInFile, required this.invalid, required this.issues, required this.preview});
+  factory ImportReport.fromJson(Map<String, dynamic> j) => ImportReport(
+      dryRun: j['dryRun'] == true, issuesTruncated: j['issuesTruncated'] == true, totalRows: j['totalRows'] ?? 0, created: j['created'] ?? 0, existing: j['existing'] ?? 0,
+      duplicatesInFile: j['duplicatesInFile'] ?? 0, invalid: j['invalid'] ?? 0,
+      issues: [for (final i in (j['issues'] as List? ?? const [])) (i['row'] as int, i['reason'] as String)],
+      preview: [for (final p in (j['preview'] as List? ?? const [])) (p['fullName'] as String, p['phone'] as String)]);
+}
+
 class PlanUsage {
   final String planCode;
   final int employees, maxEmployees;

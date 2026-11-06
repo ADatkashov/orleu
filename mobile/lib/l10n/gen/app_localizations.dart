@@ -1803,6 +1803,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Update'**
   String get notifOther;
+
+  /// No description provided for @importNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Import clients (CSV)'**
+  String get importNav;
+
+  /// No description provided for @importIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Export your spreadsheet as CSV (UTF-8). The first row names the columns: name and phone are required, e-mail and notes are optional. Clients that already exist are never changed, and imported clients are not marked as agreeing to marketing messages.'**
+  String get importIntro;
+
+  /// No description provided for @importChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose CSV file'**
+  String get importChoose;
+
+  /// No description provided for @importFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File: {name}'**
+  String importFile(String name);
+
+  /// No description provided for @importNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New clients'**
+  String get importNew;
+
+  /// No description provided for @importExisting.
+  ///
+  /// In en, this message translates to:
+  /// **'Already in your list'**
+  String get importExisting;
+
+  /// No description provided for @importDupes.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicates inside the file'**
+  String get importDupes;
+
+  /// No description provided for @importInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Rows with problems'**
+  String get importInvalid;
+
+  /// No description provided for @importProblems.
+  ///
+  /// In en, this message translates to:
+  /// **'Rows that will be skipped'**
+  String get importProblems;
+
+  /// No description provided for @importRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Row {row}: {reason}'**
+  String importRow(String row, String reason);
+
+  /// No description provided for @imp_PHONE_INVALID.
+  ///
+  /// In en, this message translates to:
+  /// **'invalid phone number'**
+  String get imp_PHONE_INVALID;
+
+  /// No description provided for @imp_NAME_MISSING.
+  ///
+  /// In en, this message translates to:
+  /// **'name is missing'**
+  String get imp_NAME_MISSING;
+
+  /// No description provided for @imp_NAME_TOO_LONG.
+  ///
+  /// In en, this message translates to:
+  /// **'name is too long'**
+  String get imp_NAME_TOO_LONG;
+
+  /// No description provided for @imp_EMAIL_INVALID.
+  ///
+  /// In en, this message translates to:
+  /// **'invalid e-mail'**
+  String get imp_EMAIL_INVALID;
+
+  /// No description provided for @imp_NOTES_TOO_LONG.
+  ///
+  /// In en, this message translates to:
+  /// **'notes are too long'**
+  String get imp_NOTES_TOO_LONG;
+
+  /// No description provided for @importMoreProblems.
+  ///
+  /// In en, this message translates to:
+  /// **'…and more rows with problems'**
+  String get importMoreProblems;
+
+  /// No description provided for @importConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Import {n} clients'**
+  String importConfirm(String n);
+
+  /// No description provided for @importNothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing new to import'**
+  String get importNothing;
+
+  /// No description provided for @importDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {n} clients'**
+  String importDone(String n);
+
+  /// No description provided for @importAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Import another file'**
+  String get importAnother;
+
+  /// No description provided for @importPreviewSample.
+  ///
+  /// In en, this message translates to:
+  /// **'First new clients'**
+  String get importPreviewSample;
+
+  /// No description provided for @errImportEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The file is empty or has no client rows'**
+  String get errImportEmpty;
+
+  /// No description provided for @errImportColumns.
+  ///
+  /// In en, this message translates to:
+  /// **'The first row must contain a name column and a phone column'**
+  String get errImportColumns;
+
+  /// No description provided for @errImportTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'The file is too large (at most 5000 clients, 2 MB)'**
+  String get errImportTooLarge;
+
+  /// No description provided for @errImportEncoding.
+  ///
+  /// In en, this message translates to:
+  /// **'The file is not UTF-8. In Excel choose \"CSV UTF-8\" when saving.'**
+  String get errImportEncoding;
 }
 
 class _AppLocalizationsDelegate

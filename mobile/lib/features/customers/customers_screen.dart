@@ -30,7 +30,9 @@ class _State extends ConsumerState<CustomersScreen> {
     final l = AppLocalizations.of(context);
     final res = ref.watch(customersProvider(_q));
     return Scaffold(
-      appBar: AppBar(title: Text(l.navCustomers)),
+      appBar: AppBar(title: Text(l.navCustomers), actions: [
+        IconButton(key: const Key('importCsv'), tooltip: l.importNav, icon: const Icon(Icons.upload_file_outlined), onPressed: () => context.push('/customers/import')),
+      ]),
       body: Column(children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.sm),

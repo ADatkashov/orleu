@@ -76,7 +76,7 @@ AI assistant (only with real testable use cases), forecasting (labelled estimate
 |---|---|---|
 | 1 | Legal & compliance (terms, privacy policy, consents, retention) | TODO — needs legal review; consent capture on public booking exists only as a marketing opt-in checkbox |
 | 2 | Localization (dates, times, phones, currencies, addresses, timezones) | PARTIAL — kk/ru/en UI, E.164 +7 phones, KZT formatting, business-timezone times; address formats, other currencies TODO |
-| 3 | Data import (Excel/CSV) | TODO |
+| 3 | Data import (Excel/CSV) | PARTIAL — customers from CSV (dry run, E.164, never overwrites, no consent); services/employees/bookings import, native .xlsx and cp1251 files TODO |
 | 4 | Customer acquisition (SEO, referral links, landing pages, business registration) | PARTIAL — SEO meta on booking pages; rest TODO |
 | 5 | Platform economics (CAC, LTV, MRR, ARR, churn, conversion) | TODO — needs billing first |
 | 6 | Product analytics (onboarding funnel, adoption, retention) | TODO |

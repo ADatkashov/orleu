@@ -901,4 +901,91 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notifOther => 'Update';
+
+  @override
+  String get importNav => 'Import clients (CSV)';
+
+  @override
+  String get importIntro =>
+      'Export your spreadsheet as CSV (UTF-8). The first row names the columns: name and phone are required, e-mail and notes are optional. Clients that already exist are never changed, and imported clients are not marked as agreeing to marketing messages.';
+
+  @override
+  String get importChoose => 'Choose CSV file';
+
+  @override
+  String importFile(String name) {
+    return 'File: $name';
+  }
+
+  @override
+  String get importNew => 'New clients';
+
+  @override
+  String get importExisting => 'Already in your list';
+
+  @override
+  String get importDupes => 'Duplicates inside the file';
+
+  @override
+  String get importInvalid => 'Rows with problems';
+
+  @override
+  String get importProblems => 'Rows that will be skipped';
+
+  @override
+  String importRow(String row, String reason) {
+    return 'Row $row: $reason';
+  }
+
+  @override
+  String get imp_PHONE_INVALID => 'invalid phone number';
+
+  @override
+  String get imp_NAME_MISSING => 'name is missing';
+
+  @override
+  String get imp_NAME_TOO_LONG => 'name is too long';
+
+  @override
+  String get imp_EMAIL_INVALID => 'invalid e-mail';
+
+  @override
+  String get imp_NOTES_TOO_LONG => 'notes are too long';
+
+  @override
+  String get importMoreProblems => '…and more rows with problems';
+
+  @override
+  String importConfirm(String n) {
+    return 'Import $n clients';
+  }
+
+  @override
+  String get importNothing => 'Nothing new to import';
+
+  @override
+  String importDone(String n) {
+    return 'Imported $n clients';
+  }
+
+  @override
+  String get importAnother => 'Import another file';
+
+  @override
+  String get importPreviewSample => 'First new clients';
+
+  @override
+  String get errImportEmpty => 'The file is empty or has no client rows';
+
+  @override
+  String get errImportColumns =>
+      'The first row must contain a name column and a phone column';
+
+  @override
+  String get errImportTooLarge =>
+      'The file is too large (at most 5000 clients, 2 MB)';
+
+  @override
+  String get errImportEncoding =>
+      'The file is not UTF-8. In Excel choose \"CSV UTF-8\" when saving.';
 }
