@@ -21,6 +21,7 @@ public class AdminService {
     public record Plan(String code, String name, int maxBranches, int maxEmployees, java.math.BigDecimal priceMonthly, String currency, boolean active) {}
     public record AuditRow(UUID id, UUID businessId, UUID actorUserId, String action, String entityType, UUID entityId, Instant createdAt) {}
     public record Page<T>(List<T> items, int page, int size) {}
+    public record UserRow(UUID id, String email, String fullName, String status, String platformRole, int businesses, Instant createdAt) {}
 
     private final PlatformAccess access;
     private final JdbcClient jdbc;
@@ -81,6 +82,37 @@ public class AdminService {
         if (n == 0) throw ApiException.notFound("Business");
         audit.log(businessId, actor, suspend ? "ADMIN_BUSINESS_SUSPENDED" : "ADMIN_BUSINESS_REACTIVATED", "BUSINESS", businessId, null);
         return business(businessId);
+    }
+
+    public Page<UserRow> users(String q, int page, int size) {
+        access.require(PlatformRole.SUPER_ADMIN, PlatformRole.PLATFORM_SUPPORT); // e-mail addresses are personal data: analysts do not see them
+        int s = Math.min(Math.max(size, 1), 100), p = Math.max(page, 0);
+        String like = q == null || q.isBlank() ? null : "%" + q.trim().toLowerCase().replace("%", "") + "%";
+        var rows = jdbc.sql("""
+            select u.id, u.email, u.full_name, u.status, u.platform_role, u.created_at,
+                   (select count(*) from memberships m where m.user_id = u.id) as businesses
+            from users u where (cast(:q as varchar) is null or lower(u.email) like :q or lower(u.full_name) like :q)
+            order by u.created_at desc limit :s offset :o
+            """).param("q", like, java.sql.Types.VARCHAR).param("s", s).param("o", p * s)
+                .query((rs, i) -> new UserRow(rs.getObject(1, UUID.class), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
+                        rs.getInt(7), rs.getTimestamp(6).toInstant())).list();
+        return new Page<>(rows, p, s);
+    }
+
+    /** Disabling a user blocks sign-in and revokes every refresh token; an already issued access token lives out its short lifetime (<= 15 min). */
+    @Transactional
+    public UserRow setUserDisabled(UUID userId, boolean disable) {
+        UUID actor = access.require(PlatformRole.SUPER_ADMIN);
+        if (disable && actor.equals(userId)) throw ApiException.badRequest("CANNOT_DISABLE_SELF", "You cannot disable your own account");
+        int n = jdbc.sql("update users set status = :s, updated_at = now() where id = :id").param("s", disable ? "DISABLED" : "ACTIVE").param("id", userId).update();
+        if (n == 0) throw ApiException.notFound("User");
+        if (disable) jdbc.sql("update refresh_tokens set revoked_at = now(), revoked_reason = 'ADMIN_DISABLED' where user_id = :id and revoked_at is null").param("id", userId).update();
+        audit.log(null, actor, disable ? "ADMIN_USER_DISABLED" : "ADMIN_USER_ENABLED", "USER", userId, null);
+        return jdbc.sql("""
+            select u.id, u.email, u.full_name, u.status, u.platform_role, u.created_at, (select count(*) from memberships m where m.user_id = u.id)
+            from users u where u.id = :id
+            """).param("id", userId)
+                .query((rs, i) -> new UserRow(rs.getObject(1, UUID.class), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(7), rs.getTimestamp(6).toInstant())).single();
     }
 
     public List<Plan> plans() {

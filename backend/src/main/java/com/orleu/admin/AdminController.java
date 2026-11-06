@@ -47,6 +47,17 @@ public class AdminController {
     @PostMapping("/businesses/{id}/reactivate")
     public BusinessDetail reactivate(@PathVariable UUID id) { return service.setSuspended(id, false, null); }
 
+    @GetMapping("/users")
+    public Page<UserRow> users(@RequestParam(required = false) String q, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+        return service.users(q, page, size);
+    }
+
+    @PostMapping("/users/{id}/disable")
+    public UserRow disableUser(@PathVariable UUID id) { return service.setUserDisabled(id, true); }
+
+    @PostMapping("/users/{id}/enable")
+    public UserRow enableUser(@PathVariable UUID id) { return service.setUserDisabled(id, false); }
+
     @GetMapping("/plans")
     public List<Plan> plans() { return service.plans(); }
 
