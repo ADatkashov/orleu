@@ -399,5 +399,8 @@
   "promoDiscountOf": "Жеңілдік {value}",
   "promoValidUntilLabel": "{date} дейін",
   "errPromo": "Промокод жарамсыз.",
-  "errCodeExists": "Мұндай код бар."
+  "errCodeExists": "Мұндай код бар.",
+  "tagsTitle": "Тегтер",
+  "tagsHint": "Үтір арқылы, ұзындығы 30 таңбаға дейінгі 10 тегке дейін",
+  "tagsInvalid": "10 тегтен көп емес, әрқайсысы 30 таңбаға дейін."
 }

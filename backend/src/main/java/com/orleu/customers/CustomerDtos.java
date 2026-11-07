@@ -15,11 +15,16 @@ public final class CustomerDtos {
             Boolean marketingOptIn) {}
 
     public record CustomerView(UUID id, String fullName, String phone, String email, String notes,
-                               boolean marketingOptIn, boolean blocked) {
-        public static CustomerView of(Customer c) {
-            return new CustomerView(c.getId(), c.getFullName(), c.getPhone(), c.getEmail(), c.getNotes(), c.isMarketingOptIn(), c.isBlocked());
+                               boolean marketingOptIn, boolean blocked,
+                               java.util.List<String> tags) {
+        public static CustomerView of(Customer c, java.util.List<String> tags) {
+            return new CustomerView(c.getId(), c.getFullName(), c.getPhone(), c.getEmail(), c.getNotes(), c.isMarketingOptIn(), c.isBlocked(), tags);
         }
     }
+
+    public record TagsRequest(@NotNull @Size(max = 10) java.util.List<@NotBlank @Size(max = 30) String> tags) {}
+
+    public record TagCount(String tag, long customers) {}
 
     /** All fields optional: null = leave unchanged. The phone number is the customer's identity and cannot be edited. */
     public record UpdateCustomerRequest(@Size(min = 1, max = 200) String fullName, @Email @Size(max = 254) String email,

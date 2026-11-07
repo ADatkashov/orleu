@@ -29,6 +29,8 @@ class _State extends ConsumerState<CustomersScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final res = ref.watch(customersProvider(_q));
+    final tags = ref.watch(customerTagsProvider).value ?? const [];
+    final selected = ref.watch(customerTagFilterProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l.navCustomers), actions: [
         IconButton(key: const Key('importCsv'), tooltip: l.importNav, icon: const Icon(Icons.upload_file_outlined), onPressed: () => context.push('/customers/import')),
@@ -44,6 +46,19 @@ class _State extends ConsumerState<CustomersScreen> {
             },
           ),
         ),
+        if (tags.isNotEmpty)
+          SizedBox(height: 48, child: ListView(
+            scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            children: [
+              for (final t in tags) Padding(
+                padding: const EdgeInsets.only(right: AppSpacing.sm),
+                child: FilterChip(
+                  key: Key('tagFilter-${t.tag}'), label: Text('${t.tag} · ${t.customers}'), selected: selected == t.tag,
+                  onSelected: (on) => ref.read(customerTagFilterProvider.notifier).select(on ? t.tag : null),
+                ),
+              ),
+            ],
+          )),
         Expanded(
           child: res.when(
             loading: () => const SkeletonList(),
@@ -62,7 +77,7 @@ class _State extends ConsumerState<CustomersScreen> {
                           onTap: () => context.push('/customers/${c.id}'),
                           leading: CircleAvatar(child: Text(c.fullName.isEmpty ? '?' : c.fullName[0].toUpperCase())),
                           title: Text(c.fullName),
-                          subtitle: Text(c.phone),
+                          subtitle: Text(c.tags.isEmpty ? c.phone : '${c.phone} · ${c.tags.map((t) => '#$t').join(' ')}'),
                           trailing: c.blocked ? const Icon(Icons.block, color: AppColors.danger) : null,
                         ),
                       );

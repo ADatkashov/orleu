@@ -435,5 +435,8 @@
   "promoValidUntilLabel": "until {date}",
   "@promoValidUntilLabel": {"placeholders": {"date": {"type": "String"}}},
   "errPromo": "This promo code is not valid.",
-  "errCodeExists": "This code already exists."
+  "errCodeExists": "This code already exists.",
+  "tagsTitle": "Tags",
+  "tagsHint": "Comma-separated, up to 10 tags of 30 characters",
+  "tagsInvalid": "Up to 10 tags, each at most 30 characters."
 }

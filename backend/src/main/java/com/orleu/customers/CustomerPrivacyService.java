@@ -110,6 +110,7 @@ public class CustomerPrivacyService {
             update customers set full_name = 'Deleted customer', phone = :p, email = null, notes = null, marketing_opt_in = false, anonymized_at = now()
             where id = :c and business_id = :b and anonymized_at is null
             """).param("p", placeholder).param("c", customerId).param("b", businessId).update();
+        jdbc.sql("delete from customer_tags where customer_id = :c and business_id = :b").param("c", customerId).param("b", businessId).update();
         jdbc.sql("update bookings set notes = null, manage_token_hash = null where customer_id = :c and business_id = :b").param("c", customerId).param("b", businessId).update();
         jdbc.sql("delete from customer_messages where business_id = :b and booking_id in (select id from bookings where customer_id = :c and business_id = :b)").param("c", customerId).param("b", businessId).update();
         jdbc.sql("update reviews set comment = null where business_id = :b and booking_id in (select id from bookings where customer_id = :c and business_id = :b)").param("c", customerId).param("b", businessId).update();

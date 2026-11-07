@@ -74,11 +74,28 @@ final bookingsRangeProvider = FutureProvider.autoDispose.family<List<Booking>, C
   return (r.data as List).map((e) => Booking.fromJson(e, zone: b.timezone)).toList();
 });
 
+/// Selected tag filter of the customer list (null = everyone).
+class CustomerTagFilter extends Notifier<String?> {
+  @override
+  String? build() => null;
+  void select(String? tag) => state = tag;
+}
+
+final customerTagFilterProvider = NotifierProvider<CustomerTagFilter, String?>(CustomerTagFilter.new);
+
 final customersProvider = FutureProvider.autoDispose.family<List<Customer>, String>((ref, q) async {
   final b = await _biz(ref);
+  final tag = ref.watch(customerTagFilterProvider);
   final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/customers',
-      queryParameters: {'q': q, 'size': 50}));
+      queryParameters: {'q': q, 'size': 50, 'tag': ?tag}));
   return (r.data['items'] as List).map((e) => Customer.fromJson(e)).toList();
+});
+
+/// Tags in use with their customer counts (filter chips).
+final customerTagsProvider = FutureProvider.autoDispose<List<({String tag, int customers})>>((ref) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/customers/tags'));
+  return [for (final e in (r.data as List)) (tag: e['tag'] as String, customers: (e['customers'] as num).toInt())];
 });
 
 /// Last-30-days summary; the end of the range reaches into tomorrow so payments recorded today are included.
@@ -275,6 +292,14 @@ class BookingActions {
         data: {'fullName': ?fullName, 'email': ?email, 'notes': ?notes, 'marketingOptIn': ?marketingOptIn}));
     ref.invalidate(customerProfileProvider);
     ref.invalidate(customersProvider);
+  }
+
+  Future<void> setCustomerTags(String id, List<String> tags) async {
+    final biz = await _id();
+    await ref.read(apiClientProvider).run((d) => d.put('/api/v1/businesses/$biz/customers/$id/tags', data: {'tags': tags}));
+    ref.invalidate(customerProfileProvider);
+    ref.invalidate(customersProvider);
+    ref.invalidate(customerTagsProvider);
   }
 
   Future<void> setCustomerBlocked(String id, bool blocked) async {

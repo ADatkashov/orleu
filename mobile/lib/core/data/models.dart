@@ -60,9 +60,11 @@ class Customer {
   final String id, fullName, phone;
   final String? email;
   final bool blocked;
-  const Customer({required this.id, required this.fullName, required this.phone, this.email, required this.blocked});
-  factory Customer.fromJson(Map<String, dynamic> j) =>
-      Customer(id: j['id'], fullName: j['fullName'], phone: j['phone'], email: j['email'], blocked: j['blocked'] == true);
+  final List<String> tags;
+  const Customer({required this.id, required this.fullName, required this.phone, this.email, required this.blocked, this.tags = const []});
+  factory Customer.fromJson(Map<String, dynamic> j) => Customer(
+      id: j['id'], fullName: j['fullName'], phone: j['phone'], email: j['email'], blocked: j['blocked'] == true,
+      tags: [for (final t in (j['tags'] as List? ?? const [])) t as String]);
 }
 
 class Summary {

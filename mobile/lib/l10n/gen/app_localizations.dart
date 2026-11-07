@@ -2499,6 +2499,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This code already exists.'**
   String get errCodeExists;
+
+  /// No description provided for @tagsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get tagsTitle;
+
+  /// No description provided for @tagsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Comma-separated, up to 10 tags of 30 characters'**
+  String get tagsHint;
+
+  /// No description provided for @tagsInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 10 tags, each at most 30 characters.'**
+  String get tagsInvalid;
 }
 
 class _AppLocalizationsDelegate

@@ -7,8 +7,8 @@ import 'package:orleu_mobile/core/data/models.dart';
 
 import 'support/fake_api.dart';
 
-Map<String, Object?> profileJson({bool blocked = false, String? notes = 'Prefers mornings', bool visits = true, bool optIn = false}) => {
-      'customer': {'id': 'c1', 'fullName': 'Aigerim Sadykova', 'phone': '+77011234567', 'email': 'a@example.com', 'notes': notes, 'marketingOptIn': optIn, 'blocked': blocked},
+Map<String, Object?> profileJson({bool blocked = false, String? notes = 'Prefers mornings', bool visits = true, bool optIn = false, List<String> tags = const []}) => {
+      'customer': {'tags': tags, 'id': 'c1', 'fullName': 'Aigerim Sadykova', 'phone': '+77011234567', 'email': 'a@example.com', 'notes': notes, 'marketingOptIn': optIn, 'blocked': blocked},
       'stats': {
         'totalBookings': visits ? 4 : 0, 'completedVisits': visits ? 1 : 0, 'cancelled': visits ? 1 : 0, 'noShows': visits ? 1 : 0, 'upcoming': visits ? 1 : 0,
         'lastVisit': visits ? '2026-11-05T05:00:00Z' : null, 'totalSpent': visits ? 18000 : 0, 'averageSpendPerVisit': visits ? 15000 : null,
@@ -20,6 +20,7 @@ Map<String, Object?> profileJson({bool blocked = false, String? notes = 'Prefers
 
 class Env {
   bool blocked = false, optIn = false, noVisits = false;
+  var tags = <String>[];
   String? notes = 'Prefers mornings';
   Handler? patchOverride;
   var service = <String, Object?>{'id': 's1', 'name': 'Haircut', 'durationMinutes': 60, 'bufferMinutes': 15, 'price': 20000, 'depositPercent': 30, 'active': true};
@@ -32,13 +33,15 @@ class Env {
       ...businessRoutes(),
       'GET /api/v1/businesses': (_) => ok([{'id': 'b1', 'name': 'Studio', 'slug': 'studio', 'currency': 'KZT', 'planCode': 'FREE', 'published': true, 'timezone': 'Asia/Almaty'}]),
       'GET /api/v1/businesses/b1/customers': (_) => ok({'items': [{'id': 'c1', 'fullName': 'Aigerim Sadykova', 'phone': '+77011234567', 'blocked': blocked}], 'page': 0, 'size': 50, 'total': 1}),
-      'GET /api/v1/businesses/b1/customers/c1/profile': (_) => ok(profileJson(blocked: blocked, notes: notes, visits: !noVisits, optIn: optIn)),
+      'GET /api/v1/businesses/b1/customers/c1/profile': (_) => ok(profileJson(blocked: blocked, notes: notes, visits: !noVisits, optIn: optIn, tags: tags)),
       'PATCH /api/v1/businesses/b1/customers/c1': (o) {
         final d = o.data as Map;
         if (d.containsKey('notes')) notes = d['notes'];
         if (d.containsKey('marketingOptIn')) optIn = d['marketingOptIn'];
         return patchOverride?.call(o) ?? ok({});
       },
+      'PUT /api/v1/businesses/b1/customers/c1/tags': (o) { tags = [for (final t in (o.data as Map)['tags']) t as String]; return ok({}); },
+      'GET /api/v1/businesses/b1/customers/tags': (_) => ok([{'tag': 'vip', 'customers': 2}]),
       'POST /api/v1/businesses/b1/customers/c1/block': (_) { blocked = true; return ok({}); },
       'POST /api/v1/businesses/b1/customers/c1/unblock': (_) { blocked = false; return ok({}); },
       'GET /api/v1/businesses/b1/services': (_) => ok([service]),
@@ -90,6 +93,7 @@ void main() {
       expect(find.textContaining('18'), findsWidgets);           // total paid 18 000 (cash)
       expect(find.textContaining('15'), findsWidgets);           // average per completed visit
       expect(find.textContaining('Paid = cash collected minus refunds'), findsOneWidget);
+      await tester.scrollUntilVisible(find.byKey(const Key('line-k1')), 200, scrollable: find.byType(Scrollable).first);
       expect(find.byKey(const Key('line-k1')), findsOneWidget);
       expect(find.textContaining('10:00'), findsWidgets);        // 05:00Z is 10:00 in Almaty, even on a UTC device
       expect(find.text('Prefers mornings'), findsOneWidget);
@@ -130,6 +134,34 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('formError')), findsOneWidget);
       expect(find.byKey(const Key('editName')), findsOneWidget);
+    });
+
+    testWidgets('tags are edited as a comma-separated list and shown as chips', (tester) async {
+      final env = Env();
+      await openProfile(tester, env);
+      expect(find.byKey(const Key('noTags')), findsOneWidget);
+      await tester.ensureVisible(find.byKey(const Key('editTags')));
+      await tester.tap(find.byKey(const Key('editTags')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('tagsField')), 'vip, allergy ,');
+      await tester.tap(find.byKey(const Key('saveTags')));
+      await tester.pumpAndSettle();
+      expect(env.bodyOf('PUT', '/customers/c1/tags'), {'tags': ['vip', 'allergy']});
+      expect(find.byKey(const Key('tag-vip')), findsOneWidget);
+      expect(find.byKey(const Key('tag-allergy')), findsOneWidget);
+    });
+
+    testWidgets('a tag that is too long is rejected locally, inside the dialog', (tester) async {
+      final env = Env();
+      await openProfile(tester, env);
+      await tester.ensureVisible(find.byKey(const Key('editTags')));
+      await tester.tap(find.byKey(const Key('editTags')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('tagsField')), 'x' * 31);
+      await tester.tap(find.byKey(const Key('saveTags')));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('at most 30'), findsOneWidget);
+      expect(env.bodyOf('PUT', '/customers/c1/tags'), isNull);
     });
 
     testWidgets('marketing consent toggles through the API', (tester) async {

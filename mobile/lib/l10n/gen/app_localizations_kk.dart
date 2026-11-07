@@ -1291,4 +1291,14 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get errCodeExists => 'Мұндай код бар.';
+
+  @override
+  String get tagsTitle => 'Тегтер';
+
+  @override
+  String get tagsHint =>
+      'Үтір арқылы, ұзындығы 30 таңбаға дейінгі 10 тегке дейін';
+
+  @override
+  String get tagsInvalid => '10 тегтен көп емес, әрқайсысы 30 таңбаға дейін.';
 }
