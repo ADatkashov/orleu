@@ -1301,4 +1301,17 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get tagsInvalid => '10 тегтен көп емес, әрқайсысы 30 таңбаға дейін.';
+
+  @override
+  String get mergeClient => 'Қосарланған жазбаны біріктіру';
+
+  @override
+  String mergeIntro(String name) {
+    return '$name клиентінің қосарланған жазбасын тауып, осы карточкаға біріктіріңіз.';
+  }
+
+  @override
+  String mergeWarning(String dup, String phone, String name) {
+    return '$dup ($phone) жазбасын $name карточкасына біріктіру керек пе? Жазбалар, тегтер мен ескертпелер $name карточкасына ауысады, қосарланған карточка жойылады. Жарнамаға келісім ауыспайды. Мұны қайтару мүмкін емес.';
+  }
 }

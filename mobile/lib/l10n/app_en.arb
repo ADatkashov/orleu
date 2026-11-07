@@ -438,5 +438,10 @@
   "errCodeExists": "This code already exists.",
   "tagsTitle": "Tags",
   "tagsHint": "Comma-separated, up to 10 tags of 30 characters",
-  "tagsInvalid": "Up to 10 tags, each at most 30 characters."
+  "tagsInvalid": "Up to 10 tags, each at most 30 characters.",
+  "mergeClient": "Merge a duplicate",
+  "mergeIntro": "Find the duplicate of {name} to merge into this card.",
+  "@mergeIntro": {"placeholders": {"name": {"type": "String"}}},
+  "mergeWarning": "Merge {dup} ({phone}) into {name}? Its bookings, tags and notes move to {name}; the duplicate record is deleted. Marketing consent is not transferred. This cannot be undone.",
+  "@mergeWarning": {"placeholders": {"dup": {"type": "String"}, "phone": {"type": "String"}, "name": {"type": "String"}}}
 }

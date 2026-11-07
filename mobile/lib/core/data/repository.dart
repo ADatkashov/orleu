@@ -83,13 +83,18 @@ class CustomerTagFilter extends Notifier<String?> {
 
 final customerTagFilterProvider = NotifierProvider<CustomerTagFilter, String?>(CustomerTagFilter.new);
 
-final customersProvider = FutureProvider.autoDispose.family<List<Customer>, String>((ref, q) async {
+Future<List<Customer>> _searchCustomers(Ref ref, String q, String? tag) async {
   final b = await _biz(ref);
-  final tag = ref.watch(customerTagFilterProvider);
   final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/customers',
       queryParameters: {'q': q, 'size': 50, 'tag': ?tag}));
   return (r.data['items'] as List).map((e) => Customer.fromJson(e)).toList();
-});
+}
+
+final customersProvider = FutureProvider.autoDispose.family<List<Customer>, String>(
+    (ref, q) => _searchCustomers(ref, q, ref.watch(customerTagFilterProvider)));
+
+/// Plain search without the list's tag filter (used by the merge picker).
+final customerSearchProvider = FutureProvider.autoDispose.family<List<Customer>, String>((ref, q) => _searchCustomers(ref, q, null));
 
 /// Tags in use with their customer counts (filter chips).
 final customerTagsProvider = FutureProvider.autoDispose<List<({String tag, int customers})>>((ref) async {
@@ -299,6 +304,16 @@ class BookingActions {
     await ref.read(apiClientProvider).run((d) => d.put('/api/v1/businesses/$biz/customers/$id/tags', data: {'tags': tags}));
     ref.invalidate(customerProfileProvider);
     ref.invalidate(customersProvider);
+    ref.invalidate(customerTagsProvider);
+  }
+
+  /// Merges the duplicate [sourceId] into [targetId]; the duplicate is deleted on the server.
+  Future<void> mergeCustomer(String targetId, String sourceId) async {
+    final biz = await _id();
+    await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/$biz/customers/$targetId/merge', data: {'sourceId': sourceId}));
+    ref.invalidate(customerProfileProvider);
+    ref.invalidate(customersProvider);
+    ref.invalidate(customerSearchProvider);
     ref.invalidate(customerTagsProvider);
   }
 
