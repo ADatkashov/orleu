@@ -127,7 +127,7 @@ void main() {
     await pumpApp(tester, adapter, store);
     await tester.tap(find.text('More').last);
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Sign out')); // the More list is long; the button is below the fold on a phone
+    await tester.scrollUntilVisible(find.text('Sign out'), 300, scrollable: find.byType(Scrollable).first); // the More list is long; the button is below the fold on a phone
     await tester.pumpAndSettle();
     await tester.tap(find.text('Sign out'));
     await tester.pumpAndSettle();
