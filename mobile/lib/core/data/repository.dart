@@ -622,3 +622,15 @@ Future<void> closeCash(WidgetRef ref, {required String expectedCash, required St
   ref.invalidate(cashPreviewProvider);
   ref.invalidate(cashClosingsProvider);
 }
+
+/// Public reply of the business to a review (owner/admin); the guest sees it on their booking link.
+Future<void> replyToReview(WidgetRef ref, String id, String? text) async {
+  final b = await ref.read(currentBusinessProvider.future);
+  final api = ref.read(apiClientProvider);
+  if (text == null) {
+    await api.run((d) => d.delete('/api/v1/businesses/${b!.id}/reviews/$id/reply'));
+  } else {
+    await api.run((d) => d.put('/api/v1/businesses/${b!.id}/reviews/$id/reply', data: {'text': text}));
+  }
+  ref.invalidate(reviewsProvider);
+}

@@ -446,5 +446,9 @@
   "closingPeriod": "Кезең: {from} – {to}",
   "closingShortage": "Жетіспейді: {amount}",
   "closingSurplus": "Артық: {amount}",
-  "closingRow": "күтілген {expected}, саналған {counted}"
+  "closingRow": "күтілген {expected}, саналған {counted}",
+  "reviewReply": "Жауап беру",
+  "reviewReplyRemove": "Жауапты жою",
+  "reviewReplyNote": "Жауапты қонақ өзінің жазылу сілтемесінде көреді. Сыпайы болыңыз, жеке деректерді жазбаңыз.",
+  "reviewHidden": "Платформа жасырды: {reason}"
 }

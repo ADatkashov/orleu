@@ -231,7 +231,7 @@ public class BookingService {
     public record ManageView(String businessName, String serviceName, java.time.Instant startsAt, BookingStatus status,
                              BigDecimal price, BigDecimal depositAmount, BigDecimal remainingBalance, String currency,
                              boolean canCancel, Instant cancelUntil,
-                             boolean canReview, Integer reviewRating) {}
+                             boolean canReview, Integer reviewRating, String businessReply) {}
 
     @Transactional(readOnly = true)
     public ManageView manageView(String rawToken) {
@@ -261,10 +261,13 @@ public class BookingService {
         Instant cancelUntil = b.getStartsAt().minus(Duration.ofHours(biz.getCancellationDeadlineHours()));
         boolean open = b.getStatus() == BookingStatus.PENDING || b.getStatus() == BookingStatus.AWAITING_PAYMENT || b.getStatus() == BookingStatus.CONFIRMED;
         boolean canCancel = open && (b.getStatus() == BookingStatus.AWAITING_PAYMENT || Instant.now().isBefore(cancelUntil));
-        Integer rating = jdbc.sql("select rating from reviews where booking_id = :id").param("id", b.getId()).query(Integer.class).optional().orElse(null);
+        var review = jdbc.sql("select rating, case when hidden then null else reply end from reviews where booking_id = :id").param("id", b.getId())
+                .query((rs, i) -> new Object[]{rs.getInt(1), rs.getString(2)}).optional().orElse(null);
+        Integer rating = review == null ? null : (Integer) review[0];
+        String reply = review == null ? null : (String) review[1];
         return new ManageView(biz.getName(), svc, b.getStartsAt(), b.getStatus(), b.getPrice(), b.getDepositAmount(),
                 Money.scale(b.getPrice().subtract(paid).max(BigDecimal.ZERO)), b.getCurrency(), canCancel, cancelUntil,
-                b.getStatus() == BookingStatus.COMPLETED && rating == null, rating);
+                b.getStatus() == BookingStatus.COMPLETED && rating == null, rating, reply);
     }
 
     private Booking byToken(String raw) {

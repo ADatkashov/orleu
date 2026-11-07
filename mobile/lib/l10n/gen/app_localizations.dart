@@ -2781,6 +2781,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'expected {expected}, counted {counted}'**
   String closingRow(String expected, String counted);
+
+  /// No description provided for @reviewReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get reviewReply;
+
+  /// No description provided for @reviewReplyRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove reply'**
+  String get reviewReplyRemove;
+
+  /// No description provided for @reviewReplyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reply is shown to the guest on their booking link. Be polite and do not share personal details.'**
+  String get reviewReplyNote;
+
+  /// No description provided for @reviewHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden by the platform: {reason}'**
+  String reviewHidden(String reason);
 }
 
 class _AppLocalizationsDelegate

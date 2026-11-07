@@ -1454,4 +1454,19 @@ class AppLocalizationsKk extends AppLocalizations {
   String closingRow(String expected, String counted) {
     return 'күтілген $expected, саналған $counted';
   }
+
+  @override
+  String get reviewReply => 'Жауап беру';
+
+  @override
+  String get reviewReplyRemove => 'Жауапты жою';
+
+  @override
+  String get reviewReplyNote =>
+      'Жауапты қонақ өзінің жазылу сілтемесінде көреді. Сыпайы болыңыз, жеке деректерді жазбаңыз.';
+
+  @override
+  String reviewHidden(String reason) {
+    return 'Платформа жасырды: $reason';
+  }
 }

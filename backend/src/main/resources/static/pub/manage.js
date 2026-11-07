@@ -22,7 +22,10 @@
     busy = false; render();
   }
   function reviewBox() {
-    if (view.reviewRating) return h('p', { 'data-testid': 'your-rating' }, t('rateYours') + ': ' + '★'.repeat(view.reviewRating) + '☆'.repeat(5 - view.reviewRating));
+    if (view.reviewRating) return h('div', {},
+      h('p', { 'data-testid': 'your-rating' }, t('rateYours') + ': ' + '★'.repeat(view.reviewRating) + '☆'.repeat(5 - view.reviewRating)),
+      // plain text only (h() adds a text node), never HTML
+      view.businessReply && h('div', { class: 'card', 'data-testid': 'business-reply' }, h('b', {}, t('replyFromBusiness') + ' ' + view.businessName), h('p', {}, view.businessReply)));
     if (!view.canReview) return null;
     return h('div', { class: 'card', 'data-testid': 'review-box' },
       h('h2', {}, t('rateTitle')),
