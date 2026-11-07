@@ -8,7 +8,7 @@ public interface MessageSender {
     enum Outcome { SENT, TRANSIENT_FAILURE, PERMANENT_FAILURE }
 
     /** {@code attempt} starts at 1. */
-    record Outbound(java.util.UUID messageId, String channel, String recipient, String body, int attempt) {}
+    record Outbound(java.util.UUID messageId, String channel, String recipient, String subject, String body, int attempt) {}
 
     record Result(Outcome outcome, String providerMessageId, String error) {
         public static Result sent(String id) { return new Result(Outcome.SENT, id, null); }

@@ -35,7 +35,7 @@ public class MessageDispatcher {
 
     @Scheduled(fixedDelayString = "${orleu.jobs.message-interval:PT30S}")
     public void scheduled() {
-        try { dispatchDue(50); } catch (Exception e) { log.error("Message dispatch failed", e); }
+        try { dispatchDue(50); dispatchSystemDue(50); } catch (Exception e) { log.error("Message dispatch failed", e); }
     }
 
     private record Claimed(UUID id, String channel, String phone, String body, int attempt) {}
@@ -59,7 +59,7 @@ public class MessageDispatcher {
         if (batch == null) return 0;
         for (Claimed c : batch) {
             Result r;
-            try { r = s.send(new Outbound(c.id(), c.channel(), c.phone(), c.body(), c.attempt())); }
+            try { r = s.send(new Outbound(c.id(), c.channel(), c.phone(), null, c.body(), c.attempt())); }
             catch (Exception e) { r = Result.transientFailure("sender error: " + e.getClass().getSimpleName()); }
             record(c, r);
         }
@@ -83,5 +83,50 @@ public class MessageDispatcher {
                 }
             }
         }
+    }
+
+    // ---------- system messages (e-mail / SMS to one person; the body may hold a secret and is wiped once the message is final) ----------
+
+    private record SysClaimed(UUID id, String channel, String recipient, String subject, String body, int attempt) {}
+
+    /** Same rules as {@link #dispatchDue}, for {@code system_messages}. Expired messages are never sent: they fail with "expired" and lose their body. */
+    public int dispatchSystemDue(int limit) {
+        MessageSender s = sender.getIfAvailable();
+        if (s == null) return 0;
+        jdbc.sql("update system_messages set status = 'FAILED', body = null, last_error = 'expired', next_attempt_at = null where status = 'NOT_SENT' and expires_at <= now()").update();
+        List<SysClaimed> batch = tx.execute(st -> {
+            var rows = jdbc.sql("""
+                select id, channel, recipient, subject, body, attempts + 1 from system_messages
+                where status = 'NOT_SENT' and expires_at > now() and (next_attempt_at is null or next_attempt_at <= now())
+                order by created_at limit :n for update skip locked
+                """).param("n", limit).query((rs, i) -> new SysClaimed(rs.getObject(1, UUID.class), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6))).list();
+            for (SysClaimed c : rows) {
+                jdbc.sql("update system_messages set attempts = :a, next_attempt_at = now() + make_interval(secs => :s) where id = :id")
+                        .param("a", c.attempt()).param("s", (double) LEASE.toSeconds()).param("id", c.id()).update();
+            }
+            return rows;
+        });
+        if (batch == null) return 0;
+        for (SysClaimed c : batch) {
+            Result r;
+            try { r = s.send(new Outbound(c.id(), c.channel(), c.recipient(), c.subject(), c.body(), c.attempt())); }
+            catch (Exception e) { r = Result.transientFailure("sender error: " + e.getClass().getSimpleName()); }
+            String err = r.error() == null ? null : (r.error().length() > 200 ? r.error().substring(0, 200) : r.error());
+            switch (r.outcome()) {
+                case SENT -> jdbc.sql("update system_messages set status = 'SENT', body = null, sent_at = now(), provider_message_id = :p, last_error = null, next_attempt_at = null where id = :id and status = 'NOT_SENT'")
+                        .param("p", r.providerMessageId()).param("id", c.id()).update();
+                case PERMANENT_FAILURE -> jdbc.sql("update system_messages set status = 'FAILED', body = null, last_error = :e, next_attempt_at = null where id = :id and status = 'NOT_SENT'").param("e", err).param("id", c.id()).update();
+                case TRANSIENT_FAILURE -> {
+                    if (c.attempt() >= MAX_ATTEMPTS) {
+                        jdbc.sql("update system_messages set status = 'FAILED', body = null, last_error = :e, next_attempt_at = null where id = :id and status = 'NOT_SENT'").param("e", err).param("id", c.id()).update();
+                    } else {
+                        Duration wait = BACKOFF[Math.min(c.attempt() - 1, BACKOFF.length - 1)];
+                        jdbc.sql("update system_messages set last_error = :e, next_attempt_at = now() + make_interval(secs => :s) where id = :id and status = 'NOT_SENT'")
+                                .param("e", err).param("s", (double) wait.toSeconds()).param("id", c.id()).update();
+                    }
+                }
+            }
+        }
+        return batch.size();
     }
 }
