@@ -634,3 +634,36 @@ Future<void> replyToReview(WidgetRef ref, String id, String? text) async {
   }
   ref.invalidate(reviewsProvider);
 }
+
+final giftCardsProvider = FutureProvider.autoDispose<List<GiftCard>>((ref) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/gift-cards'));
+  return (r.data as List).map((e) => GiftCard.fromJson(e)).toList();
+});
+
+/// Sells a gift card. The code is in the response ONCE; [idempotencyKey] stays the same while the attempt is retried, so a retry cannot sell two cards.
+/// Returns the code, or null if the server already created this card on an earlier attempt (the code was lost with that response).
+Future<String?> sellGiftCard(WidgetRef ref, {required String amount, required String method, String? buyerName, required String idempotencyKey}) async {
+  final b = await ref.read(currentBusinessProvider.future);
+  final res = await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/${b!.id}/gift-cards',
+      data: {'amount': amount, 'method': method, 'buyerName': ?((buyerName ?? '').trim().isEmpty ? null : buyerName!.trim())}, options: Options(headers: {'Idempotency-Key': idempotencyKey})));
+  ref.invalidate(giftCardsProvider);
+  return res.data['code'] as String?;
+}
+
+Future<void> redeemGiftCard(WidgetRef ref, {required String bookingId, required String code, required String amount, required String idempotencyKey}) async {
+  final b = await ref.read(currentBusinessProvider.future);
+  await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/${b!.id}/bookings/$bookingId/gift-card-payments',
+      data: {'code': code.trim(), 'amount': amount}, options: Options(headers: {'Idempotency-Key': idempotencyKey})));
+  ref.invalidate(bookingsProvider);
+  ref.invalidate(bookingsRangeProvider);
+  ref.invalidate(todaySummaryProvider);
+  ref.invalidate(summaryProvider);
+  ref.invalidate(giftCardsProvider);
+}
+
+Future<void> voidGiftCard(WidgetRef ref, String id) async {
+  final b = await ref.read(currentBusinessProvider.future);
+  await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/${b!.id}/gift-cards/$id/void'));
+  ref.invalidate(giftCardsProvider);
+}

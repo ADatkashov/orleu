@@ -49,7 +49,7 @@ Gaps: OTP/phone login, MFA, e-mail invitations, branch-level permissions, (done:
 - DONE: week/month calendar with specialist/location filters. TODO: drag-and-drop, resource columns, analytics charts, staff performance, customer portal (history, reschedule, favourites), support tickets, review replies/moderation (replies + platform hide DONE), reconciliation views.
 
 ### Phase 4 — Business growth: TODO
-Marketing campaigns, loyalty, referrals, gift cards, packages, memberships, QR codes, widgets, promo landing pages (consent rules apply).
+Marketing campaigns, loyalty, referrals, gift cards (basic DONE), packages, memberships, QR codes, widgets, promo landing pages (consent rules apply).
 
 ### Phase 5 — Advanced platform: TODO
 AI assistant (only with real testable use cases), forecasting (labelled estimates), integrations registry (calendar, accounting export, maps, WhatsApp), automation, more locales/currencies.
@@ -100,4 +100,5 @@ Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real 
 12. ~~Refund approval workflow + refund UI~~ — done (no approver notifications or reason field yet).
 13. ~~Cash register closing~~ — done (single register per business; reconciliation against provider statements waits for providers).
 14. ~~Review replies and platform moderation~~ — done (no flag-for-review by businesses/guests, no reply notifications).
-15. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.
+15. ~~Gift cards (sell, redeem, void)~~ — done (no restore-on-cancel, top-up or liability report yet); packages/memberships, referrals, loyalty remain.
+16. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.

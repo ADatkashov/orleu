@@ -357,6 +357,19 @@ class _SheetState extends ConsumerState<BookingSheet> {
               },
             ),
           ),
+          if (b.canTakePayment && canCloseCash(ref.watch(myRoleProvider).value)) Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: OutlinedButton.icon(
+              key: const Key('giftPayAction'),
+              icon: const Icon(Icons.card_giftcard),
+              label: Text(l.giftPay),
+              onPressed: _busy ? null : () {
+                final nav = Navigator.of(context);
+                nav.pop();
+                showModalBottomSheet(context: nav.context, isScrollControlled: true, showDragHandle: true, builder: (_) => GiftPaymentSheet(booking: b));
+              },
+            ),
+          ),
           if (f.paid > 0 && canRefund(ref.watch(myRoleProvider).value)) Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: OutlinedButton.icon(

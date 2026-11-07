@@ -1471,4 +1471,62 @@ class AppLocalizationsEn extends AppLocalizations {
   String reviewHidden(String reason) {
     return 'Hidden by the platform: $reason';
   }
+
+  @override
+  String get giftCardsNav => 'Gift cards';
+
+  @override
+  String get giftSell => 'Sell a gift card';
+
+  @override
+  String get giftNone => 'No gift cards sold yet';
+
+  @override
+  String get giftNote =>
+      'Money taken for a gift card is not income until it is spent on a booking. The code is shown once when the card is sold.';
+
+  @override
+  String get giftVoid => 'Void';
+
+  @override
+  String get giftExpired => 'Expired';
+
+  @override
+  String get giftVoidAction => 'Void card';
+
+  @override
+  String get giftBuyer => 'Buyer (optional)';
+
+  @override
+  String get giftCodeOnce =>
+      'Give this code to the buyer. It is shown only now and cannot be recovered.';
+
+  @override
+  String get giftCodeLost =>
+      'This card was already created on an earlier attempt, but its code was not received. Void it in the list and sell a new one.';
+
+  @override
+  String get giftCopy => 'Copy';
+
+  @override
+  String get giftPay => 'Pay with gift card';
+
+  @override
+  String get giftCode => 'Gift card code';
+
+  @override
+  String get validationGiftCode => 'Enter the 12-character code';
+
+  @override
+  String get errGiftInvalid =>
+      'This gift card cannot be used (unknown, void or expired).';
+
+  @override
+  String get errGiftInsufficient =>
+      'The gift card balance is too low for this amount.';
+
+  @override
+  String giftVoidWarning(String code) {
+    return 'Void card $code? The customer will not be able to use it. This cannot be undone.';
+  }
 }

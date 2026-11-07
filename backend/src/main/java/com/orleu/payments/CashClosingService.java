@@ -54,6 +54,10 @@ public class CashClosingService {
                 .param("b", businessId).param("m", method).param("s", Timestamp.from(p.start())).param("e", Timestamp.from(p.end())).query(BigDecimal.class).single();
         BigDecimal ref = jdbc.sql("select coalesce(sum(amount), 0) from ledger_entries where business_id = :b and method = :m and entry_type = 'REFUND' and created_at >= :s and created_at < :e")
                 .param("b", businessId).param("m", method).param("s", Timestamp.from(p.start())).param("e", Timestamp.from(p.end())).query(BigDecimal.class).single();
+        // money taken for gift cards sold in the period is in the drawer / bank too (it is not a booking payment, so it is not in the ledger)
+        BigDecimal cards = jdbc.sql("select coalesce(sum(initial_amount), 0) from gift_cards where business_id = :b and sold_method = :m and created_at >= :s and created_at < :e")
+                .param("b", businessId).param("m", method).param("s", Timestamp.from(p.start())).param("e", Timestamp.from(p.end())).query(BigDecimal.class).single();
+        pay = pay.add(cards);
         return new Method(Money.scale(pay), Money.scale(ref), Money.scale(pay.subtract(ref)));
     }
 

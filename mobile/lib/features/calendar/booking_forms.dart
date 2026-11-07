@@ -324,3 +324,64 @@ class _RefundState extends ConsumerState<RefundSheet> {
     );
   }
 }
+
+/// Pays (part of) a booking from a gift card. The server checks the code, the balance and the amount; errors stay inside the sheet.
+class GiftPaymentSheet extends ConsumerStatefulWidget {
+  final Booking booking;
+  const GiftPaymentSheet({super.key, required this.booking});
+  @override
+  ConsumerState<GiftPaymentSheet> createState() => _GiftPayState();
+}
+
+class _GiftPayState extends ConsumerState<GiftPaymentSheet> {
+  final _form = GlobalKey<FormState>();
+  final _code = TextEditingController();
+  late final _amount = TextEditingController(text: _fmt(widget.booking.financials.remaining));
+  final String _key = newIdempotencyKey();
+  bool _busy = false;
+  String? _error;
+
+  static String _fmt(double v) => v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(2);
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final b = widget.booking;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, MediaQuery.viewInsetsOf(context).bottom + AppSpacing.lg),
+      child: SingleChildScrollView(
+        child: Form(
+          key: _form,
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
+            Text(l.giftPay, style: Theme.of(context).textTheme.titleLarge),
+            Text('${b.serviceName} · ${b.customerName} · ${l.remaining}: ${_fmt(b.financials.remaining)} ${b.currency}', style: Theme.of(context).textTheme.bodySmall),
+            const SizedBox(height: AppSpacing.md),
+            TextFormField(key: const Key('giftPayCode'), controller: _code, textCapitalization: TextCapitalization.characters, decoration: InputDecoration(labelText: l.giftCode),
+                validator: (v) => (v ?? '').replaceAll(RegExp(r'[^A-Za-z0-9]'), '').length != 12 ? l.validationGiftCode : null),
+            const SizedBox(height: AppSpacing.md),
+            TextFormField(key: const Key('giftPayAmount'), controller: _amount, keyboardType: const TextInputType.numberWithOptions(decimal: true), decoration: InputDecoration(labelText: l.paymentAmount, suffixText: b.currency),
+                validator: (v) { final n = double.tryParse((v ?? '').trim().replaceAll(',', '.')); return n == null || n <= 0 || n > b.financials.remaining + 0.0001 ? l.validationAmount : null; }),
+            FormError(_error),
+            const SizedBox(height: AppSpacing.lg),
+            FilledButton(
+              key: const Key('giftPaySave'),
+              onPressed: _busy ? null : () async {
+                if (!_form.currentState!.validate()) return;
+                setState(() => _busy = true);
+                final err = await attempt(context, () => redeemGiftCard(ref, bookingId: b.id, code: _code.text, amount: _amount.text.trim().replaceAll(',', '.'), idempotencyKey: _key));
+                if (!context.mounted) return;
+                if (err == null) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.paymentRecorded), behavior: SnackBarBehavior.floating));
+                } else {
+                  setState(() { _busy = false; _error = err; });
+                }
+              },
+              child: Text(l.giftPay),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}

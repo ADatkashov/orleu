@@ -1469,4 +1469,62 @@ class AppLocalizationsKk extends AppLocalizations {
   String reviewHidden(String reason) {
     return 'Платформа жасырды: $reason';
   }
+
+  @override
+  String get giftCardsNav => 'Сыйлық сертификаттары';
+
+  @override
+  String get giftSell => 'Сертификат сату';
+
+  @override
+  String get giftNone => 'Сертификаттар әлі сатылмаған';
+
+  @override
+  String get giftNote =>
+      'Сертификат үшін алынған ақша жазылымға жұмсалмайынша табыс саналмайды. Код сатылғанда бір рет көрсетіледі.';
+
+  @override
+  String get giftVoid => 'Жойылған';
+
+  @override
+  String get giftExpired => 'Мерзімі өткен';
+
+  @override
+  String get giftVoidAction => 'Жою';
+
+  @override
+  String get giftBuyer => 'Сатып алушы (міндетті емес)';
+
+  @override
+  String get giftCodeOnce =>
+      'Бұл кодты сатып алушыға беріңіз. Ол тек қазір көрсетіледі, қалпына келтірілмейді.';
+
+  @override
+  String get giftCodeLost =>
+      'Сертификат алдыңғы әрекетте жасалған, бірақ коды алынбады. Тізімде жойып, жаңасын сатыңыз.';
+
+  @override
+  String get giftCopy => 'Көшіру';
+
+  @override
+  String get giftPay => 'Сертификатпен төлеу';
+
+  @override
+  String get giftCode => 'Сертификат коды';
+
+  @override
+  String get validationGiftCode => '12 таңбалы кодты енгізіңіз';
+
+  @override
+  String get errGiftInvalid =>
+      'Бұл сертификатты қолдануға болмайды (белгісіз, жойылған немесе мерзімі өткен).';
+
+  @override
+  String get errGiftInsufficient =>
+      'Сертификаттағы қаражат бұл сомаға жетпейді.';
+
+  @override
+  String giftVoidWarning(String code) {
+    return '$code сертификатын жою керек пе? Клиент оны қолдана алмайды. Мұны қайтару мүмкін емес.';
+  }
 }

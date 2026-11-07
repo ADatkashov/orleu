@@ -80,8 +80,8 @@ public class RefundRequestService {
             if (!e[1].equals(bookingId) || ((BigDecimal) e[2]).compareTo(amount) != 0) throw ApiException.conflict("IDEMPOTENCY_KEY_REUSED", "Idempotency-Key was already used for a different operation");
             return new Outcome(null, view(businessId, (UUID) e[0]));
         }
-        BigDecimal net = jdbc.sql("select coalesce(sum(case when entry_type = 'PAYMENT' then amount else -amount end), 0) from ledger_entries where booking_id = :id").param("id", bookingId).query(BigDecimal.class).single();
-        if (amount.compareTo(net) > 0) throw ApiException.conflict("REFUND_EXCEEDS_PAID", "Refund exceeds the amount currently paid (" + Money.scale(net) + ")");
+        BigDecimal net = payments.refundable(bookingId);
+        if (amount.compareTo(net) > 0) throw ApiException.conflict("REFUND_EXCEEDS_PAID", "Refund exceeds the amount that can be paid back in money (" + Money.scale(net) + ")");
         UUID id = jdbc.sql("""
             insert into refund_requests (business_id, booking_id, amount, currency, method, provider_ref, idempotency_key, requested_by)
             values (:b, :bk, :a, :c, :m, :p, :k, :u) returning id
