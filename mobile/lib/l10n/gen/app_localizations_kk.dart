@@ -1527,4 +1527,22 @@ class AppLocalizationsKk extends AppLocalizations {
   String giftVoidWarning(String code) {
     return '$code сертификатын жою керек пе? Клиент оны қолдана алмайды. Мұны қайтару мүмкін емес.';
   }
+
+  @override
+  String get giftReturn => 'Сертификатқа қайтару';
+
+  @override
+  String get giftReturned => 'Сома сертификатқа қайтарылды';
+
+  @override
+  String get giftNothingToReturn =>
+      'Бұл жазылым сертификатпен төленбеген немесе қайтарылып қойған.';
+
+  @override
+  String get errGiftNothing => 'Бұл соманы сертификатқа қайтаруға болмайды.';
+
+  @override
+  String giftReturnNote(String amount, String currency) {
+    return 'Сертификатқа $amount $currency дейін қайтаруға болады. Қолма-қол берілмейді.';
+  }
 }

@@ -667,3 +667,23 @@ Future<void> voidGiftCard(WidgetRef ref, String id) async {
   await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/${b!.id}/gift-cards/$id/void'));
   ref.invalidate(giftCardsProvider);
 }
+
+/// How much of a booking's gift-card payments can still go back onto the cards (0 = nothing).
+final giftRestorableProvider = FutureProvider.autoDispose.family<double, String>((ref, bookingId) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/bookings/$bookingId/gift-card-restorable'));
+  final t = r.data['total'];
+  return t is num ? t.toDouble() : double.tryParse('$t') ?? 0;
+});
+
+Future<void> restoreGiftCard(WidgetRef ref, {required String bookingId, required String amount, required String idempotencyKey}) async {
+  final b = await ref.read(currentBusinessProvider.future);
+  await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/${b!.id}/bookings/$bookingId/gift-card-refunds',
+      data: {'amount': amount}, options: Options(headers: {'Idempotency-Key': idempotencyKey})));
+  ref.invalidate(bookingsProvider);
+  ref.invalidate(bookingsRangeProvider);
+  ref.invalidate(todaySummaryProvider);
+  ref.invalidate(summaryProvider);
+  ref.invalidate(giftCardsProvider);
+  ref.invalidate(giftRestorableProvider);
+}

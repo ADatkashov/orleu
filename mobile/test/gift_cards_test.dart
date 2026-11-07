@@ -7,6 +7,8 @@ import 'package:orleu_mobile/core/api/token_store.dart';
 import 'app_flow_test.dart' show booking;
 import 'support/fake_api.dart';
 
+final paidBooking = {...booking, 'financials': {'price': 20000, 'depositAmount': 6000, 'paid': 5000, 'refunded': 0, 'netPaid': 5000, 'remaining': 15000, 'paymentStatus': 'PARTIAL'}};
+
 class Env {
   String role;
   bool replay = false;
@@ -14,9 +16,9 @@ class Env {
   var cards = <Map<String, Object?>>[];
   late final FakeAdapter adapter;
 
-  Env({this.role = 'BUSINESS_OWNER'}) {
+  Env({this.role = 'BUSINESS_OWNER', bool paid = false}) {
     adapter = FakeAdapter({
-      ...businessRoutes(bookings: [booking]),
+      ...businessRoutes(bookings: [paid ? paidBooking : booking]),
       'GET /api/v1/me': (_) => ok({'id': 'u1', 'email': 'a@b.kz', 'fullName': 'A', 'locale': 'en', 'memberships': [{'businessId': 'b1', 'role': role}]}),
       'GET /api/v1/businesses/b1/gift-cards': (_) => ok(cards),
       'POST /api/v1/businesses/b1/gift-cards': (o) {
@@ -46,6 +48,7 @@ Future<void> openGiftCards(WidgetTester tester, Env e) async {
 }
 
 void main() {
+  restoreTests();
   testWidgets('selling shows the code once and the card appears with its balance', (tester) async {
     final e = Env();
     await openGiftCards(tester, e);
@@ -134,5 +137,56 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('The gift card balance is too low for this amount.'), findsOneWidget);
     expect(find.byType(SnackBar), findsNothing);
+  });
+}
+
+class RestoreEnv extends Env {
+  double restorable;
+  RestoreEnv({this.restorable = 5000}) : super(paid: true) {
+    adapter.routes['GET /api/v1/businesses/b1/bookings/k1/gift-card-restorable'] = (_) => ok({'total': restorable, 'cards': []});
+    adapter.routes['POST /api/v1/businesses/b1/bookings/k1/gift-card-refunds'] = (o) => redeemOverride?.call(o) ?? (status: 201, body: booking);
+  }
+}
+
+void restoreTests() {
+  Future<void> openReturn(WidgetTester tester, Env e) async {
+    await openApp(tester, e);
+    await tester.tap(find.text('Calendar').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Haircut').first);
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('giftReturnAction')));
+    await tester.tap(find.byKey(const Key('giftReturnAction')));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('returning value to the card: prefilled with what the server says can go back, exact body and key', (tester) async {
+    final e = RestoreEnv();
+    await openReturn(tester, e);
+    expect((tester.widget(find.byKey(const Key('giftReturnAmount'))) as TextFormField).controller!.text, '5000');
+    await tester.enterText(find.byKey(const Key('giftReturnAmount')), '3000');
+    await tester.tap(find.byKey(const Key('giftReturnSave')));
+    await tester.pumpAndSettle();
+    final call = e.adapter.calls.firstWhere((c) => c.path.endsWith('/gift-card-refunds'));
+    expect(call.data, {'amount': '3000'});
+    expect(call.headers['Idempotency-Key'], matches(RegExp(r'^[0-9a-f]{32}$')));
+    expect(find.text('Value returned to the gift card'), findsOneWidget);
+  });
+
+  testWidgets('more than can go back is refused locally; nothing to return is explained', (tester) async {
+    final e = RestoreEnv();
+    await openReturn(tester, e);
+    await tester.enterText(find.byKey(const Key('giftReturnAmount')), '5001');
+    await tester.tap(find.byKey(const Key('giftReturnSave')));
+    await tester.pumpAndSettle();
+    expect(find.text('Enter an amount up to the remaining balance'), findsOneWidget);
+    expect(e.adapter.calls.any((c) => c.path.endsWith('/gift-card-refunds')), isFalse);
+  });
+
+  testWidgets('a booking not paid with a gift card shows an explanation instead of a form', (tester) async {
+    final e = RestoreEnv(restorable: 0);
+    await openReturn(tester, e);
+    expect(find.byKey(const Key('giftNothing')), findsOneWidget);
+    expect(find.byKey(const Key('giftReturnSave')), findsNothing);
   });
 }

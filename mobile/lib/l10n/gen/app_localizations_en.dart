@@ -1529,4 +1529,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String giftVoidWarning(String code) {
     return 'Void card $code? The customer will not be able to use it. This cannot be undone.';
   }
+
+  @override
+  String get giftReturn => 'Return to gift card';
+
+  @override
+  String get giftReturned => 'Value returned to the gift card';
+
+  @override
+  String get giftNothingToReturn =>
+      'Nothing on this booking was paid with a gift card, or it was already returned.';
+
+  @override
+  String get errGiftNothing => 'That amount cannot be returned to a gift card.';
+
+  @override
+  String giftReturnNote(String amount, String currency) {
+    return 'Up to $amount $currency can go back onto the gift card(s). It is not paid out in cash.';
+  }
 }

@@ -1528,4 +1528,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String giftVoidWarning(String code) {
     return 'Аннулировать сертификат $code? Клиент не сможет им воспользоваться. Это нельзя отменить.';
   }
+
+  @override
+  String get giftReturn => 'Вернуть на сертификат';
+
+  @override
+  String get giftReturned => 'Сумма возвращена на сертификат';
+
+  @override
+  String get giftNothingToReturn =>
+      'По этой записи нет оплаты сертификатом или она уже возвращена.';
+
+  @override
+  String get errGiftNothing => 'Такую сумму нельзя вернуть на сертификат.';
+
+  @override
+  String giftReturnNote(String amount, String currency) {
+    return 'На сертификат можно вернуть до $amount $currency. Наличными не выдаётся.';
+  }
 }

@@ -107,6 +107,31 @@ public class PaymentService {
         return queries.find(businessId, bookingId).orElseThrow();
     }
 
+    /**
+     * Records the return of gift-card value as a REFUND with method GIFT_CARD. {@code restore} (GiftCardService) puts the value back on the card(s)
+     * after the booking is locked and before the ledger insert, in one transaction. A replay of the same key changes nothing.
+     */
+    @Transactional
+    public BookingView recordGiftCardRefund(UUID businessId, UUID bookingId, String idempotencyKey, BigDecimal amount, Runnable restore) {
+        access.require(businessId, Permission.FINANCE_MANAGE);
+        requireKey(idempotencyKey);
+        lockBooking(businessId, bookingId);
+        Booking b = bookings.findByIdAndBusinessId(bookingId, businessId).orElseThrow(() -> ApiException.notFound("Booking"));
+        BigDecimal a = Money.scale(amount);
+        if (replay(businessId, idempotencyKey, "REFUND", bookingId, a).isPresent()) return queries.find(businessId, bookingId).orElseThrow();
+        restore.run();
+        try {
+            jdbc.sql("""
+                insert into ledger_entries (business_id, booking_id, entry_type, amount, currency, method, idempotency_key, provider_ref, created_by)
+                values (:b, :bk, 'REFUND', :a, :c, 'GIFT_CARD', :k, 'gift-card:restored', :u)
+                """).param("b", businessId).param("bk", bookingId).param("a", a).param("c", b.getCurrency()).param("k", idempotencyKey).param("u", CurrentUser.id()).update();
+        } catch (DataIntegrityViolationException e) {
+            throw ApiException.conflict("IDEMPOTENCY_KEY_REUSED", "Idempotency-Key was already used");
+        }
+        audit.log(businessId, CurrentUser.id(), "REFUND_RECORDED", "BOOKING", bookingId, "{\"amount\":\"" + a + "\",\"method\":\"GIFT_CARD\"}");
+        return queries.find(businessId, bookingId).orElseThrow();
+    }
+
     @Transactional
     public BookingView recordRefund(UUID businessId, UUID bookingId, String idempotencyKey, MoneyRequest r) {
         access.require(businessId, Permission.FINANCE_MANAGE);
@@ -183,11 +208,11 @@ public class PaymentService {
 
     /**
      * What may still be paid back in money: payments made with money (not gift cards) minus refunds. Value paid with a gift card
-     * is never paid out in cash (restoring it to the card is a separate, not yet built operation).
+     * is never paid out in cash; it goes back to the card ({@link #recordGiftCardRefund}).
      */
     public BigDecimal refundable(UUID bookingId) {
         return jdbc.sql("""
-            select coalesce(sum(case when entry_type = 'PAYMENT' and method <> 'GIFT_CARD' then amount when entry_type = 'REFUND' then -amount else 0 end), 0)
+            select coalesce(sum(case when entry_type = 'PAYMENT' and method <> 'GIFT_CARD' then amount when entry_type = 'REFUND' and method <> 'GIFT_CARD' then -amount else 0 end), 0)
             from ledger_entries where booking_id = :id
             """).param("id", bookingId).query(BigDecimal.class).single();
     }

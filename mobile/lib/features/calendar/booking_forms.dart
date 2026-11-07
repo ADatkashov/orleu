@@ -385,3 +385,69 @@ class _GiftPayState extends ConsumerState<GiftPaymentSheet> {
     );
   }
 }
+
+/// Returns gift-card value to the card(s) the booking was paid with (never as cash). The server says how much can go back.
+class GiftRestoreSheet extends ConsumerStatefulWidget {
+  final Booking booking;
+  const GiftRestoreSheet({super.key, required this.booking});
+  @override
+  ConsumerState<GiftRestoreSheet> createState() => _GiftRestoreState();
+}
+
+class _GiftRestoreState extends ConsumerState<GiftRestoreSheet> {
+  final _form = GlobalKey<FormState>();
+  final _amount = TextEditingController();
+  final String _key = newIdempotencyKey();
+  bool _busy = false, _prefilled = false;
+  String? _error;
+
+  static String _fmt(double v) => v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(2);
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final b = widget.booking;
+    final res = ref.watch(giftRestorableProvider(b.id));
+    return Padding(
+      padding: EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, MediaQuery.viewInsetsOf(context).bottom + AppSpacing.lg),
+      child: SingleChildScrollView(
+        child: res.when(
+          loading: () => const Padding(padding: EdgeInsets.all(AppSpacing.lg), child: Center(child: CircularProgressIndicator())),
+          error: (e, _) => Text(l.errNetwork),
+          data: (total) {
+            if (!_prefilled) { _amount.text = _fmt(total); _prefilled = true; }
+            if (total <= 0) return Padding(padding: const EdgeInsets.all(AppSpacing.lg), child: Text(l.giftNothingToReturn, key: const Key('giftNothing')));
+            return Form(
+              key: _form,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
+                Text(l.giftReturn, style: Theme.of(context).textTheme.titleLarge),
+                Text(l.giftReturnNote(_fmt(total), b.currency), style: Theme.of(context).textTheme.bodySmall),
+                const SizedBox(height: AppSpacing.md),
+                TextFormField(key: const Key('giftReturnAmount'), controller: _amount, keyboardType: const TextInputType.numberWithOptions(decimal: true), decoration: InputDecoration(labelText: l.paymentAmount, suffixText: b.currency),
+                    validator: (v) { final n = double.tryParse((v ?? '').trim().replaceAll(',', '.')); return n == null || n <= 0 || n > total + 0.0001 ? l.validationAmount : null; }),
+                FormError(_error),
+                const SizedBox(height: AppSpacing.lg),
+                FilledButton(
+                  key: const Key('giftReturnSave'),
+                  onPressed: _busy ? null : () async {
+                    if (!_form.currentState!.validate()) return;
+                    setState(() => _busy = true);
+                    final err = await attempt(context, () => restoreGiftCard(ref, bookingId: b.id, amount: _amount.text.trim().replaceAll(',', '.'), idempotencyKey: _key));
+                    if (!context.mounted) return;
+                    if (err == null) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.giftReturned), behavior: SnackBarBehavior.floating));
+                    } else {
+                      setState(() { _busy = false; _error = err; });
+                    }
+                  },
+                  child: Text(l.giftReturn),
+                ),
+              ]),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
