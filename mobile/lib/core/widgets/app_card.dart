@@ -14,8 +14,15 @@ class AppCard extends StatelessWidget {
   final double radius;
   final String? semanticLabel;
   const AppCard({
-    super.key, required this.child, this.padding = const EdgeInsets.all(AppSpacing.md), this.onTap, this.color, this.gradient,
-    this.elevated = false, this.radius = AppRadius.card, this.semanticLabel,
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(AppSpacing.md),
+    this.onTap,
+    this.color,
+    this.gradient,
+    this.elevated = false,
+    this.radius = AppRadius.card,
+    this.semanticLabel,
   });
 
   @override
@@ -34,7 +41,11 @@ class AppCard extends StatelessWidget {
         type: MaterialType.transparency,
         borderRadius: shape,
         clipBehavior: Clip.antiAlias,
-        child: InkWell(onTap: onTap, borderRadius: shape, child: Padding(padding: padding, child: child)),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: shape,
+          child: Padding(padding: padding, child: child),
+        ),
       ),
     );
     if (onTap != null) card = Pressable(child: card);

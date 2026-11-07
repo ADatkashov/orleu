@@ -22,9 +22,16 @@ class AppAvatar extends StatelessWidget {
     final tints = [(s.primaryContainer, s.onPrimaryContainer), (p.infoSoft, p.infoFg), (p.successSoft, p.successFg), (p.warningSoft, p.warningFg)];
     final (bg, fg) = tints[name.runes.fold<int>(0, (a, b) => a + b) % tints.length];
     return Container(
-      width: size, height: size, alignment: Alignment.center,
+      width: size,
+      height: size,
+      alignment: Alignment.center,
       decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
-      child: ExcludeSemantics(child: Text(initialsOf(name), style: Theme.of(context).textTheme.titleSmall?.copyWith(color: fg, fontWeight: FontWeight.w800, fontSize: size * 0.32))),
+      child: ExcludeSemantics(
+        child: Text(
+          initialsOf(name),
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(color: fg, fontWeight: FontWeight.w800, fontSize: size * 0.32),
+        ),
+      ),
     );
   }
 }

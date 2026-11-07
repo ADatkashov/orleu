@@ -20,23 +20,28 @@ class EmptyState extends StatelessWidget {
         padding: const EdgeInsets.all(AppSpacing.xl),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 360),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Container(
-              width: 80, height: 80,
-              decoration: BoxDecoration(color: t.colorScheme.primaryContainer, shape: BoxShape.circle),
-              child: Icon(icon, size: 36, color: t.colorScheme.primary),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            if (title != null) ...[
-              Text(title!, textAlign: TextAlign.center, style: t.textTheme.titleMedium),
-              const SizedBox(height: AppSpacing.xs),
-            ],
-            Text(text, textAlign: TextAlign.center, style: t.textTheme.bodyMedium?.copyWith(color: t.colorScheme.onSurfaceVariant)),
-            if (actionLabel != null && onAction != null) ...[
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(color: t.colorScheme.primaryContainer, shape: BoxShape.circle),
+                child: Icon(icon, size: 36, color: t.colorScheme.primary),
+              ),
               const SizedBox(height: AppSpacing.lg),
-              PrimaryButton(label: actionLabel!, onPressed: onAction, expand: false),
+              if (title != null) ...[Text(title!, textAlign: TextAlign.center, style: t.textTheme.titleMedium), const SizedBox(height: AppSpacing.xs)],
+              Text(
+                text,
+                textAlign: TextAlign.center,
+                style: t.textTheme.bodyMedium?.copyWith(color: t.colorScheme.onSurfaceVariant),
+              ),
+              if (actionLabel != null && onAction != null) ...[
+                const SizedBox(height: AppSpacing.lg),
+                PrimaryButton(label: actionLabel!, onPressed: onAction, expand: false),
+              ],
             ],
-          ]),
+          ),
         ),
       ),
     );
@@ -55,17 +60,21 @@ class ErrorState extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Container(
-            width: 64, height: 64,
-            decoration: BoxDecoration(color: context.palette.dangerSoft, shape: BoxShape.circle),
-            child: Icon(Icons.cloud_off_outlined, size: 28, color: context.palette.dangerFg),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Text(errorText(context, error), textAlign: TextAlign.center, style: t.textTheme.bodyMedium),
-          const SizedBox(height: AppSpacing.md),
-          SecondaryButton(label: l.retry, onPressed: onRetry, icon: Icons.refresh_rounded, expand: false),
-        ]),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(color: context.palette.dangerSoft, shape: BoxShape.circle),
+              child: Icon(Icons.cloud_off_outlined, size: 28, color: context.palette.dangerFg),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(errorText(context, error), textAlign: TextAlign.center, style: t.textTheme.bodyMedium),
+            const SizedBox(height: AppSpacing.md),
+            SecondaryButton(label: l.retry, onPressed: onRetry, icon: Icons.refresh_rounded, expand: false),
+          ],
+        ),
       ),
     );
   }
@@ -109,13 +118,11 @@ class _SkeletonBoxState extends State<SkeletonBox> with SingleTickerProviderStat
       child: AnimatedBuilder(
         animation: _c,
         builder: (_, _) => Container(
-          width: widget.width, height: widget.height,
+          width: widget.width,
+          height: widget.height,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(widget.radius),
-            gradient: LinearGradient(
-              begin: Alignment(-1.5 + 3 * _c.value, 0), end: Alignment(-0.5 + 3 * _c.value, 0),
-              colors: [base, hi, base],
-            ),
+            gradient: LinearGradient(begin: Alignment(-1.5 + 3 * _c.value, 0), end: Alignment(-0.5 + 3 * _c.value, 0), colors: [base, hi, base]),
           ),
         ),
       ),
@@ -138,15 +145,26 @@ class SkeletonList extends StatelessWidget {
         itemCount: count,
         separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm + 2),
         itemBuilder: (_, _) => Container(
-          height: 76, padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(color: s.surface, borderRadius: BorderRadius.circular(AppRadius.card), border: Border.all(color: s.outlineVariant)),
-          child: const Row(children: [
-            SkeletonBox(width: 44, height: 44, radius: 22),
-            SizedBox(width: AppSpacing.md),
-            Expanded(child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              SkeletonBox(width: 140, height: 14), SizedBox(height: 8), SkeletonBox(width: 90, height: 12),
-            ])),
-          ]),
+          height: 76,
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: s.surface,
+            borderRadius: BorderRadius.circular(AppRadius.card),
+            border: Border.all(color: s.outlineVariant),
+          ),
+          child: const Row(
+            children: [
+              SkeletonBox(width: 44, height: 44, radius: 22),
+              SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [SkeletonBox(width: 140, height: 14), SizedBox(height: 8), SkeletonBox(width: 90, height: 12)],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -157,5 +175,7 @@ class SkeletonList extends StatelessWidget {
 class LoadingState extends StatelessWidget {
   const LoadingState({super.key});
   @override
-  Widget build(BuildContext context) => Center(child: Semantics(label: AppLocalizations.of(context).loading, child: const CircularProgressIndicator()));
+  Widget build(BuildContext context) => Center(
+    child: Semantics(label: AppLocalizations.of(context).loading, child: const CircularProgressIndicator()),
+  );
 }

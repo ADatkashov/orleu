@@ -20,29 +20,46 @@ class AnalyticsBarChart extends StatelessWidget {
     final maxV = values.fold<double>(0, (a, v) => v > a ? v : a);
     final reduce = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
     return Semantics(
-      label: semanticLabel, image: true,
+      label: semanticLabel,
+      image: true,
       child: ExcludeSemantics(
-        child: Column(children: [
-          SizedBox(
-            height: height, width: double.infinity,
-            child: TweenAnimationBuilder<double>(
-              tween: Tween(begin: reduce ? 1 : 0, end: 1),
-              duration: AppMotion.slow, curve: AppMotion.curve,
-              builder: (_, progress, _) => CustomPaint(
-                key: chartKey,
-                painter: _BarsPainter(values, maxV, p.chartBar, p.chartBarMuted, p.chartHighlight, p.chartGrid, highlight, progress),
+        child: Column(
+          children: [
+            SizedBox(
+              height: height,
+              width: double.infinity,
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(begin: reduce ? 1 : 0, end: 1),
+                duration: AppMotion.slow,
+                curve: AppMotion.curve,
+                builder: (_, progress, _) => CustomPaint(
+                  key: chartKey,
+                  painter: _BarsPainter(values, maxV, p.chartBar, p.chartBarMuted, p.chartHighlight, p.chartGrid, highlight, progress),
+                ),
               ),
             ),
-          ),
-          if (labels != null) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Row(children: [
-              for (var i = 0; i < labels!.length; i++)
-                Expanded(child: Text(labels![i], textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.clip,
-                    style: t.textTheme.labelSmall?.copyWith(color: i == highlight ? t.colorScheme.onSurface : null, fontWeight: i == highlight ? FontWeight.w800 : FontWeight.w500))),
-            ]),
+            if (labels != null) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Row(
+                children: [
+                  for (var i = 0; i < labels!.length; i++)
+                    Expanded(
+                      child: Text(
+                        labels![i],
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.clip,
+                        style: t.textTheme.labelSmall?.copyWith(
+                          color: i == highlight ? t.colorScheme.onSurface : null,
+                          fontWeight: i == highlight ? FontWeight.w800 : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
           ],
-        ]),
+        ),
       ),
     );
   }
@@ -59,7 +76,9 @@ class _BarsPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (values.isEmpty) return;
-    final gridPaint = Paint()..color = grid..strokeWidth = 1;
+    final gridPaint = Paint()
+      ..color = grid
+      ..strokeWidth = 1;
     for (var i = 0; i <= 3; i++) {
       final y = size.height * i / 3;
       canvas.drawLine(Offset(0, y.clamp(0.5, size.height - 0.5)), Offset(size.width, y.clamp(0.5, size.height - 0.5)), gridPaint);
@@ -73,7 +92,16 @@ class _BarsPainter extends CustomPainter {
       final paint = Paint()..color = highlight == null ? color : (highlight == i ? accent : color.withValues(alpha: 0.72));
       if (v <= 0) paint.color = muted;
       final x = i * slot + (slot - w) / 2;
-      canvas.drawRRect(RRect.fromRectAndCorners(Rect.fromLTWH(x, size.height - h, w, h), topLeft: Radius.circular(w / 2.4), topRight: Radius.circular(w / 2.4), bottomLeft: const Radius.circular(2), bottomRight: const Radius.circular(2)), paint);
+      canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(x, size.height - h, w, h),
+          topLeft: Radius.circular(w / 2.4),
+          topRight: Radius.circular(w / 2.4),
+          bottomLeft: const Radius.circular(2),
+          bottomRight: const Radius.circular(2),
+        ),
+        paint,
+      );
     }
   }
 

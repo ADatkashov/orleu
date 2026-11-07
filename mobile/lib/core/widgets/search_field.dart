@@ -34,7 +34,9 @@ class _SearchFieldState extends State<SearchField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      key: widget.fieldKey, controller: _c, textInputAction: TextInputAction.search,
+      key: widget.fieldKey,
+      controller: _c,
+      textInputAction: TextInputAction.search,
       decoration: InputDecoration(
         hintText: widget.hint,
         prefixIcon: const Icon(Icons.search_rounded, size: AppIconSize.lg),
@@ -42,7 +44,14 @@ class _SearchFieldState extends State<SearchField> {
           valueListenable: _c,
           builder: (_, v, _) => v.text.isEmpty
               ? const SizedBox.shrink()
-              : IconButton(icon: const Icon(Icons.close_rounded, size: AppIconSize.md), onPressed: () { _c.clear(); _t?.cancel(); widget.onChanged(''); }),
+              : IconButton(
+                  icon: const Icon(Icons.close_rounded, size: AppIconSize.md),
+                  onPressed: () {
+                    _c.clear();
+                    _t?.cancel();
+                    widget.onChanged('');
+                  },
+                ),
         ),
       ),
       onChanged: _emit,
@@ -60,9 +69,10 @@ class AppFilterChip extends StatelessWidget {
     final s = Theme.of(context).colorScheme;
     final dark = context.isDark;
     return FilterChip(
-      label: Text(label), selected: selected, onSelected: onSelected,
-      labelStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-          color: selected ? (dark ? s.onPrimaryContainer : AppColors.accentLime) : s.onSurface),
+      label: Text(label),
+      selected: selected,
+      onSelected: onSelected,
+      labelStyle: Theme.of(context).textTheme.labelLarge?.copyWith(color: selected ? (dark ? s.onPrimaryContainer : AppColors.accentLime) : s.onSurface),
     );
   }
 }

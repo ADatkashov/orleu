@@ -17,7 +17,7 @@ class AppColors {
   static const accentLimeSoft = Color(0xFFEBF9C8);
   static const textPrimary = Color(0xFF18231D);
   // Brand spec was #758078, which is only 4.1:1 on white (fails WCAG AA 4.5:1). Darkened slightly, same hue.
-  static const textSecondary = Color(0xFF68736B);
+  static const textSecondary = Color(0xFF627067);
   static const border = Color(0xFFE7EBE6);
   static const borderStrong = Color(0xFFD3DAD1);
   // Semantic (fills / icons). Text on a soft tint uses the matching *Fg in [AppPalette] (AA contrast).
@@ -48,33 +48,81 @@ class AppPalette extends ThemeExtension<AppPalette> {
   final Color chartBar, chartBarMuted, chartHighlight, chartGrid;
 
   const AppPalette({
-    required this.success, required this.successSoft, required this.successFg,
-    required this.warning, required this.warningSoft, required this.warningFg,
-    required this.danger, required this.dangerSoft, required this.dangerFg,
-    required this.info, required this.infoSoft, required this.infoFg,
-    required this.neutralSoft, required this.neutralFg,
-    required this.heroStart, required this.heroEnd, required this.onHero, required this.onHeroMuted, required this.heroAccent,
-    required this.chartBar, required this.chartBarMuted, required this.chartHighlight, required this.chartGrid,
+    required this.success,
+    required this.successSoft,
+    required this.successFg,
+    required this.warning,
+    required this.warningSoft,
+    required this.warningFg,
+    required this.danger,
+    required this.dangerSoft,
+    required this.dangerFg,
+    required this.info,
+    required this.infoSoft,
+    required this.infoFg,
+    required this.neutralSoft,
+    required this.neutralFg,
+    required this.heroStart,
+    required this.heroEnd,
+    required this.onHero,
+    required this.onHeroMuted,
+    required this.heroAccent,
+    required this.chartBar,
+    required this.chartBarMuted,
+    required this.chartHighlight,
+    required this.chartGrid,
   });
 
   static const light = AppPalette(
-    success: AppColors.success, successSoft: Color(0xFFE3F3EA), successFg: Color(0xFF176B52),
-    warning: AppColors.warning, warningSoft: Color(0xFFFCF0D0), warningFg: Color(0xFF8A5A00),
-    danger: AppColors.danger, dangerSoft: Color(0xFFFBE4E4), dangerFg: Color(0xFFA83232),
-    info: AppColors.info, infoSoft: Color(0xFFE4ECFD), infoFg: Color(0xFF2F58B5),
-    neutralSoft: AppColors.surfaceStrong, neutralFg: AppColors.textSecondary,
-    heroStart: Color(0xFF1B7A5C), heroEnd: AppColors.primaryDark, onHero: Colors.white, onHeroMuted: Color(0xFFB9D3C7), heroAccent: AppColors.accentLime,
-    chartBar: AppColors.primaryGreen, chartBarMuted: AppColors.secondaryGreen, chartHighlight: AppColors.accentLime, chartGrid: AppColors.border,
+    success: AppColors.success,
+    successSoft: Color(0xFFE3F3EA),
+    successFg: Color(0xFF176B52),
+    warning: AppColors.warning,
+    warningSoft: Color(0xFFFCF0D0),
+    warningFg: Color(0xFF8A5A00),
+    danger: AppColors.danger,
+    dangerSoft: Color(0xFFFBE4E4),
+    dangerFg: Color(0xFFA83232),
+    info: AppColors.info,
+    infoSoft: Color(0xFFE4ECFD),
+    infoFg: Color(0xFF2F58B5),
+    neutralSoft: AppColors.surfaceStrong,
+    neutralFg: Color(0xFF4F5B53),
+    heroStart: AppColors.primaryGreen,
+    heroEnd: AppColors.primaryDark,
+    onHero: Colors.white,
+    onHeroMuted: Color(0xFFD3E6DB),
+    heroAccent: AppColors.accentLime,
+    chartBar: AppColors.primaryGreen,
+    chartBarMuted: AppColors.secondaryGreen,
+    chartHighlight: AppColors.accentLime,
+    chartGrid: AppColors.border,
   );
 
   static const dark = AppPalette(
-    success: Color(0xFF5FD08F), successSoft: Color(0xFF1B3A2B), successFg: Color(0xFF8BE0AE),
-    warning: Color(0xFFF0B955), warningSoft: Color(0xFF3D3015), warningFg: Color(0xFFF5CD84),
-    danger: Color(0xFFF08080), dangerSoft: Color(0xFF402020), dangerFg: Color(0xFFF6A3A3),
-    info: Color(0xFF7BA7F5), infoSoft: Color(0xFF1E2C4A), infoFg: Color(0xFFA6C3F8),
-    neutralSoft: AppColors.darkSurfaceStrong, neutralFg: AppColors.darkTextSecondary,
-    heroStart: Color(0xFF1F5F4A), heroEnd: Color(0xFF0B1712), onHero: AppColors.darkText, onHeroMuted: Color(0xFFA6C2B5), heroAccent: AppColors.accentLime,
-    chartBar: Color(0xFF3FA882), chartBarMuted: Color(0xFF2A3A31), chartHighlight: AppColors.accentLime, chartGrid: AppColors.darkBorder,
+    success: Color(0xFF5FD08F),
+    successSoft: Color(0xFF1B3A2B),
+    successFg: Color(0xFF8BE0AE),
+    warning: Color(0xFFF0B955),
+    warningSoft: Color(0xFF3D3015),
+    warningFg: Color(0xFFF5CD84),
+    danger: Color(0xFFF08080),
+    dangerSoft: Color(0xFF402020),
+    dangerFg: Color(0xFFF6A3A3),
+    info: Color(0xFF7BA7F5),
+    infoSoft: Color(0xFF1E2C4A),
+    infoFg: Color(0xFFA6C3F8),
+    neutralSoft: AppColors.darkSurfaceStrong,
+    neutralFg: AppColors.darkTextSecondary,
+    heroStart: Color(0xFF1F5F4A),
+    heroEnd: Color(0xFF0B1712),
+    onHero: AppColors.darkText,
+    onHeroMuted: Color(0xFFC4DACF),
+    heroAccent: AppColors.accentLime,
+    chartBar: Color(0xFF3FA882),
+    chartBarMuted: Color(0xFF2A3A31),
+    chartHighlight: AppColors.accentLime,
+    chartGrid: AppColors.darkBorder,
   );
 
   @override
@@ -85,15 +133,29 @@ class AppPalette extends ThemeExtension<AppPalette> {
     if (other is! AppPalette) return this;
     Color l(Color a, Color b) => Color.lerp(a, b, t)!;
     return AppPalette(
-      success: l(success, other.success), successSoft: l(successSoft, other.successSoft), successFg: l(successFg, other.successFg),
-      warning: l(warning, other.warning), warningSoft: l(warningSoft, other.warningSoft), warningFg: l(warningFg, other.warningFg),
-      danger: l(danger, other.danger), dangerSoft: l(dangerSoft, other.dangerSoft), dangerFg: l(dangerFg, other.dangerFg),
-      info: l(info, other.info), infoSoft: l(infoSoft, other.infoSoft), infoFg: l(infoFg, other.infoFg),
-      neutralSoft: l(neutralSoft, other.neutralSoft), neutralFg: l(neutralFg, other.neutralFg),
-      heroStart: l(heroStart, other.heroStart), heroEnd: l(heroEnd, other.heroEnd), onHero: l(onHero, other.onHero),
-      onHeroMuted: l(onHeroMuted, other.onHeroMuted), heroAccent: l(heroAccent, other.heroAccent),
-      chartBar: l(chartBar, other.chartBar), chartBarMuted: l(chartBarMuted, other.chartBarMuted),
-      chartHighlight: l(chartHighlight, other.chartHighlight), chartGrid: l(chartGrid, other.chartGrid),
+      success: l(success, other.success),
+      successSoft: l(successSoft, other.successSoft),
+      successFg: l(successFg, other.successFg),
+      warning: l(warning, other.warning),
+      warningSoft: l(warningSoft, other.warningSoft),
+      warningFg: l(warningFg, other.warningFg),
+      danger: l(danger, other.danger),
+      dangerSoft: l(dangerSoft, other.dangerSoft),
+      dangerFg: l(dangerFg, other.dangerFg),
+      info: l(info, other.info),
+      infoSoft: l(infoSoft, other.infoSoft),
+      infoFg: l(infoFg, other.infoFg),
+      neutralSoft: l(neutralSoft, other.neutralSoft),
+      neutralFg: l(neutralFg, other.neutralFg),
+      heroStart: l(heroStart, other.heroStart),
+      heroEnd: l(heroEnd, other.heroEnd),
+      onHero: l(onHero, other.onHero),
+      onHeroMuted: l(onHeroMuted, other.onHeroMuted),
+      heroAccent: l(heroAccent, other.heroAccent),
+      chartBar: l(chartBar, other.chartBar),
+      chartBarMuted: l(chartBarMuted, other.chartBarMuted),
+      chartHighlight: l(chartHighlight, other.chartHighlight),
+      chartGrid: l(chartGrid, other.chartGrid),
     );
   }
 }
@@ -106,14 +168,8 @@ extension AppThemeX on BuildContext {
 /// Brand gradients and soft elevation used by hero surfaces.
 class AppGradients {
   AppGradients._();
-  static const hero = LinearGradient(
-    begin: Alignment.topLeft, end: Alignment.bottomRight,
-    colors: [Color(0xFF1B7A5C), AppColors.primaryDark],
-  );
-  static const logo = LinearGradient(
-    begin: Alignment.topLeft, end: Alignment.bottomRight,
-    colors: [AppColors.primaryGreenLight, AppColors.primaryDark],
-  );
+  static const hero = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [AppColors.primaryGreen, AppColors.primaryDark]);
+  static const logo = LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [AppColors.primaryGreenLight, AppColors.primaryDark]);
   static LinearGradient heroOf(BuildContext c) {
     final p = c.palette;
     return LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [p.heroStart, p.heroEnd]);
@@ -125,9 +181,8 @@ class AppGradients {
 /// Elevation: used sparingly (hero + floating surfaces). Dark mode relies on surface tone, not shadow.
 class AppShadows {
   AppShadows._();
-  static List<BoxShadow> soft(BuildContext context) => context.isDark
-      ? const []
-      : [BoxShadow(color: AppColors.primaryDark.withValues(alpha: 0.06), blurRadius: 24, offset: const Offset(0, 8))];
+  static List<BoxShadow> soft(BuildContext context) =>
+      context.isDark ? const [] : [BoxShadow(color: AppColors.primaryDark.withValues(alpha: 0.06), blurRadius: 24, offset: const Offset(0, 8))];
   static List<BoxShadow> raised(BuildContext context) => context.isDark
       ? const []
       : [

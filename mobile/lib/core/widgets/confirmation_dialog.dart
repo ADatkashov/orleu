@@ -21,7 +21,9 @@ Future<bool> showConfirmationDialog(
       actions: [
         TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.cancel)),
         FilledButton(
-          style: destructive ? FilledButton.styleFrom(backgroundColor: ctx.palette.danger, foregroundColor: AppColors.primaryDark, minimumSize: const Size(96, 44)) : FilledButton.styleFrom(minimumSize: const Size(96, 44)),
+          style: destructive
+              ? FilledButton.styleFrom(backgroundColor: ctx.palette.danger, foregroundColor: AppColors.primaryDark, minimumSize: const Size(96, 44))
+              : FilledButton.styleFrom(minimumSize: const Size(96, 44)),
           onPressed: () => Navigator.pop(ctx, true),
           child: Text(confirmLabel),
         ),

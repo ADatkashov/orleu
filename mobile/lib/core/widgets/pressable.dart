@@ -25,12 +25,7 @@ class _PressableState extends State<Pressable> {
       onPointerDown: (_) => _set(true),
       onPointerUp: (_) => _set(false),
       onPointerCancel: (_) => _set(false),
-      child: AnimatedScale(
-        scale: _down && !reduce ? widget.scale : 1,
-        duration: AppMotion.fast,
-        curve: AppMotion.curve,
-        child: widget.child,
-      ),
+      child: AnimatedScale(scale: _down && !reduce ? widget.scale : 1, duration: AppMotion.fast, curve: AppMotion.curve, child: widget.child),
     );
   }
 }
@@ -48,7 +43,10 @@ class Entrance extends StatelessWidget {
       tween: Tween(begin: 0, end: 1),
       duration: AppMotion.slow + delay,
       curve: Interval(delay.inMilliseconds / (AppMotion.slow + delay).inMilliseconds, 1, curve: AppMotion.curve),
-      builder: (_, v, c) => Opacity(opacity: v, child: Transform.translate(offset: Offset(0, (1 - v) * 10), child: c)),
+      builder: (_, v, c) => Opacity(
+        opacity: v,
+        child: Transform.translate(offset: Offset(0, (1 - v) * 10), child: c),
+      ),
       child: child,
     );
   }

@@ -30,11 +30,21 @@ class StatTile extends StatelessWidget {
     return AppCard(
       semanticLabel: '$label: $value',
       child: ExcludeSemantics(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(label, style: t.textTheme.bodySmall),
-          const SizedBox(height: AppSpacing.xs),
-          FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Text(value, style: t.textTheme.titleLarge?.copyWith(color: valueColor, fontWeight: FontWeight.w800))),
-        ]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label, style: t.textTheme.bodySmall),
+            const SizedBox(height: AppSpacing.xs),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                value,
+                style: t.textTheme.titleLarge?.copyWith(color: valueColor, fontWeight: FontWeight.w800),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

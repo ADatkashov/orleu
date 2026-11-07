@@ -11,22 +11,27 @@ class SettingsGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      if (title != null)
-        Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.xs, 0, 0, AppSpacing.sm),
-          child: Semantics(header: true, child: Text(title!.toUpperCase(), style: t.textTheme.labelSmall?.copyWith(letterSpacing: 0.8, fontWeight: FontWeight.w700))),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (title != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(AppSpacing.xs, 0, 0, AppSpacing.sm),
+            child: Semantics(
+              header: true,
+              child: Text(title!.toUpperCase(), style: t.textTheme.labelSmall?.copyWith(letterSpacing: 0.8, fontWeight: FontWeight.w700)),
+            ),
+          ),
+        AppCard(
+          padding: EdgeInsets.zero,
+          child: Column(
+            children: [
+              for (var i = 0; i < children.length; i++) ...[if (i > 0) Divider(indent: 68, color: t.colorScheme.outlineVariant), children[i]],
+            ],
+          ),
         ),
-      AppCard(
-        padding: EdgeInsets.zero,
-        child: Column(children: [
-          for (var i = 0; i < children.length; i++) ...[
-            if (i > 0) Divider(indent: 68, color: t.colorScheme.outlineVariant),
-            children[i],
-          ],
-        ]),
-      ),
-    ]);
+      ],
+    );
   }
 }
 
@@ -47,21 +52,27 @@ class SettingsTile extends StatelessWidget {
         constraints: const BoxConstraints(minHeight: 60),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 10),
-          child: Row(children: [
-            Container(
-              width: 36, height: 36,
-              decoration: BoxDecoration(color: t.colorScheme.primaryContainer, borderRadius: BorderRadius.circular(AppRadius.control - 2)),
-              child: Icon(icon, size: AppIconSize.md, color: t.colorScheme.primary),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(title, style: t.textTheme.titleSmall?.copyWith(fontSize: 15)),
-                if (subtitle != null) Text(subtitle!, style: t.textTheme.bodySmall),
-              ]),
-            ),
-            trailing ?? (onTap != null ? Icon(Icons.chevron_right_rounded, color: t.colorScheme.onSurfaceVariant) : const SizedBox.shrink()),
-          ]),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(color: t.colorScheme.primaryContainer, borderRadius: BorderRadius.circular(AppRadius.control - 2)),
+                child: Icon(icon, size: AppIconSize.md, color: t.colorScheme.primary),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: t.textTheme.titleSmall?.copyWith(fontSize: 15)),
+                    if (subtitle != null) Text(subtitle!, style: t.textTheme.bodySmall),
+                  ],
+                ),
+              ),
+              trailing ?? (onTap != null ? Icon(Icons.chevron_right_rounded, color: t.colorScheme.onSurfaceVariant) : const SizedBox.shrink()),
+            ],
+          ),
         ),
       ),
     );

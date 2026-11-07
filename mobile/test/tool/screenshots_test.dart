@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:orleu_mobile/admin/admin_app.dart';
 import 'package:orleu_mobile/app.dart';
 import 'package:orleu_mobile/core/api/token_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,11 +25,31 @@ String _iso(int h, int m) {
 }
 
 Map<String, Object?> _b(String id, String svc, String emp, String cust, int h, int m, int mins, String status, {double paid = 0, double price = 15000}) => {
-      'id': id, 'branchId': 'br', 'serviceId': 's', 'serviceName': svc, 'employeeId': 'e', 'employeeName': emp,
-      'customerId': 'c$id', 'customerName': cust, 'customerPhone': '+77011234567',
-      'startsAt': _iso(h, m), 'endsAt': _iso(h + (m + mins) ~/ 60, (m + mins) % 60), 'status': status, 'currency': 'KZT', 'notes': null, 'holdExpiresAt': null,
-      'financials': {'price': price, 'depositAmount': 4500, 'paid': paid, 'refunded': 0, 'netPaid': paid, 'remaining': price - paid, 'paymentStatus': paid > 0 ? 'PARTIAL' : 'UNPAID'},
-    };
+  'id': id,
+  'branchId': 'br',
+  'serviceId': 's',
+  'serviceName': svc,
+  'employeeId': 'e',
+  'employeeName': emp,
+  'customerId': 'c$id',
+  'customerName': cust,
+  'customerPhone': '+77011234567',
+  'startsAt': _iso(h, m),
+  'endsAt': _iso(h + (m + mins) ~/ 60, (m + mins) % 60),
+  'status': status,
+  'currency': 'KZT',
+  'notes': null,
+  'holdExpiresAt': null,
+  'financials': {
+    'price': price,
+    'depositAmount': 4500,
+    'paid': paid,
+    'refunded': 0,
+    'netPaid': paid,
+    'remaining': price - paid,
+    'paymentStatus': paid > 0 ? 'PARTIAL' : 'UNPAID',
+  },
+};
 
 Map<String, Handler> _routes() {
   final now = DateTime.now().toUtc();
@@ -41,32 +62,108 @@ Map<String, Handler> _routes() {
   ];
   return {
     ...businessRoutes(bookings: bookings),
-    'GET /api/v1/businesses/b1/analytics/summary': (_) => ok({'totalBookings': 12, 'bookedValue': 184500, 'collected': 184500, 'refunded': 0, 'netCollected': 184500, 'outstanding': 42000, 'cancellationRate': 0.083, 'noShowRate': 0.041}),
+    'GET /api/v1/businesses/b1/analytics/summary': (_) => ok({
+      'totalBookings': 12,
+      'bookedValue': 184500,
+      'collected': 184500,
+      'refunded': 0,
+      'netCollected': 184500,
+      'outstanding': 42000,
+      'cancellationRate': 0.083,
+      'noShowRate': 0.041,
+    }),
     'GET /api/v1/businesses/b1/analytics/timeseries': (_) => ok([
-          for (var i = 6; i >= 0; i--) {'date': now.subtract(Duration(days: i)).toIso8601String().substring(0, 10), 'bookings': 3 + (i * 7) % 5, 'netCollected': 90000.0 + ((i * 53) % 7) * 31000}
-        ]),
-    'GET /api/v1/businesses/b1/customers': (_) => ok({'items': [
-          for (final (i, n) in ['Amina Sadykova', 'Madina Kenzhebek', 'Daniyar Tulegenov', 'Aliya Nurlan', 'Saule Bekova', 'Ерлан Қасымов'].indexed)
-            {'id': 'c$i', 'fullName': n, 'phone': '+7701123456$i', 'email': null, 'blocked': i == 4, 'tags': i < 2 ? ['VIP', 'regular'] : <String>[]}
-        ], 'page': 0, 'size': 50, 'total': 6}),
-    'GET /api/v1/businesses/b1/customers/tags': (_) => ok([{'tag': 'VIP', 'customers': 2}, {'tag': 'regular', 'customers': 2}]),
+      for (var i = 6; i >= 0; i--)
+        {
+          'date': now.subtract(Duration(days: i)).toIso8601String().substring(0, 10),
+          'bookings': 3 + (i * 7) % 5,
+          'netCollected': 90000.0 + ((i * 53) % 7) * 31000,
+        },
+    ]),
+    'GET /api/v1/businesses/b1/customers': (_) => ok({
+      'items': [
+        for (final (i, n) in ['Amina Sadykova', 'Madina Kenzhebek', 'Daniyar Tulegenov', 'Aliya Nurlan', 'Saule Bekova', 'Ерлан Қасымов'].indexed)
+          {
+            'id': 'c$i',
+            'fullName': n,
+            'phone': '+7701123456$i',
+            'email': null,
+            'blocked': i == 4,
+            'tags': i < 2 ? ['VIP', 'regular'] : <String>[],
+          },
+      ],
+      'page': 0,
+      'size': 50,
+      'total': 6,
+    }),
+    'GET /api/v1/businesses/b1/customers/tags': (_) => ok([
+      {'tag': 'VIP', 'customers': 2},
+      {'tag': 'regular', 'customers': 2},
+    ]),
     'GET /api/v1/businesses/b1/services': (_) => ok([
-          {'id': 's1', 'name': 'Haircut', 'durationMinutes': 45, 'bufferMinutes': 0, 'price': 8000, 'depositPercent': null, 'active': true},
-          {'id': 's2', 'name': 'Coloring', 'durationMinutes': 90, 'bufferMinutes': 10, 'price': 32000, 'depositPercent': 30, 'active': true},
-          {'id': 's3', 'name': 'Manicure', 'durationMinutes': 60, 'bufferMinutes': 0, 'price': 12000, 'depositPercent': null, 'active': false},
-        ]),
+      {'id': 's1', 'name': 'Haircut', 'durationMinutes': 45, 'bufferMinutes': 0, 'price': 8000, 'depositPercent': null, 'active': true},
+      {'id': 's2', 'name': 'Coloring', 'durationMinutes': 90, 'bufferMinutes': 10, 'price': 32000, 'depositPercent': 30, 'active': true},
+      {'id': 's3', 'name': 'Manicure', 'durationMinutes': 60, 'bufferMinutes': 0, 'price': 12000, 'depositPercent': null, 'active': false},
+    ]),
     'GET /api/v1/businesses/b1/employees': (_) => ok([
-          {'id': 'e1', 'displayName': 'Aigerim Sadykova', 'active': true, 'branchIds': ['br'], 'serviceIds': ['s1', 's2']},
-          {'id': 'e2', 'displayName': 'Dana Omarova', 'active': true, 'branchIds': ['br'], 'serviceIds': ['s1']},
-        ]),
+      {
+        'id': 'e1',
+        'displayName': 'Aigerim Sadykova',
+        'active': true,
+        'branchIds': ['br'],
+        'serviceIds': ['s1', 's2'],
+      },
+      {
+        'id': 'e2',
+        'displayName': 'Dana Omarova',
+        'active': true,
+        'branchIds': ['br'],
+        'serviceIds': ['s1'],
+      },
+    ]),
     'GET /api/v1/businesses/b1/branches': (_) => ok([
-          {'id': 'br', 'name': 'Main', 'address': 'Abay 10, Almaty', 'active': true, 'hours': [for (var d = 1; d <= 6; d++) {'dayOfWeek': d, 'open': '09:00:00', 'close': '20:00:00'}]},
-        ]),
+      {
+        'id': 'br',
+        'name': 'Main',
+        'address': 'Abay 10, Almaty',
+        'active': true,
+        'hours': [
+          for (var d = 1; d <= 6; d++) {'dayOfWeek': d, 'open': '09:00:00', 'close': '20:00:00'},
+        ],
+      },
+    ]),
     'GET /api/v1/businesses/b1/notifications': (_) => ok([
-          {'id': 'n1', 'eventType': 'BOOKING_CREATED', 'bookingId': '2', 'customerName': 'Madina Kenzhebek', 'serviceName': 'Manicure', 'createdAt': now.subtract(const Duration(minutes: 12)).toIso8601String(), 'startsAtInstant': _iso(23, 30), 'read': false},
-          {'id': 'n2', 'eventType': 'PAYMENT_RECEIVED', 'bookingId': '1', 'customerName': 'Amina Sadykova', 'serviceName': 'Hair styling', 'createdAt': now.subtract(const Duration(hours: 3)).toIso8601String(), 'startsAtInstant': _iso(23, 0), 'read': false},
-          {'id': 'n3', 'eventType': 'BOOKING_CANCELLED', 'bookingId': '5', 'customerName': 'Saule Bekova', 'serviceName': 'Haircut', 'createdAt': now.subtract(const Duration(days: 1)).toIso8601String(), 'startsAtInstant': _iso(23, 58), 'read': true},
-        ]),
+      {
+        'id': 'n1',
+        'eventType': 'BOOKING_CREATED',
+        'bookingId': '2',
+        'customerName': 'Madina Kenzhebek',
+        'serviceName': 'Manicure',
+        'createdAt': now.subtract(const Duration(minutes: 12)).toIso8601String(),
+        'startsAtInstant': _iso(23, 30),
+        'read': false,
+      },
+      {
+        'id': 'n2',
+        'eventType': 'PAYMENT_RECEIVED',
+        'bookingId': '1',
+        'customerName': 'Amina Sadykova',
+        'serviceName': 'Hair styling',
+        'createdAt': now.subtract(const Duration(hours: 3)).toIso8601String(),
+        'startsAtInstant': _iso(23, 0),
+        'read': false,
+      },
+      {
+        'id': 'n3',
+        'eventType': 'BOOKING_CANCELLED',
+        'bookingId': '5',
+        'customerName': 'Saule Bekova',
+        'serviceName': 'Haircut',
+        'createdAt': now.subtract(const Duration(days: 1)).toIso8601String(),
+        'startsAtInstant': _iso(23, 58),
+        'read': true,
+      },
+    ]),
   };
 }
 
@@ -87,8 +184,15 @@ Future<GlobalKey> _boot(WidgetTester tester, {required double w, required double
   tester.view.physicalSize = Size(w, h);
   addTearDown(tester.view.reset);
   final key = GlobalKey();
-  final store = MemoryTokenStore()..access = 'a'..refresh = 'r';
-  await tester.pumpWidget(RepaintBoundary(key: key, child: ProviderScope(overrides: overridesFor(FakeAdapter(_routes()), store), child: const OrleuApp())));
+  final store = MemoryTokenStore()
+    ..access = 'a'
+    ..refresh = 'r';
+  await tester.pumpWidget(
+    RepaintBoundary(
+      key: key,
+      child: ProviderScope(overrides: overridesFor(FakeAdapter(_routes()), store), child: const OrleuApp()),
+    ),
+  );
   await tester.pumpAndSettle();
   await tester.pump(const Duration(milliseconds: 300));
   return key;
@@ -116,7 +220,12 @@ Future<void> _loadFonts() async {
     inter.addFont(File('assets/fonts/Inter-$w.ttf').readAsBytes().then((b) => ByteData.view(b.buffer)));
   }
   await inter.load();
-  final icons = FontLoader('MaterialIcons')..addFont(File('${Platform.environment['FLUTTER_ROOT'] ?? '/opt/sdk/flutter'}/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf').readAsBytes().then((b) => ByteData.view(b.buffer)));
+  final icons = FontLoader('MaterialIcons')
+    ..addFont(
+      File('${Platform.environment['FLUTTER_ROOT'] ?? '/opt/sdk/flutter'}/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf')
+          .readAsBytes()
+          .then((b) => ByteData.view(b.buffer)),
+    );
   await icons.load();
 }
 
@@ -154,7 +263,18 @@ void main() {
     testWidgets('detail screens $m', skip: skip, (tester) async {
       final key = await _boot(tester, w: 390, h: 844, dark: dark);
       await _tab(tester, 'More');
-      for (final (text, name) in [('Services', 'services'), ('Specialists', 'employees'), ('Locations & hours', 'branches'), ('Reviews', 'reviews'), ('Promo codes', 'promos'), ('Gift cards', 'giftcards'), ('Support', 'support'), ('Message log', 'messages'), ('Account & security', 'account'), ('Business setup', 'setup')]) {
+      for (final (text, name) in [
+        ('Services', 'services'),
+        ('Specialists', 'employees'),
+        ('Locations & hours', 'branches'),
+        ('Reviews', 'reviews'),
+        ('Promo codes', 'promos'),
+        ('Gift cards', 'giftcards'),
+        ('Support', 'support'),
+        ('Message log', 'messages'),
+        ('Account & security', 'account'),
+        ('Business setup', 'setup'),
+      ]) {
         if (find.text(text).evaluate().isEmpty) continue;
         await _open(tester, key, text, '$name-$m');
       }
@@ -177,7 +297,12 @@ void main() {
       tester.view.physicalSize = const Size(390, 844);
       addTearDown(tester.view.reset);
       final key = GlobalKey();
-      await tester.pumpWidget(RepaintBoundary(key: key, child: ProviderScope(overrides: overridesFor(FakeAdapter({}), MemoryTokenStore()), child: const OrleuApp())));
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: ProviderScope(overrides: overridesFor(FakeAdapter({}), MemoryTokenStore()), child: const OrleuApp()),
+        ),
+      );
       await tester.pumpAndSettle();
       await _shot(tester, key, 'login-$m');
       await tester.tap(find.byType(TextButton).first);
@@ -185,6 +310,48 @@ void main() {
       await _shot(tester, key, 'register-$m');
     });
   }
+
+  testWidgets('admin console', skip: skip, (tester) async {
+    final biz = {
+      'id': 'b1',
+      'slug': 'studio-almaty',
+      'name': 'Studio Almaty',
+      'businessType': 'BARBERSHOP',
+      'planCode': 'PRO',
+      'status': 'ACTIVE',
+      'published': true,
+      'createdAt': '2026-11-01T10:00:00Z',
+    };
+    final routes = <String, Handler>{
+      'GET /api/v1/me': (_) => ok({'id': 'u1', 'email': 'admin@example.com', 'fullName': 'Admin', 'memberships': []}),
+      'GET /api/v1/admin/me': (_) => ok({'role': 'SUPER_ADMIN', 'canModify': true}),
+      'GET /api/v1/admin/businesses': (_) => ok({
+        'items': [
+          biz,
+          {...biz, 'id': 'b2', 'name': 'Barber House', 'slug': 'barber-house', 'planCode': 'FREE', 'status': 'SUSPENDED', 'published': false},
+        ],
+        'page': 0,
+        'size': 20,
+      }),
+    };
+    for (final w in [1280.0, 390.0]) {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = Size(w, 800);
+      final key = GlobalKey();
+      final store = MemoryTokenStore()
+        ..access = 'a'
+        ..refresh = 'r';
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: key,
+          child: ProviderScope(overrides: overridesFor(FakeAdapter(routes), store), child: const AdminApp()),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await _shot(tester, key, 'admin-${w.toInt()}');
+    }
+    addTearDown(tester.view.reset);
+  });
 
   testWidgets('desktop and small phone', skip: skip, (tester) async {
     var key = await _boot(tester, w: 1280, h: 860);

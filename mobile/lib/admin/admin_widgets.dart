@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../core/api/api_client.dart';
 import '../core/design/tokens.dart';
+import '../core/widgets/widgets.dart';
 import 'admin_data.dart';
 
 /// Localization-free (English) error text for the admin console. Raw server messages are never shown.
@@ -41,7 +42,7 @@ class InlineError extends StatelessWidget {
   @override
   Widget build(BuildContext context) => message == null
       ? const SizedBox.shrink()
-      : Padding(padding: const EdgeInsets.only(top: 12), child: Text(message!, key: const Key('formError'), style: TextStyle(color: Theme.of(context).colorScheme.error)));
+      : Padding(padding: const EdgeInsets.only(top: 12), child: Text(message!, key: const Key('formError'), style: TextStyle(color: context.palette.dangerFg)));
 }
 
 class AdminError extends StatelessWidget {
@@ -53,6 +54,12 @@ class AdminError extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Container(
+              width: 64, height: 64,
+              decoration: BoxDecoration(color: context.palette.dangerSoft, shape: BoxShape.circle),
+              child: Icon(Icons.cloud_off_outlined, size: 28, color: context.palette.dangerFg),
+            ),
+            const SizedBox(height: AppSpacing.md),
             Text(adminError(error), textAlign: TextAlign.center),
             const SizedBox(height: AppSpacing.md),
             OutlinedButton(onPressed: onRetry, child: const Text(S.retry)),
@@ -61,16 +68,24 @@ class AdminError extends StatelessWidget {
       );
 }
 
+/// Status pill. [color] is one of the brand/semantic colors; it selects the matching soft-tint tone.
 class Pill extends StatelessWidget {
   final String text;
   final Color color;
   const Pill(this.text, this.color, {super.key});
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-        decoration: BoxDecoration(color: color.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(999)),
-        child: Text(text, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: color, fontWeight: FontWeight.w600)),
-      );
+  Widget build(BuildContext context) {
+    final tone = color == AppColors.success
+        ? BadgeTone.success
+        : color == AppColors.danger
+            ? BadgeTone.danger
+            : color == AppColors.warning
+                ? BadgeTone.warning
+                : color == AppColors.info
+                    ? BadgeTone.info
+                    : BadgeTone.accent;
+    return StatusBadge(text, tone: tone, dot: false);
+  }
 }
 
 Widget statusBadge(String status) => Pill(status, status == 'ACTIVE' ? AppColors.success : AppColors.danger);
