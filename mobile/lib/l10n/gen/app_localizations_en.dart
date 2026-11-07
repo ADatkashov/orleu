@@ -1302,4 +1302,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tagsInvalid => 'Up to 10 tags, each at most 30 characters.';
+
+  @override
+  String get mergeClient => 'Merge a duplicate';
+
+  @override
+  String mergeIntro(String name) {
+    return 'Find the duplicate of $name to merge into this card.';
+  }
+
+  @override
+  String mergeWarning(String dup, String phone, String name) {
+    return 'Merge $dup ($phone) into $name? Its bookings, tags and notes move to $name; the duplicate record is deleted. Marketing consent is not transferred. This cannot be undone.';
+  }
 }

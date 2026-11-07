@@ -2517,6 +2517,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Up to 10 tags, each at most 30 characters.'**
   String get tagsInvalid;
+
+  /// No description provided for @mergeClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge a duplicate'**
+  String get mergeClient;
+
+  /// No description provided for @mergeIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Find the duplicate of {name} to merge into this card.'**
+  String mergeIntro(String name);
+
+  /// No description provided for @mergeWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge {dup} ({phone}) into {name}? Its bookings, tags and notes move to {name}; the duplicate record is deleted. Marketing consent is not transferred. This cannot be undone.'**
+  String mergeWarning(String dup, String phone, String name);
 }
 
 class _AppLocalizationsDelegate

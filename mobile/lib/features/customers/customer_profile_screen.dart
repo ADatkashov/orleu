@@ -88,6 +88,9 @@ class CustomerProfileScreen extends ConsumerWidget {
                     key: const Key('block'), style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
                     onPressed: () => showDialog(context: context, builder: (_) => _BlockDialog(customerId: customerId)), child: Text(l.blockClient)),
             const SizedBox(height: AppSpacing.sm),
+            OutlinedButton.icon(key: const Key('mergeClient'), icon: const Icon(Icons.merge_outlined), label: Text(l.mergeClient),
+                onPressed: () => showDialog(context: context, builder: (_) => _MergeDialog(target: p.customer))),
+            const SizedBox(height: AppSpacing.sm),
             OutlinedButton.icon(key: const Key('exportClient'), icon: const Icon(Icons.download_outlined), label: Text(l.privacyExport), onPressed: () => guarded(context, () async {
               final f = await ref.read(bookingActionsProvider).exportCustomer(customerId);
               final saved = await ref.read(csvSaverProvider)(f.name, f.bytes);
@@ -296,6 +299,61 @@ class _TagsState extends ConsumerState<_TagsDialog> {
             if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
           },
           child: Text(l.save),
+        ),
+      ],
+    );
+  }
+}
+
+/// Pick the duplicate, read what will happen, confirm. Errors stay inside the dialog.
+class _MergeDialog extends ConsumerStatefulWidget {
+  final Customer target;
+  const _MergeDialog({required this.target});
+  @override
+  ConsumerState<_MergeDialog> createState() => _MergeState();
+}
+
+class _MergeState extends ConsumerState<_MergeDialog> {
+  String _q = '';
+  Customer? _picked;
+  bool _busy = false;
+  String? _error;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final picked = _picked;
+    return AlertDialog(
+      title: Text(l.mergeClient),
+      content: SizedBox(width: 360, child: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (picked == null) ...[
+          Text(l.mergeIntro(widget.target.fullName)),
+          const SizedBox(height: AppSpacing.sm),
+          TextField(key: const Key('mergeSearch'), decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: l.searchCustomers), onChanged: (v) => setState(() => _q = v.trim())),
+          if (_q.isNotEmpty) ref.watch(customerSearchProvider(_q)).when(
+                loading: () => const Padding(padding: EdgeInsets.all(AppSpacing.md), child: Center(child: CircularProgressIndicator())),
+                error: (e, _) => Text(l.errNetwork),
+                data: (list) => Column(children: [
+                  for (final c in list.where((c) => c.id != widget.target.id))
+                    ListTile(key: Key('mergePick-${c.id}'), dense: true, title: Text(c.fullName), subtitle: Text(c.phone), onTap: () => setState(() => _picked = c)),
+                ]),
+              ),
+        ] else ...[
+          Text(l.mergeWarning(picked.fullName, picked.phone, widget.target.fullName), key: const Key('mergeWarning')),
+        ],
+        FormError(_error),
+      ]))),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
+        if (picked != null) FilledButton(
+          key: const Key('confirmMerge'), style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
+          onPressed: _busy ? null : () async {
+            setState(() { _busy = true; _error = null; });
+            final err = await attempt(context, () => ref.read(bookingActionsProvider).mergeCustomer(widget.target.id, picked.id));
+            if (!context.mounted) return;
+            if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
+          },
+          child: Text(l.mergeClient),
         ),
       ],
     );

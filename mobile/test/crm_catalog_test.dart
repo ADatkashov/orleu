@@ -32,7 +32,15 @@ class Env {
     adapter = FakeAdapter({
       ...businessRoutes(),
       'GET /api/v1/businesses': (_) => ok([{'id': 'b1', 'name': 'Studio', 'slug': 'studio', 'currency': 'KZT', 'planCode': 'FREE', 'published': true, 'timezone': 'Asia/Almaty'}]),
-      'GET /api/v1/businesses/b1/customers': (_) => ok({'items': [{'id': 'c1', 'fullName': 'Aigerim Sadykova', 'phone': '+77011234567', 'blocked': blocked}], 'page': 0, 'size': 50, 'total': 1}),
+      'GET /api/v1/businesses/b1/customers': (o) {
+        final q = o.queryParameters['q'];
+        // a non-empty search (the merge picker) finds the target itself and its duplicate
+        return ok({'items': [
+          {'id': 'c1', 'fullName': 'Aigerim Sadykova', 'phone': '+77011234567', 'blocked': blocked},
+          if (q != null && q != '') {'id': 'c2', 'fullName': 'Aigerim S.', 'phone': '+77011234568', 'blocked': false},
+        ], 'page': 0, 'size': 50, 'total': 1});
+      },
+      'POST /api/v1/businesses/b1/customers/c1/merge': (_) => ok({}),
       'GET /api/v1/businesses/b1/customers/c1/profile': (_) => ok(profileJson(blocked: blocked, notes: notes, visits: !noVisits, optIn: optIn, tags: tags)),
       'PATCH /api/v1/businesses/b1/customers/c1': (o) {
         final d = o.data as Map;
@@ -102,6 +110,7 @@ void main() {
     testWidgets('a client without visits shows placeholders instead of invented numbers', (tester) async {
       await openProfile(tester, Env()..noVisits = true..notes = null);
       expect(find.text('No visits yet'), findsOneWidget);
+      await tester.scrollUntilVisible(find.byKey(const Key('noHistory')), 200, scrollable: find.byType(Scrollable).first);
       expect(find.byKey(const Key('noHistory')), findsOneWidget);
       expect(find.text('—'), findsWidgets);                      // average and notes
     });
@@ -162,6 +171,27 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.textContaining('at most 30'), findsOneWidget);
       expect(env.bodyOf('PUT', '/customers/c1/tags'), isNull);
+    });
+
+    testWidgets('merging a duplicate needs a pick and a confirmation, then sends the duplicate id', (tester) async {
+      final env = Env();
+      await openProfile(tester, env);
+      await tester.ensureVisible(find.byKey(const Key('mergeClient')));
+      await tester.tap(find.byKey(const Key('mergeClient')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('mergeSearch')), 'Aig');
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('mergePick-c1')), findsNothing);   // cannot merge a card into itself
+      await tester.tap(find.byKey(const Key('mergePick-c2')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('mergeWarning')), findsOneWidget);
+      expect(find.textContaining('cannot be undone'), findsOneWidget);
+      expect(env.bodyOf('POST', '/customers/c1/merge'), isNull);      // nothing sent before confirming
+      await tester.tap(find.byKey(const Key('confirmMerge')));
+      await tester.pumpAndSettle();
+      expect(env.bodyOf('POST', '/customers/c1/merge'), {'sourceId': 'c2'});
+      expect(find.byKey(const Key('confirmMerge')), findsNothing);
     });
 
     testWidgets('marketing consent toggles through the API', (tester) async {

@@ -1301,4 +1301,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get tagsInvalid => 'Не более 10 тегов, каждый до 30 символов.';
+
+  @override
+  String get mergeClient => 'Объединить дубликат';
+
+  @override
+  String mergeIntro(String name) {
+    return 'Найдите дубликат клиента $name, чтобы влить его в эту карточку.';
+  }
+
+  @override
+  String mergeWarning(String dup, String phone, String name) {
+    return 'Влить $dup ($phone) в $name? Записи, теги и заметки перейдут к $name, карточка-дубликат будет удалена. Согласие на рекламу не переносится. Это нельзя отменить.';
+  }
 }

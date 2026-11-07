@@ -10,12 +10,14 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/businesses/{businessId}/customers")
 public class CustomerController {
+    public record MergeRequest(@jakarta.validation.constraints.NotNull UUID sourceId) {}
     public record ImportRequest(@jakarta.validation.constraints.NotNull String csv, boolean dryRun) {}
 
     private final CustomerService service;
     private final CustomerImportService importer;
     private final CustomerPrivacyService privacy;
-    public CustomerController(CustomerService service, CustomerImportService importer, CustomerPrivacyService privacy) { this.service = service; this.importer = importer; this.privacy = privacy; }
+    private final CustomerMergeService merger;
+    public CustomerController(CustomerService service, CustomerImportService importer, CustomerPrivacyService privacy, CustomerMergeService merger) { this.service = service; this.importer = importer; this.privacy = privacy; this.merger = merger; }
 
     @PostMapping @ResponseStatus(HttpStatus.CREATED)
     public CustomerView create(@PathVariable UUID businessId, @Valid @RequestBody CustomerInput in) { return service.create(businessId, in); }
@@ -40,6 +42,10 @@ public class CustomerController {
 
     @GetMapping("/{id}/profile")
     public CustomerProfile profile(@PathVariable UUID businessId, @PathVariable UUID id) { return service.profile(businessId, id); }
+
+    /** Merges the duplicate `sourceId` into this customer (bookings and tags move here; the duplicate is deleted). */
+    @PostMapping("/{id}/merge")
+    public CustomerView merge(@PathVariable UUID businessId, @PathVariable UUID id, @Valid @RequestBody MergeRequest r) { return merger.merge(businessId, id, r.sourceId()); }
 
     @PostMapping("/{id}/block")
     public CustomerView block(@PathVariable UUID businessId, @PathVariable UUID id) { return service.setBlocked(businessId, id, true); }
