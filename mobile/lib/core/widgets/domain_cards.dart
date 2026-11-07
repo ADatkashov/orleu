@@ -119,7 +119,8 @@ class ServiceCard extends StatelessWidget {
   final String currency;
   final VoidCallback? onTap;
   final Widget? trailing;
-  const ServiceCard({super.key, required this.service, required this.currency, this.onTap, this.trailing});
+  final String? subtitleExtra;
+  const ServiceCard({super.key, required this.service, required this.currency, this.onTap, this.trailing, this.subtitleExtra});
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -140,7 +141,7 @@ class ServiceCard extends StatelessWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(s.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: t.textTheme.titleSmall?.copyWith(fontSize: 15)),
               const SizedBox(height: 2),
-              Text('${s.durationMinutes} ${l.minutesShort}', style: t.textTheme.bodySmall),
+              Text('${s.durationMinutes} ${l.minutesShort}${subtitleExtra == null ? '' : ' · $subtitleExtra'}', style: t.textTheme.bodySmall),
             ]),
           ),
           const SizedBox(width: AppSpacing.sm),

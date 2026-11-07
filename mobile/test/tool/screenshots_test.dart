@@ -94,6 +94,16 @@ Future<GlobalKey> _boot(WidgetTester tester, {required double w, required double
   return key;
 }
 
+Future<void> _open(WidgetTester tester, GlobalKey key, String text, String name) async {
+  await tester.scrollUntilVisible(find.text(text), 200, scrollable: find.byType(Scrollable).first);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(text).first);
+  await tester.pumpAndSettle();
+  await _shot(tester, key, name);
+  await tester.pageBack();
+  await tester.pumpAndSettle();
+}
+
 Future<void> _tab(WidgetTester tester, String label) async {
   await tester.tap(find.text(label).last);
   await tester.pumpAndSettle();
@@ -138,6 +148,43 @@ void main() {
     await tester.pumpAndSettle();
     await _shot(tester, key, 'notifications-light');
   });
+
+  for (final dark in [false, true]) {
+    final m = dark ? 'dark' : 'light';
+    testWidgets('detail screens $m', skip: skip, (tester) async {
+      final key = await _boot(tester, w: 390, h: 844, dark: dark);
+      await _tab(tester, 'More');
+      for (final (text, name) in [('Services', 'services'), ('Specialists', 'employees'), ('Locations & hours', 'branches'), ('Reviews', 'reviews'), ('Promo codes', 'promos'), ('Gift cards', 'giftcards'), ('Support', 'support'), ('Message log', 'messages'), ('Account & security', 'account'), ('Business setup', 'setup')]) {
+        if (find.text(text).evaluate().isEmpty) continue;
+        await _open(tester, key, text, '$name-$m');
+      }
+    });
+    testWidgets('booking sheets $m', skip: skip, (tester) async {
+      final key = await _boot(tester, w: 390, h: 844, dark: dark);
+      await _tab(tester, 'Calendar');
+      await tester.tap(find.text('Manicure'));
+      await tester.pumpAndSettle();
+      await _shot(tester, key, 'booking-sheet-$m');
+      await tester.tapAt(const Offset(195, 40));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('newBooking')));
+      await tester.pumpAndSettle();
+      await _shot(tester, key, 'new-booking-$m');
+    });
+    testWidgets('signed out $m', skip: skip, (tester) async {
+      SharedPreferences.setMockInitialValues({'theme': dark ? 'dark' : 'light'});
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.reset);
+      final key = GlobalKey();
+      await tester.pumpWidget(RepaintBoundary(key: key, child: ProviderScope(overrides: overridesFor(FakeAdapter({}), MemoryTokenStore()), child: const OrleuApp())));
+      await tester.pumpAndSettle();
+      await _shot(tester, key, 'login-$m');
+      await tester.tap(find.byType(TextButton).first);
+      await tester.pumpAndSettle();
+      await _shot(tester, key, 'register-$m');
+    });
+  }
 
   testWidgets('desktop and small phone', skip: skip, (tester) async {
     var key = await _boot(tester, w: 1280, h: 860);

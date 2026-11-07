@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'setup_common.dart';
 
@@ -26,18 +26,17 @@ class ServicesScreen extends ConsumerWidget {
         loading: () => const SkeletonList(),
         error: (e, _) => ErrorRetry(error: e, onRetry: () => ref.invalidate(servicesProvider)),
         data: (list) => list.isEmpty
-            ? EmptyState(icon: Icons.content_cut, text: l.noneYet)
+            ? EmptyState(icon: Icons.content_cut_rounded, text: l.noneYet)
             : ListView.separated(
                 padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, 96),
                 itemCount: list.length,
                 separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
-                itemBuilder: (_, i) => Card(
-                  child: ListTile(
-                    key: Key('service-${list[i].id}'),
+                itemBuilder: (_, i) => Entrance(
+                  index: i,
+                  child: ServiceCard(
+                    key: Key('service-${list[i].id}'), service: list[i], currency: cur,
+                    subtitleExtra: list[i].active ? null : l.inactive,
                     onTap: () => showModalBottomSheet(context: context, isScrollControlled: true, showDragHandle: true, builder: (_) => _ServiceForm(initial: list[i])),
-                    title: Text(list[i].name, style: list[i].active ? null : TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                    subtitle: Text('${list[i].durationMinutes} ${l.minutesShort}${list[i].active ? '' : ' · ${l.inactive}'}'),
-                    trailing: Text(money(context, list[i].price, cur), style: Theme.of(context).textTheme.titleMedium),
                   ),
                 ),
               ),
