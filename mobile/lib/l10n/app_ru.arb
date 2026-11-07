@@ -429,5 +429,22 @@
   "refundApprove": "Одобрить",
   "refundReject": "Отклонить",
   "refundRequestedBy": "Запросил(а): {name}",
-  "refundsPolicyOn": "Согласование нужно для сумм выше {amount}"
+  "refundsPolicyOn": "Согласование нужно для сумм выше {amount}",
+  "closingTitle": "Закрыть кассу",
+  "closingFirst": "Первое закрытие: считается с начала сегодняшнего дня.",
+  "closingExpectedCash": "Ожидаемо наличных в кассе",
+  "closingNotCounted": "Суммы по банку и карте нужны бухгалтеру; в кассе они не пересчитываются.",
+  "closingCounted": "Посчитано наличных",
+  "closingMatches": "Совпадает с ожидаемой суммой.",
+  "closingConfirm": "Закрыть кассу",
+  "closingDone": "Касса закрыта",
+  "closingHistory": "Прошлые закрытия",
+  "closingNone": "Закрытий ещё не было",
+  "errExpectedChanged": "Платежи изменились, пока вы считали. Проверьте новую ожидаемую сумму и подтвердите ещё раз.",
+  "errRefundExceeds": "Возврат больше, чем сейчас оплачено.",
+  "errAlreadyDecided": "По этому запросу уже принято решение.",
+  "closingPeriod": "Период: {from} – {to}",
+  "closingShortage": "Недостача: {amount}",
+  "closingSurplus": "Излишек: {amount}",
+  "closingRow": "ожидалось {expected}, посчитано {counted}"
 }

@@ -1393,4 +1393,65 @@ class AppLocalizationsKk extends AppLocalizations {
   String refundsPolicyOn(String amount) {
     return '$amount сомасынан асатын қайтаруға келісу керек';
   }
+
+  @override
+  String get closingTitle => 'Кассаны жабу';
+
+  @override
+  String get closingFirst => 'Алғашқы жабу: бүгінгі күннің басынан есептеледі.';
+
+  @override
+  String get closingExpectedCash => 'Кассада күтілетін қолма-қол ақша';
+
+  @override
+  String get closingNotCounted =>
+      'Банк пен карта сомалары бухгалтерге арналған; кассада санаулы емес.';
+
+  @override
+  String get closingCounted => 'Саналған қолма-қол ақша';
+
+  @override
+  String get closingMatches => 'Күтілетін сомамен сәйкес.';
+
+  @override
+  String get closingConfirm => 'Кассаны жабу';
+
+  @override
+  String get closingDone => 'Касса жабылды';
+
+  @override
+  String get closingHistory => 'Алдыңғы жабулар';
+
+  @override
+  String get closingNone => 'Әзірге жабулар жоқ';
+
+  @override
+  String get errExpectedChanged =>
+      'Санап жатқанда төлемдер өзгерді. Жаңа күтілетін соманы тексеріп, қайта растаңыз.';
+
+  @override
+  String get errRefundExceeds => 'Қайтару қазір төленген сомадан артық.';
+
+  @override
+  String get errAlreadyDecided => 'Бұл сұраныс бойынша шешім қабылданған.';
+
+  @override
+  String closingPeriod(String from, String to) {
+    return 'Кезең: $from – $to';
+  }
+
+  @override
+  String closingShortage(String amount) {
+    return 'Жетіспейді: $amount';
+  }
+
+  @override
+  String closingSurplus(String amount) {
+    return 'Артық: $amount';
+  }
+
+  @override
+  String closingRow(String expected, String counted) {
+    return 'күтілген $expected, саналған $counted';
+  }
 }

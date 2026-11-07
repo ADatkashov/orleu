@@ -346,3 +346,30 @@ class RefundRequest {
       method: j['method'], status: j['status'], requestedByName: j['requestedByName'], decisionNote: j['decisionNote']);
   bool get pending => status == 'PENDING';
 }
+
+class CashMethod {
+  final double payments, refunds, net;
+  const CashMethod(this.payments, this.refunds, this.net);
+  factory CashMethod.fromJson(Map<String, dynamic> j) => CashMethod(_num(j['payments']), _num(j['refunds']), _num(j['net']));
+}
+
+class CashClosing {
+  final String id, currency;
+  final DateTime periodStart, periodEnd; // exact instants
+  final double expectedCash, countedCash, difference;
+  final String? note, closedByName;
+  const CashClosing({required this.id, required this.currency, required this.periodStart, required this.periodEnd, required this.expectedCash,
+      required this.countedCash, required this.difference, this.note, this.closedByName});
+  factory CashClosing.fromJson(Map<String, dynamic> j) => CashClosing(id: j['id'], currency: j['currency'] ?? 'KZT', periodStart: DateTime.parse(j['periodStart']),
+      periodEnd: DateTime.parse(j['periodEnd']), expectedCash: _num(j['expectedCash']), countedCash: _num(j['countedCash']), difference: _num(j['difference']),
+      note: j['note'], closedByName: j['closedByName']);
+}
+
+class CashPreview {
+  final DateTime periodStart, periodEnd;
+  final CashMethod cash, bank, card;
+  final bool firstClosing;
+  const CashPreview({required this.periodStart, required this.periodEnd, required this.cash, required this.bank, required this.card, required this.firstClosing});
+  factory CashPreview.fromJson(Map<String, dynamic> j) => CashPreview(periodStart: DateTime.parse(j['periodStart']), periodEnd: DateTime.parse(j['periodEnd']),
+      cash: CashMethod.fromJson(j['cash']), bank: CashMethod.fromJson(j['bank']), card: CashMethod.fromJson(j['card']), firstClosing: j['firstClosing'] == true);
+}

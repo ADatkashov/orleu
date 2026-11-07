@@ -1394,4 +1394,66 @@ class AppLocalizationsEn extends AppLocalizations {
   String refundsPolicyOn(String amount) {
     return 'Approval required above $amount';
   }
+
+  @override
+  String get closingTitle => 'Close cash register';
+
+  @override
+  String get closingFirst => 'First closing: counted from the start of today.';
+
+  @override
+  String get closingExpectedCash => 'Expected cash in the drawer';
+
+  @override
+  String get closingNotCounted =>
+      'Bank and card amounts are for the accountant; they are not counted in the drawer.';
+
+  @override
+  String get closingCounted => 'Cash counted';
+
+  @override
+  String get closingMatches => 'Matches the expected cash.';
+
+  @override
+  String get closingConfirm => 'Close the register';
+
+  @override
+  String get closingDone => 'Register closed';
+
+  @override
+  String get closingHistory => 'Previous closings';
+
+  @override
+  String get closingNone => 'No closings yet';
+
+  @override
+  String get errExpectedChanged =>
+      'Payments changed while you were counting. Check the new expected cash and confirm again.';
+
+  @override
+  String get errRefundExceeds =>
+      'The refund is larger than what is currently paid.';
+
+  @override
+  String get errAlreadyDecided => 'This request was already decided.';
+
+  @override
+  String closingPeriod(String from, String to) {
+    return 'Period: $from – $to';
+  }
+
+  @override
+  String closingShortage(String amount) {
+    return 'Shortage: $amount';
+  }
+
+  @override
+  String closingSurplus(String amount) {
+    return 'Surplus: $amount';
+  }
+
+  @override
+  String closingRow(String expected, String counted) {
+    return 'expected $expected, counted $counted';
+  }
 }

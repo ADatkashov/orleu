@@ -1393,4 +1393,66 @@ class AppLocalizationsRu extends AppLocalizations {
   String refundsPolicyOn(String amount) {
     return 'Согласование нужно для сумм выше $amount';
   }
+
+  @override
+  String get closingTitle => 'Закрыть кассу';
+
+  @override
+  String get closingFirst =>
+      'Первое закрытие: считается с начала сегодняшнего дня.';
+
+  @override
+  String get closingExpectedCash => 'Ожидаемо наличных в кассе';
+
+  @override
+  String get closingNotCounted =>
+      'Суммы по банку и карте нужны бухгалтеру; в кассе они не пересчитываются.';
+
+  @override
+  String get closingCounted => 'Посчитано наличных';
+
+  @override
+  String get closingMatches => 'Совпадает с ожидаемой суммой.';
+
+  @override
+  String get closingConfirm => 'Закрыть кассу';
+
+  @override
+  String get closingDone => 'Касса закрыта';
+
+  @override
+  String get closingHistory => 'Прошлые закрытия';
+
+  @override
+  String get closingNone => 'Закрытий ещё не было';
+
+  @override
+  String get errExpectedChanged =>
+      'Платежи изменились, пока вы считали. Проверьте новую ожидаемую сумму и подтвердите ещё раз.';
+
+  @override
+  String get errRefundExceeds => 'Возврат больше, чем сейчас оплачено.';
+
+  @override
+  String get errAlreadyDecided => 'По этому запросу уже принято решение.';
+
+  @override
+  String closingPeriod(String from, String to) {
+    return 'Период: $from – $to';
+  }
+
+  @override
+  String closingShortage(String amount) {
+    return 'Недостача: $amount';
+  }
+
+  @override
+  String closingSurplus(String amount) {
+    return 'Излишек: $amount';
+  }
+
+  @override
+  String closingRow(String expected, String counted) {
+    return 'ожидалось $expected, посчитано $counted';
+  }
 }
