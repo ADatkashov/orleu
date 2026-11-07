@@ -375,3 +375,14 @@ class CashPreview {
   factory CashPreview.fromJson(Map<String, dynamic> j) => CashPreview(periodStart: DateTime.parse(j['periodStart']), periodEnd: DateTime.parse(j['periodEnd']),
       cash: CashMethod.fromJson(j['cash']), bank: CashMethod.fromJson(j['bank']), card: CashMethod.fromJson(j['card']), firstClosing: j['firstClosing'] == true);
 }
+
+class GiftCard {
+  final String id, codeLast4, currency, status;
+  final double initialAmount, balance;
+  final String? buyerName;
+  final bool expired;
+  const GiftCard({required this.id, required this.codeLast4, required this.currency, required this.status, required this.initialAmount, required this.balance, this.buyerName, this.expired = false});
+  factory GiftCard.fromJson(Map<String, dynamic> j) => GiftCard(id: j['id'], codeLast4: j['codeLast4'], currency: j['currency'] ?? 'KZT', status: j['status'], initialAmount: _num(j['initialAmount']),
+      balance: _num(j['balance']), buyerName: j['buyerName'], expired: j['expired'] == true);
+  bool get usable => status == 'ACTIVE' && !expired && balance > 0;
+}

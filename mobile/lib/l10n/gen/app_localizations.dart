@@ -2805,6 +2805,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hidden by the platform: {reason}'**
   String reviewHidden(String reason);
+
+  /// No description provided for @giftCardsNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift cards'**
+  String get giftCardsNav;
+
+  /// No description provided for @giftSell.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell a gift card'**
+  String get giftSell;
+
+  /// No description provided for @giftNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No gift cards sold yet'**
+  String get giftNone;
+
+  /// No description provided for @giftNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Money taken for a gift card is not income until it is spent on a booking. The code is shown once when the card is sold.'**
+  String get giftNote;
+
+  /// No description provided for @giftVoid.
+  ///
+  /// In en, this message translates to:
+  /// **'Void'**
+  String get giftVoid;
+
+  /// No description provided for @giftExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get giftExpired;
+
+  /// No description provided for @giftVoidAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Void card'**
+  String get giftVoidAction;
+
+  /// No description provided for @giftBuyer.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer (optional)'**
+  String get giftBuyer;
+
+  /// No description provided for @giftCodeOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'Give this code to the buyer. It is shown only now and cannot be recovered.'**
+  String get giftCodeOnce;
+
+  /// No description provided for @giftCodeLost.
+  ///
+  /// In en, this message translates to:
+  /// **'This card was already created on an earlier attempt, but its code was not received. Void it in the list and sell a new one.'**
+  String get giftCodeLost;
+
+  /// No description provided for @giftCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get giftCopy;
+
+  /// No description provided for @giftPay.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay with gift card'**
+  String get giftPay;
+
+  /// No description provided for @giftCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift card code'**
+  String get giftCode;
+
+  /// No description provided for @validationGiftCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 12-character code'**
+  String get validationGiftCode;
+
+  /// No description provided for @errGiftInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This gift card cannot be used (unknown, void or expired).'**
+  String get errGiftInvalid;
+
+  /// No description provided for @errGiftInsufficient.
+  ///
+  /// In en, this message translates to:
+  /// **'The gift card balance is too low for this amount.'**
+  String get errGiftInsufficient;
+
+  /// No description provided for @giftVoidWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Void card {code}? The customer will not be able to use it. This cannot be undone.'**
+  String giftVoidWarning(String code);
 }
 
 class _AppLocalizationsDelegate

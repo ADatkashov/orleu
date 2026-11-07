@@ -37,6 +37,8 @@ String errorText(BuildContext context, Object error) {
     'CODE_EXISTS' => l.errCodeExists,
     'OVERPAYMENT' => l.errOverpayment,
     'EXPECTED_CHANGED' => l.errExpectedChanged,
+    'GIFT_CARD_INVALID' => l.errGiftInvalid,
+    'GIFT_CARD_INSUFFICIENT' => l.errGiftInsufficient,
     'REFUND_EXCEEDS_PAID' => l.errRefundExceeds,
     'ALREADY_DECIDED' => l.errAlreadyDecided,
     'INVALID_NAME' => l.validationRequired,

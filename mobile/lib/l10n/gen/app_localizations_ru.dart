@@ -1470,4 +1470,62 @@ class AppLocalizationsRu extends AppLocalizations {
   String reviewHidden(String reason) {
     return 'Скрыт платформой: $reason';
   }
+
+  @override
+  String get giftCardsNav => 'Подарочные сертификаты';
+
+  @override
+  String get giftSell => 'Продать сертификат';
+
+  @override
+  String get giftNone => 'Сертификатов ещё не продано';
+
+  @override
+  String get giftNote =>
+      'Деньги за сертификат не считаются выручкой, пока не потрачены на запись. Код показывается один раз при продаже.';
+
+  @override
+  String get giftVoid => 'Аннулирован';
+
+  @override
+  String get giftExpired => 'Истёк';
+
+  @override
+  String get giftVoidAction => 'Аннулировать';
+
+  @override
+  String get giftBuyer => 'Покупатель (необязательно)';
+
+  @override
+  String get giftCodeOnce =>
+      'Передайте этот код покупателю. Он показан только сейчас и не восстанавливается.';
+
+  @override
+  String get giftCodeLost =>
+      'Сертификат уже был создан при прошлой попытке, но код не получен. Аннулируйте его в списке и продайте новый.';
+
+  @override
+  String get giftCopy => 'Копировать';
+
+  @override
+  String get giftPay => 'Оплатить сертификатом';
+
+  @override
+  String get giftCode => 'Код сертификата';
+
+  @override
+  String get validationGiftCode => 'Введите код из 12 символов';
+
+  @override
+  String get errGiftInvalid =>
+      'Этот сертификат нельзя использовать (неизвестный, аннулирован или истёк).';
+
+  @override
+  String get errGiftInsufficient =>
+      'На сертификате недостаточно средств для этой суммы.';
+
+  @override
+  String giftVoidWarning(String code) {
+    return 'Аннулировать сертификат $code? Клиент не сможет им воспользоваться. Это нельзя отменить.';
+  }
 }

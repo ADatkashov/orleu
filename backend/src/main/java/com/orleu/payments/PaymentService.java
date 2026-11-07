@@ -70,6 +70,43 @@ public class PaymentService {
         return queries.find(businessId, bookingId).orElseThrow();
     }
 
+    /**
+     * Records a gift-card payment on a booking. The caller (GiftCardService) supplies {@code deduct}, which takes the amount off the card; it runs
+     * after the booking is locked and validated and before the ledger insert, in the same transaction, so a failure anywhere leaves card and ledger untouched.
+     */
+    @Transactional
+    public BookingView recordGiftCardPayment(UUID businessId, UUID bookingId, String idempotencyKey, BigDecimal amount, String last4, Runnable deduct) {
+        access.require(businessId, Permission.FINANCE_MANAGE);
+        requireKey(idempotencyKey);
+        lockBooking(businessId, bookingId);
+        Booking b = bookings.findByIdAndBusinessId(bookingId, businessId).orElseThrow(() -> ApiException.notFound("Booking"));
+        BigDecimal a = Money.scale(amount);
+        if (b.getStatus() == BookingStatus.CANCELLED || b.getStatus() == BookingStatus.EXPIRED || b.getStatus() == BookingStatus.NO_SHOW) {
+            throw ApiException.conflict("BOOKING_CLOSED", "Payments cannot be recorded for a " + b.getStatus() + " booking");
+        }
+        BigDecimal paid = sum(bookingId, "PAYMENT");
+        BigDecimal refunded = sum(bookingId, "REFUND");
+        BigDecimal remaining = b.getPrice().subtract(paid.subtract(refunded));
+        if (a.compareTo(remaining) > 0) throw ApiException.conflict("OVERPAYMENT", "Amount exceeds the remaining balance of " + Money.scale(remaining));
+        deduct.run();
+        try {
+            jdbc.sql("""
+                insert into ledger_entries (business_id, booking_id, entry_type, amount, currency, method, idempotency_key, provider_ref, created_by)
+                values (:b, :bk, 'PAYMENT', :a, :c, 'GIFT_CARD', :k, :p, :u)
+                """).param("b", businessId).param("bk", bookingId).param("a", a).param("c", b.getCurrency()).param("k", idempotencyKey)
+                    .param("p", "gift-card:****" + last4).param("u", CurrentUser.id()).update();
+        } catch (DataIntegrityViolationException e) {
+            throw ApiException.conflict("IDEMPOTENCY_KEY_REUSED", "Idempotency-Key was already used");
+        }
+        audit.log(businessId, CurrentUser.id(), "LEDGER_PAYMENT", "BOOKING", bookingId, "{\"amount\":\"" + a + "\",\"method\":\"GIFT_CARD\"}");
+        outbox.publish(businessId, "PAYMENT_RECEIVED", bookingId, "PAYMENT_RECEIVED:" + businessId + ":" + idempotencyKey);
+        BigDecimal net = paid.subtract(refunded).add(a);
+        if (b.getStatus() == BookingStatus.AWAITING_PAYMENT && net.compareTo(b.getDepositAmount()) >= 0) {
+            bookingService.applyTransition(b, BookingStatus.CONFIRMED, CurrentUser.id(), "deposit received");
+        }
+        return queries.find(businessId, bookingId).orElseThrow();
+    }
+
     @Transactional
     public BookingView recordRefund(UUID businessId, UUID bookingId, String idempotencyKey, MoneyRequest r) {
         access.require(businessId, Permission.FINANCE_MANAGE);
@@ -80,9 +117,9 @@ public class PaymentService {
         if (replay(businessId, idempotencyKey, "REFUND", bookingId, amount).isPresent()) {
             return queries.find(businessId, bookingId).orElseThrow();
         }
-        BigDecimal net = sum(bookingId, "PAYMENT").subtract(sum(bookingId, "REFUND"));
+        BigDecimal net = refundable(bookingId);
         if (amount.compareTo(net) > 0) {
-            throw ApiException.conflict("REFUND_EXCEEDS_PAID", "Refund exceeds the amount currently paid (" + Money.scale(net) + ")");
+            throw ApiException.conflict("REFUND_EXCEEDS_PAID", "Refund exceeds the amount that can be paid back in money (" + Money.scale(net) + ")");
         }
         insert(businessId, bookingId, "REFUND", amount, b.getCurrency(), r, idempotencyKey);
         audit.log(businessId, CurrentUser.id(), "REFUND_RECORDED", "BOOKING", bookingId, "{\"amount\":\"" + amount + "\"}");
@@ -99,9 +136,9 @@ public class PaymentService {
         Booking b = bookings.findByIdAndBusinessId(bookingId, businessId).orElseThrow(() -> ApiException.notFound("Booking"));
         BigDecimal amount = Money.scale(r.amount());
         if (replay(businessId, idempotencyKey, "REFUND", bookingId, amount).isPresent()) return;
-        BigDecimal net = sum(bookingId, "PAYMENT").subtract(sum(bookingId, "REFUND"));
+        BigDecimal net = refundable(bookingId);
         if (amount.compareTo(net) > 0) {
-            throw ApiException.conflict("REFUND_EXCEEDS_PAID", "Refund exceeds the amount currently paid (" + Money.scale(net) + ")");
+            throw ApiException.conflict("REFUND_EXCEEDS_PAID", "Refund exceeds the amount that can be paid back in money (" + Money.scale(net) + ")");
         }
         insert(businessId, bookingId, "REFUND", amount, b.getCurrency(), r, idempotencyKey);
         audit.log(businessId, CurrentUser.id(), "REFUND_RECORDED", "BOOKING", bookingId, "{\"amount\":\"" + amount + "\",\"approved\":true}");
@@ -138,6 +175,21 @@ public class PaymentService {
             throw ApiException.conflict("IDEMPOTENCY_KEY_REUSED", "Idempotency-Key was already used");
         }
         audit.log(businessId, CurrentUser.id(), "LEDGER_" + type, "BOOKING", bookingId, "{\"amount\":\"" + amount + "\"}");
+    }
+
+    public BookingView bookingView(UUID businessId, UUID bookingId) {
+        return queries.find(businessId, bookingId).orElseThrow(() -> ApiException.notFound("Booking"));
+    }
+
+    /**
+     * What may still be paid back in money: payments made with money (not gift cards) minus refunds. Value paid with a gift card
+     * is never paid out in cash (restoring it to the card is a separate, not yet built operation).
+     */
+    public BigDecimal refundable(UUID bookingId) {
+        return jdbc.sql("""
+            select coalesce(sum(case when entry_type = 'PAYMENT' and method <> 'GIFT_CARD' then amount when entry_type = 'REFUND' then -amount else 0 end), 0)
+            from ledger_entries where booking_id = :id
+            """).param("id", bookingId).query(BigDecimal.class).single();
     }
 
     private BigDecimal sum(UUID bookingId, String type) {
