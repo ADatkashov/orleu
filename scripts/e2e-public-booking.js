@@ -40,8 +40,9 @@ const assert = (c, m) => { if (!c) throw new Error('ASSERT: ' + m); };
   assert((await page.title()).includes('E2E Barbers'), 'title');
   await shot('1-service');
   await page.getByTestId('service').first().click();
-  // one branch and one specialist -> straight to date/time
-  await page.getByTestId('slot').first().waitFor();
+  // one branch and one specialist -> straight to date/time. Do NOT wait for slots on the default day (today): late in the evening
+  // there are none left (minimum notice), which made this check depend on the time of day. Wait for the date chips instead.
+  await page.locator('.chips .chip').first().waitFor();
   await shot('2-time');
   // pick a date 4 days out (outside the 24h free-cancellation window), then a time
   await page.locator('.chips .chip').nth(4).click();
