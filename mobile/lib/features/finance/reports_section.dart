@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'export_section.dart';
 
@@ -20,8 +20,8 @@ class ReportsSection extends ConsumerWidget {
     final days = ref.watch(reportDaysProvider);
     final cur = ref.watch(currentBusinessProvider).value?.currency ?? 'KZT';
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l.reportsTitle, style: t.textTheme.titleMedium),
-      const SizedBox(height: AppSpacing.sm),
+      SectionHeader(l.reportsTitle),
+      const SizedBox(height: AppSpacing.sm + 4),
       SegmentedButton<int>(
         showSelectedIcon: false,
         segments: [for (final d in const [7, 30, 90]) ButtonSegment(value: d, label: Text(l.reportPeriodDays('$d')))],
@@ -49,21 +49,18 @@ class _Block extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.only(bottom: AppSpacing.md),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: Theme.of(context).textTheme.titleSmall),
-              const SizedBox(height: AppSpacing.sm),
-              child,
-            ]),
-          ),
+        child: AppCard(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Text(title, style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: AppSpacing.md),
+            child,
+          ]),
         ),
       );
 }
 
 Widget _async<T>(BuildContext context, WidgetRef ref, AsyncValue<T> v, VoidCallback retry, Widget Function(T) build) => v.when(
-      loading: () => const Padding(padding: EdgeInsets.all(AppSpacing.md), child: Center(child: CircularProgressIndicator())),
+      loading: () => const Padding(padding: EdgeInsets.all(AppSpacing.md), child: SkeletonBox(height: 96)),
       error: (e, _) => ErrorRetry(error: e, onRetry: retry),
       data: build,
     );
@@ -77,18 +74,14 @@ class _Daily extends ConsumerWidget {
     return _async<List<DayPoint>>(context, ref, ref.watch(timeseriesProvider), () => ref.invalidate(timeseriesProvider), (pts) {
       final total = pts.fold<double>(0, (a, p) => a + p.netCollected);
       if (pts.isEmpty || (total == 0 && pts.every((p) => p.bookings == 0))) return Text(l.reportNoData);
-      final maxV = pts.fold<double>(0, (a, p) => p.netCollected > a ? p.netCollected : a);
       final label = money(context, total, cur);
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(label, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: AppSpacing.sm),
-        Semantics(
-          label: '${l.reportRevenueByDay}: $label',
-          child: SizedBox(
-            height: 120,
-            width: double.infinity,
-            child: CustomPaint(key: const Key('daily-chart'), painter: _BarsPainter([for (final p in pts) p.netCollected], maxV, AppColors.primaryGreen)),
-          ),
+        AnalyticsBarChart(
+          chartKey: const Key('daily-chart'), height: 132,
+          values: [for (final p in pts) p.netCollected],
+          semanticLabel: '${l.reportRevenueByDay}: $label',
         ),
       ]);
     });
@@ -136,13 +129,10 @@ class _Peak extends ConsumerWidget {
       if (maxV == 0) return Text(l.reportNoData);
       final top = h.indexOf(maxV);
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Semantics(
-          label: '${l.reportPeakHours}: ${top.toString().padLeft(2, '0')}:00',
-          child: SizedBox(
-            height: 80,
-            width: double.infinity,
-            child: CustomPaint(key: const Key('peak-chart'), painter: _BarsPainter([for (final v in h) v.toDouble()], maxV.toDouble(), AppColors.primaryGreen, highlight: top)),
-          ),
+        AnalyticsBarChart(
+          chartKey: const Key('peak-chart'), height: 96,
+          values: [for (final v in h) v.toDouble()], highlight: top,
+          semanticLabel: '${l.reportPeakHours}: ${top.toString().padLeft(2, '0')}:00',
         ),
         const SizedBox(height: AppSpacing.xs),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -171,29 +161,4 @@ class _Mix extends ConsumerWidget {
       ]);
     });
   }
-}
-
-class _BarsPainter extends CustomPainter {
-  final List<double> values;
-  final double maxValue;
-  final Color color;
-  final int? highlight;
-  _BarsPainter(this.values, this.maxValue, this.color, {this.highlight});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (values.isEmpty) return;
-    final slot = size.width / values.length;
-    final w = (slot * 0.7).clamp(1.0, 24.0);
-    for (var i = 0; i < values.length; i++) {
-      final v = values[i];
-      final h = maxValue <= 0 ? 0.0 : (v / maxValue) * size.height;
-      final paint = Paint()..color = (highlight == null || highlight == i) ? color : color.withValues(alpha: 0.45);
-      final x = i * slot + (slot - w) / 2;
-      canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(x, size.height - (v > 0 ? h.clamp(2.0, size.height) : 1), w, v > 0 ? h.clamp(2.0, size.height) : 1), const Radius.circular(2)), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_BarsPainter o) => o.values != values || o.maxValue != maxValue || o.highlight != highlight;
 }

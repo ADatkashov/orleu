@@ -486,5 +486,11 @@
   "groupBusiness": "Бизнес",
   "groupSales": "Сатылым және адалдық",
   "groupAccount": "Байланыс және аккаунт",
-  "preferencesTitle": "Қолданба параметрлері"
+  "preferencesTitle": "Қолданба параметрлері",
+  "notifToday": "Бүгін",
+  "notifEarlier": "Бұрын",
+  "notifCatAll": "Барлығы",
+  "notifCatBookings": "Жазылулар",
+  "notifCatPayments": "Төлемдер",
+  "notifCatSupport": "Қолдау"
 }

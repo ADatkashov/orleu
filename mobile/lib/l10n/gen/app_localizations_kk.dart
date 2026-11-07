@@ -1590,4 +1590,22 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get preferencesTitle => 'Қолданба параметрлері';
+
+  @override
+  String get notifToday => 'Бүгін';
+
+  @override
+  String get notifEarlier => 'Бұрын';
+
+  @override
+  String get notifCatAll => 'Барлығы';
+
+  @override
+  String get notifCatBookings => 'Жазылулар';
+
+  @override
+  String get notifCatPayments => 'Төлемдер';
+
+  @override
+  String get notifCatSupport => 'Қолдау';
 }

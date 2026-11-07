@@ -534,5 +534,11 @@
   "groupBusiness": "Business",
   "groupSales": "Sales & loyalty",
   "groupAccount": "Communication & account",
-  "preferencesTitle": "Preferences"
+  "preferencesTitle": "Preferences",
+  "notifToday": "Today",
+  "notifEarlier": "Earlier",
+  "notifCatAll": "All",
+  "notifCatBookings": "Bookings",
+  "notifCatPayments": "Payments",
+  "notifCatSupport": "Support"
 }

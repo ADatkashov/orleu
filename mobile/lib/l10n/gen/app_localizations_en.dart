@@ -1592,4 +1592,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get preferencesTitle => 'Preferences';
+
+  @override
+  String get notifToday => 'Today';
+
+  @override
+  String get notifEarlier => 'Earlier';
+
+  @override
+  String get notifCatAll => 'All';
+
+  @override
+  String get notifCatBookings => 'Bookings';
+
+  @override
+  String get notifCatPayments => 'Payments';
+
+  @override
+  String get notifCatSupport => 'Support';
 }

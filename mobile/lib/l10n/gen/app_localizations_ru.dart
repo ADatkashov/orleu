@@ -1591,4 +1591,22 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get preferencesTitle => 'Настройки приложения';
+
+  @override
+  String get notifToday => 'Сегодня';
+
+  @override
+  String get notifEarlier => 'Ранее';
+
+  @override
+  String get notifCatAll => 'Все';
+
+  @override
+  String get notifCatBookings => 'Записи';
+
+  @override
+  String get notifCatPayments => 'Платежи';
+
+  @override
+  String get notifCatSupport => 'Поддержка';
 }

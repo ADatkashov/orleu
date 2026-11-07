@@ -486,5 +486,11 @@
   "groupBusiness": "Бизнес",
   "groupSales": "Продажи и лояльность",
   "groupAccount": "Связь и аккаунт",
-  "preferencesTitle": "Настройки приложения"
+  "preferencesTitle": "Настройки приложения",
+  "notifToday": "Сегодня",
+  "notifEarlier": "Ранее",
+  "notifCatAll": "Все",
+  "notifCatBookings": "Записи",
+  "notifCatPayments": "Платежи",
+  "notifCatSupport": "Поддержка"
 }
