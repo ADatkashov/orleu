@@ -519,5 +519,11 @@
   "giftNothingToReturn": "Nothing on this booking was paid with a gift card, or it was already returned.",
   "errGiftNothing": "That amount cannot be returned to a gift card.",
   "giftReturnNote": "Up to {amount} {currency} can go back onto the gift card(s). It is not paid out in cash.",
-  "@giftReturnNote": {"placeholders": {"amount": {"type": "String"}, "currency": {"type": "String"}}}
+  "@giftReturnNote": {"placeholders": {"amount": {"type": "String"}, "currency": {"type": "String"}}},
+  "messagesSent": "Sent",
+  "messagesFailed": "Failed",
+  "messagesRetry": "Try again",
+  "messagesTestMode": "Test mode: messages are handled by a test sender and nothing is delivered to customers.",
+  "messagesRetrying": "Retrying (attempt {n})",
+  "@messagesRetrying": {"placeholders": {"n": {"type": "int"}}}
 }

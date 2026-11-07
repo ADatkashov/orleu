@@ -2937,6 +2937,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Up to {amount} {currency} can go back onto the gift card(s). It is not paid out in cash.'**
   String giftReturnNote(String amount, String currency);
+
+  /// No description provided for @messagesSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get messagesSent;
+
+  /// No description provided for @messagesFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get messagesFailed;
+
+  /// No description provided for @messagesRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get messagesRetry;
+
+  /// No description provided for @messagesTestMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Test mode: messages are handled by a test sender and nothing is delivered to customers.'**
+  String get messagesTestMode;
+
+  /// No description provided for @messagesRetrying.
+  ///
+  /// In en, this message translates to:
+  /// **'Retrying (attempt {n})'**
+  String messagesRetrying(int n);
 }
 
 class _AppLocalizationsDelegate

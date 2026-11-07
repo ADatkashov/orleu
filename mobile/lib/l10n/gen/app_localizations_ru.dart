@@ -1546,4 +1546,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String giftReturnNote(String amount, String currency) {
     return 'На сертификат можно вернуть до $amount $currency. Наличными не выдаётся.';
   }
+
+  @override
+  String get messagesSent => 'Отправлено';
+
+  @override
+  String get messagesFailed => 'Не удалось';
+
+  @override
+  String get messagesRetry => 'Повторить';
+
+  @override
+  String get messagesTestMode =>
+      'Тестовый режим: сообщения обрабатывает тестовый отправитель, клиентам ничего не доставляется.';
+
+  @override
+  String messagesRetrying(int n) {
+    return 'Повтор (попытка $n)';
+  }
 }

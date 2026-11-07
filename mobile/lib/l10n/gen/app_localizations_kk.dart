@@ -1545,4 +1545,22 @@ class AppLocalizationsKk extends AppLocalizations {
   String giftReturnNote(String amount, String currency) {
     return 'Сертификатқа $amount $currency дейін қайтаруға болады. Қолма-қол берілмейді.';
   }
+
+  @override
+  String get messagesSent => 'Жіберілді';
+
+  @override
+  String get messagesFailed => 'Сәтсіз';
+
+  @override
+  String get messagesRetry => 'Қайталау';
+
+  @override
+  String get messagesTestMode =>
+      'Сынақ режимі: хабарламаларды сынақ жіберуші өңдейді, клиенттерге ештеңе жеткізілмейді.';
+
+  @override
+  String messagesRetrying(int n) {
+    return 'Қайталануда ($n-әрекет)';
+  }
 }

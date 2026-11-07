@@ -110,11 +110,13 @@ class CustomerMix {
 
 class CustomerMessage {
   final String id, messageType, locale, recipientPhone, body, status;
+  final String? lastError;
+  final int attempts;
   final DateTime createdAt;
-  const CustomerMessage({required this.id, required this.messageType, required this.locale, required this.recipientPhone, required this.body, required this.status, required this.createdAt});
+  const CustomerMessage({required this.id, required this.messageType, required this.locale, required this.recipientPhone, required this.body, required this.status, required this.createdAt, this.lastError, this.attempts = 0});
   factory CustomerMessage.fromJson(Map<String, dynamic> j) => CustomerMessage(
       id: j['id'], messageType: j['messageType'], locale: j['locale'], recipientPhone: j['recipientPhone'], body: j['body'], status: j['status'],
-      createdAt: DateTime.parse(j['createdAt']));
+      createdAt: DateTime.parse(j['createdAt']), lastError: j['lastError'], attempts: j['attempts'] ?? 0);
 }
 
 class DeviceSession {

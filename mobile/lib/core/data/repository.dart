@@ -687,3 +687,16 @@ Future<void> restoreGiftCard(WidgetRef ref, {required String bookingId, required
   ref.invalidate(giftCardsProvider);
   ref.invalidate(giftRestorableProvider);
 }
+
+/// `testMode` = a fake sender is configured: messages are "sent" to nowhere. NONE (no provider) means nothing is delivered at all.
+final messagingStatusProvider = FutureProvider.autoDispose<({String provider, bool testMode})>((ref) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/notifications/messaging/status'));
+  return (provider: r.data['provider'] as String, testMode: r.data['testMode'] == true);
+});
+
+Future<void> retryMessage(WidgetRef ref, String id) async {
+  final b = await ref.read(currentBusinessProvider.future);
+  await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/${b!.id}/notifications/customer-messages/$id/retry'));
+  ref.invalidate(customerMessagesProvider);
+}

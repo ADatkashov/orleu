@@ -101,4 +101,5 @@ Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real 
 13. ~~Cash register closing~~ — done (single register per business; reconciliation against provider statements waits for providers).
 14. ~~Review replies and platform moderation~~ — done (no flag-for-review by businesses/guests, no reply notifications).
 15. ~~Gift cards (sell, redeem, void)~~ — done incl. returning value to the card (no automatic return on cancel, top-up or liability report yet); packages/memberships, referrals, loyalty remain.
-16. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.
+16. ~~Message delivery behind a sender interface with a TEST sender~~ — done (no real provider; e-mail channel, OTP login and customer portal build on it next).
+17. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.

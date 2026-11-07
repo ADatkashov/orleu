@@ -7,6 +7,7 @@ import 'package:orleu_mobile/core/api/token_store.dart';
 import 'support/fake_api.dart';
 
 class Env {
+  bool testMode = false;
   int reminderHours = 24;
   String locale = 'ru';
   List<Map<String, Object?>> messages = [
@@ -18,6 +19,11 @@ class Env {
     'GET /api/v1/businesses': (_) => ok([{'id': 'b1', 'name': 'Studio', 'slug': 'studio', 'currency': 'KZT', 'planCode': 'FREE', 'published': true,
         'timezone': 'Asia/Almaty', 'reminderHours': reminderHours, 'customerLocale': locale}]),
     'GET /api/v1/businesses/b1/notifications/customer-messages': (_) => ok(messages),
+    'GET /api/v1/businesses/b1/notifications/messaging/status': (_) => ok({'provider': testMode ? 'FAKE' : 'NONE', 'testMode': testMode}),
+    'POST /api/v1/businesses/b1/notifications/customer-messages/m2/retry': (_) {
+      messages = [for (final m in messages) m['id'] == 'm2' ? {...m, 'status': 'NOT_SENT', 'attempts': 0, 'lastError': null} : m];
+      return (status: 204, body: null);
+    },
     'PATCH /api/v1/businesses/b1/settings': (o) {
       final d = o.data as Map;
       if (d.containsKey('reminderHours')) reminderHours = d['reminderHours'];
@@ -76,5 +82,32 @@ void main() {
     final e = Env()..messages = [];
     await open(tester, env: e);
     expect(find.byKey(const Key('no-messages')), findsOneWidget);
+  });
+
+  testWidgets('delivery states are shown honestly: sent, retrying, failed with its reason and a retry button; test mode is announced', (tester) async {
+    final e = Env()..testMode = true;
+    e.messages = [
+      {'id': 'm1', 'messageType': 'BOOKING_CONFIRMED', 'locale': 'ru', 'recipientPhone': '+77011234567', 'body': 'sent one', 'status': 'SENT', 'createdAt': '2026-11-05T05:00:00Z', 'attempts': 1},
+      {'id': 'm2', 'messageType': 'BOOKING_CONFIRMED', 'locale': 'ru', 'recipientPhone': '+77011234568', 'body': 'failed one', 'status': 'FAILED', 'createdAt': '2026-11-05T05:01:00Z', 'attempts': 4, 'lastError': 'fake: provider unavailable'},
+      {'id': 'm3', 'messageType': 'BOOKING_CONFIRMED', 'locale': 'ru', 'recipientPhone': '+77011234569', 'body': 'waiting one', 'status': 'NOT_SENT', 'createdAt': '2026-11-05T05:02:00Z', 'attempts': 2},
+    ];
+    await open(tester, env: e);
+    expect(find.byKey(const Key('testMode')), findsOneWidget);
+    expect(find.text('Sent'), findsOneWidget);
+    expect(find.text('Failed'), findsOneWidget);
+    expect(find.text('Retrying (attempt 2)'), findsOneWidget);
+    expect(find.text('fake: provider unavailable'), findsOneWidget);
+    expect(find.byKey(const Key('retry-m1')), findsNothing, reason: 'only failed messages can be retried');
+    await tester.ensureVisible(find.byKey(const Key('retry-m2')));
+    await tester.tap(find.byKey(const Key('retry-m2')));
+    await tester.pumpAndSettle();
+    expect(e.adapter.calls.any((c) => c.method == 'POST' && c.path.endsWith('/customer-messages/m2/retry')), isTrue);
+    expect(find.byKey(const Key('retry-m2')), findsNothing);
+  });
+
+  testWidgets('without a provider there is no test-mode banner and unsent stays "Not sent"', (tester) async {
+    await open(tester);
+    expect(find.byKey(const Key('testMode')), findsNothing);
+    expect(find.text('Not sent'), findsOneWidget);
   });
 }
