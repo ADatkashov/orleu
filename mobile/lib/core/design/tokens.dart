@@ -25,6 +25,25 @@ class AppColors {
   static const darkText = Color(0xFFF4F7F3);
 }
 
+/// Brand gradients and soft elevation used by hero surfaces (home dashboard).
+class AppGradients {
+  AppGradients._();
+  static const hero = LinearGradient(
+    begin: Alignment.topLeft, end: Alignment.bottomRight,
+    colors: [Color(0xFF1B7A5C), AppColors.primaryDark],
+  );
+  static const logo = LinearGradient(
+    begin: Alignment.topLeft, end: Alignment.bottomRight,
+    colors: [AppColors.primaryGreen, AppColors.primaryDark],
+  );
+  static List<BoxShadow> soft(BuildContext context) => [
+        BoxShadow(
+          color: AppColors.primaryDark.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.0 : 0.07),
+          blurRadius: 24, offset: const Offset(0, 8),
+        ),
+      ];
+}
+
 class AppSpacing {
   AppSpacing._();
   static const double xs = 4, sm = 8, md = 16, lg = 24, xl = 32; // 8px grid
@@ -33,6 +52,7 @@ class AppSpacing {
 class AppRadius {
   AppRadius._();
   static const double card = 16; // spec: 14-18
+  static const double hero = 24; // large dashboard cards
   static const double control = 12;
 }
 
