@@ -477,5 +477,10 @@
   "messagesFailed": "Не удалось",
   "messagesRetry": "Повторить",
   "messagesTestMode": "Тестовый режим: сообщения обрабатывает тестовый отправитель, клиентам ничего не доставляется.",
-  "messagesRetrying": "Повтор (попытка {n})"
+  "messagesRetrying": "Повтор (попытка {n})",
+  "loading": "Загрузка",
+  "quickActions": "Быстрые действия",
+  "performanceTitle": "Показатели за сегодня",
+  "sevenDays": "Последние 7 дней",
+  "seeAll": "Все"
 }

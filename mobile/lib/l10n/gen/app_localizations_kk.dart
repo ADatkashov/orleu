@@ -1563,4 +1563,19 @@ class AppLocalizationsKk extends AppLocalizations {
   String messagesRetrying(int n) {
     return 'Қайталануда ($n-әрекет)';
   }
+
+  @override
+  String get loading => 'Жүктелуде';
+
+  @override
+  String get quickActions => 'Жылдам әрекеттер';
+
+  @override
+  String get performanceTitle => 'Бүгінгі көрсеткіштер';
+
+  @override
+  String get sevenDays => 'Соңғы 7 күн';
+
+  @override
+  String get seeAll => 'Барлығы';
 }

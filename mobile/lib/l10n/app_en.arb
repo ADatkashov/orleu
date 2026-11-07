@@ -525,5 +525,10 @@
   "messagesRetry": "Try again",
   "messagesTestMode": "Test mode: messages are handled by a test sender and nothing is delivered to customers.",
   "messagesRetrying": "Retrying (attempt {n})",
-  "@messagesRetrying": {"placeholders": {"n": {"type": "int"}}}
+  "@messagesRetrying": {"placeholders": {"n": {"type": "int"}}},
+  "loading": "Loading",
+  "quickActions": "Quick actions",
+  "performanceTitle": "Performance today",
+  "sevenDays": "Last 7 days",
+  "seeAll": "See all"
 }

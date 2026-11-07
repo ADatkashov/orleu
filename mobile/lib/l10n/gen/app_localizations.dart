@@ -2967,6 +2967,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retrying (attempt {n})'**
   String messagesRetrying(int n);
+
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get loading;
+
+  /// No description provided for @quickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick actions'**
+  String get quickActions;
+
+  /// No description provided for @performanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance today'**
+  String get performanceTitle;
+
+  /// No description provided for @sevenDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get sevenDays;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get seeAll;
 }
 
 class _AppLocalizationsDelegate

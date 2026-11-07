@@ -1565,4 +1565,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String messagesRetrying(int n) {
     return 'Retrying (attempt $n)';
   }
+
+  @override
+  String get loading => 'Loading';
+
+  @override
+  String get quickActions => 'Quick actions';
+
+  @override
+  String get performanceTitle => 'Performance today';
+
+  @override
+  String get sevenDays => 'Last 7 days';
+
+  @override
+  String get seeAll => 'See all';
 }
