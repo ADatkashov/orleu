@@ -336,3 +336,13 @@ class PromoItem {
   factory PromoItem.fromJson(Map<String, dynamic> j) => PromoItem(id: j['id'], code: j['code'], kind: j['kind'], value: _num(j['value']),
       validUntil: j['validUntil'], maxUses: j['maxUses'], usedCount: j['usedCount'] ?? 0, active: j['active'] ?? true);
 }
+
+class RefundRequest {
+  final String id, bookingId, currency, method, status;
+  final double amount;
+  final String? requestedByName, decisionNote;
+  const RefundRequest({required this.id, required this.bookingId, required this.amount, required this.currency, required this.method, required this.status, this.requestedByName, this.decisionNote});
+  factory RefundRequest.fromJson(Map<String, dynamic> j) => RefundRequest(id: j['id'], bookingId: j['bookingId'], amount: _num(j['amount']), currency: j['currency'] ?? 'KZT',
+      method: j['method'], status: j['status'], requestedByName: j['requestedByName'], decisionNote: j['decisionNote']);
+  bool get pending => status == 'PENDING';
+}

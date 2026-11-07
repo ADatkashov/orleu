@@ -412,5 +412,22 @@
   "exceptionsNone": "Особых дней нет",
   "exceptionPickDate": "Выберите дату",
   "scheduleBadRange": "Конец должен быть позже начала.",
-  "close": "Закрыть"
+  "close": "Закрыть",
+  "refundAction": "Возврат",
+  "refundRecorded": "Возврат записан",
+  "refundPending": "Возврат отправлен на согласование",
+  "validationRefundAmount": "Введите сумму не больше оплаченной",
+  "refundsNav": "Возвраты",
+  "refundsNone": "Запросов на возврат нет",
+  "refundsPolicyTitle": "Согласование крупных возвратов",
+  "refundsPolicyOff": "Выключено: каждый возврат записывается сразу.",
+  "refundsThreshold": "Порог согласования",
+  "refundsThresholdHint": "Возвраты выше этой суммы подтверждает владелец или администратор. Пусто = выключено.",
+  "refundStatusPending": "Ожидает",
+  "refundStatusApproved": "Одобрен",
+  "refundStatusRejected": "Отклонён",
+  "refundApprove": "Одобрить",
+  "refundReject": "Отклонить",
+  "refundRequestedBy": "Запросил(а): {name}",
+  "refundsPolicyOn": "Согласование нужно для сумм выше {amount}"
 }

@@ -249,3 +249,78 @@ class _PaymentState extends ConsumerState<PaymentSheet> {
     );
   }
 }
+
+/// Records a refund of cash already paid. Above the business threshold the server holds it as a request for an approver (HTTP 202).
+class RefundSheet extends ConsumerStatefulWidget {
+  final Booking booking;
+  const RefundSheet({super.key, required this.booking});
+  @override
+  ConsumerState<RefundSheet> createState() => _RefundState();
+}
+
+class _RefundState extends ConsumerState<RefundSheet> {
+  final _form = GlobalKey<FormState>();
+  final _amount = TextEditingController();
+  final String _key = newIdempotencyKey();
+  String _method = 'CASH';
+  bool _busy = false;
+  String? _error;
+
+  static String _fmt(double v) => v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(2);
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final b = widget.booking;
+    final paid = b.financials.paid;
+    final methods = {'CASH': l.methodCash, 'BANK_TRANSFER': l.methodBank, 'CARD_MANUAL': l.methodCard};
+    return Padding(
+      padding: EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, MediaQuery.viewInsetsOf(context).bottom + AppSpacing.lg),
+      child: SingleChildScrollView(
+        child: Form(
+          key: _form,
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
+            Text(l.refundAction, style: Theme.of(context).textTheme.titleLarge),
+            Text('${b.serviceName} · ${b.customerName} · ${l.paid}: ${_fmt(paid)} ${b.currency}', style: Theme.of(context).textTheme.bodySmall),
+            const SizedBox(height: AppSpacing.md),
+            TextFormField(
+              key: const Key('refundAmount'), controller: _amount, keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(labelText: l.paymentAmount, suffixText: b.currency),
+              validator: (v) {
+                final n = double.tryParse((v ?? '').trim().replaceAll(',', '.'));
+                return n == null || n <= 0 || n > paid + 0.0001 ? l.validationRefundAmount : null;
+              },
+            ),
+            const SizedBox(height: AppSpacing.md),
+            DropdownButtonFormField<String>(
+              key: const Key('refundMethod'), initialValue: _method, decoration: InputDecoration(labelText: l.paymentMethod),
+              items: [for (final e in methods.entries) DropdownMenuItem(value: e.key, child: Text(e.value))],
+              onChanged: (v) => setState(() => _method = v ?? _method),
+            ),
+            FormError(_error),
+            const SizedBox(height: AppSpacing.lg),
+            FilledButton(
+              key: const Key('refundSave'),
+              onPressed: _busy ? null : () async {
+                if (!_form.currentState!.validate()) return;
+                setState(() => _busy = true);
+                bool recorded = true;
+                final err = await attempt(context, () async {
+                  recorded = await refundBooking(ref, bookingId: b.id, amount: _amount.text.trim().replaceAll(',', '.'), method: _method, idempotencyKey: _key);
+                });
+                if (!context.mounted) return;
+                if (err == null) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(recorded ? l.refundRecorded : l.refundPending), behavior: SnackBarBehavior.floating));
+                } else {
+                  setState(() { _busy = false; _error = err; }); // retry keeps the same idempotency key
+                }
+              },
+              child: Text(l.refundAction),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}

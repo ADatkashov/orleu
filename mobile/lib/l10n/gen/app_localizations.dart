@@ -2577,6 +2577,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
+
+  /// No description provided for @refundAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get refundAction;
+
+  /// No description provided for @refundRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund recorded'**
+  String get refundRecorded;
+
+  /// No description provided for @refundPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund sent for approval'**
+  String get refundPending;
+
+  /// No description provided for @validationRefundAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount up to what has been paid'**
+  String get validationRefundAmount;
+
+  /// No description provided for @refundsNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunds'**
+  String get refundsNav;
+
+  /// No description provided for @refundsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No refund requests'**
+  String get refundsNone;
+
+  /// No description provided for @refundsPolicyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval of large refunds'**
+  String get refundsPolicyTitle;
+
+  /// No description provided for @refundsPolicyOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off: every refund is recorded immediately.'**
+  String get refundsPolicyOff;
+
+  /// No description provided for @refundsThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval threshold'**
+  String get refundsThreshold;
+
+  /// No description provided for @refundsThresholdHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunds above this amount need an owner or admin. Empty = off.'**
+  String get refundsThresholdHint;
+
+  /// No description provided for @refundStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get refundStatusPending;
+
+  /// No description provided for @refundStatusApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get refundStatusApproved;
+
+  /// No description provided for @refundStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get refundStatusRejected;
+
+  /// No description provided for @refundApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get refundApprove;
+
+  /// No description provided for @refundReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get refundReject;
+
+  /// No description provided for @refundRequestedBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested by {name}'**
+  String refundRequestedBy(String name);
+
+  /// No description provided for @refundsPolicyOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval required above {amount}'**
+  String refundsPolicyOn(String amount);
 }
 
 class _AppLocalizationsDelegate

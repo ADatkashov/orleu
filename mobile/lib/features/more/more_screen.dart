@@ -38,6 +38,7 @@ class MoreScreen extends ConsumerWidget {
           (Icons.badge_outlined, l.employees, '/more/employees'),
           (Icons.star_outline, l.reviewsNav, '/more/reviews'),
           (Icons.sell_outlined, l.promosNav, '/more/promos'),
+          (Icons.undo, l.refundsNav, '/more/refunds'),
           (Icons.support_agent_outlined, l.supportNav, '/more/support'),
           (Icons.sms_outlined, l.messagesNav, '/more/messages'),
           (Icons.lock_outline, l.accountNav, '/more/account'),
