@@ -89,6 +89,24 @@ public class PaymentService {
         return queries.find(businessId, bookingId).orElseThrow();
     }
 
+    /**
+     * Records a refund that an approver accepted. No FINANCE_MANAGE check here: the caller verified REFUND_APPROVE.
+     * The idempotency key is derived from the request id, so approving twice can never refund twice.
+     */
+    @Transactional
+    public void recordApprovedRefund(UUID businessId, UUID bookingId, String idempotencyKey, MoneyRequest r) {
+        lockBooking(businessId, bookingId);
+        Booking b = bookings.findByIdAndBusinessId(bookingId, businessId).orElseThrow(() -> ApiException.notFound("Booking"));
+        BigDecimal amount = Money.scale(r.amount());
+        if (replay(businessId, idempotencyKey, "REFUND", bookingId, amount).isPresent()) return;
+        BigDecimal net = sum(bookingId, "PAYMENT").subtract(sum(bookingId, "REFUND"));
+        if (amount.compareTo(net) > 0) {
+            throw ApiException.conflict("REFUND_EXCEEDS_PAID", "Refund exceeds the amount currently paid (" + Money.scale(net) + ")");
+        }
+        insert(businessId, bookingId, "REFUND", amount, b.getCurrency(), r, idempotencyKey);
+        audit.log(businessId, CurrentUser.id(), "REFUND_RECORDED", "BOOKING", bookingId, "{\"amount\":\"" + amount + "\",\"approved\":true}");
+    }
+
     // Serializes concurrent money operations on one booking.
     private void lockBooking(UUID businessId, UUID bookingId) {
         jdbc.sql("select id from bookings where id = :id and business_id = :b for update")

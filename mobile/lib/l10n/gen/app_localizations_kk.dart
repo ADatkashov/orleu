@@ -1336,4 +1336,61 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get close => 'Жабу';
+
+  @override
+  String get refundAction => 'Қайтару';
+
+  @override
+  String get refundRecorded => 'Қайтару тіркелді';
+
+  @override
+  String get refundPending => 'Қайтару келісуге жіберілді';
+
+  @override
+  String get validationRefundAmount =>
+      'Төленген сомадан аспайтын соманы енгізіңіз';
+
+  @override
+  String get refundsNav => 'Қайтарулар';
+
+  @override
+  String get refundsNone => 'Қайтару сұраныстары жоқ';
+
+  @override
+  String get refundsPolicyTitle => 'Ірі қайтаруларды келісу';
+
+  @override
+  String get refundsPolicyOff => 'Өшірулі: әр қайтару бірден тіркеледі.';
+
+  @override
+  String get refundsThreshold => 'Келісу шегі';
+
+  @override
+  String get refundsThresholdHint =>
+      'Осы сомадан асатын қайтаруды иесі немесе әкімші растайды. Бос = өшірулі.';
+
+  @override
+  String get refundStatusPending => 'Күтуде';
+
+  @override
+  String get refundStatusApproved => 'Мақұлданды';
+
+  @override
+  String get refundStatusRejected => 'Қабылданбады';
+
+  @override
+  String get refundApprove => 'Мақұлдау';
+
+  @override
+  String get refundReject => 'Қабылдамау';
+
+  @override
+  String refundRequestedBy(String name) {
+    return 'Сұраған: $name';
+  }
+
+  @override
+  String refundsPolicyOn(String amount) {
+    return '$amount сомасынан асатын қайтаруға келісу керек';
+  }
 }

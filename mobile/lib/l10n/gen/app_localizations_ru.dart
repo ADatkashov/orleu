@@ -1336,4 +1336,61 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get close => 'Закрыть';
+
+  @override
+  String get refundAction => 'Возврат';
+
+  @override
+  String get refundRecorded => 'Возврат записан';
+
+  @override
+  String get refundPending => 'Возврат отправлен на согласование';
+
+  @override
+  String get validationRefundAmount => 'Введите сумму не больше оплаченной';
+
+  @override
+  String get refundsNav => 'Возвраты';
+
+  @override
+  String get refundsNone => 'Запросов на возврат нет';
+
+  @override
+  String get refundsPolicyTitle => 'Согласование крупных возвратов';
+
+  @override
+  String get refundsPolicyOff =>
+      'Выключено: каждый возврат записывается сразу.';
+
+  @override
+  String get refundsThreshold => 'Порог согласования';
+
+  @override
+  String get refundsThresholdHint =>
+      'Возвраты выше этой суммы подтверждает владелец или администратор. Пусто = выключено.';
+
+  @override
+  String get refundStatusPending => 'Ожидает';
+
+  @override
+  String get refundStatusApproved => 'Одобрен';
+
+  @override
+  String get refundStatusRejected => 'Отклонён';
+
+  @override
+  String get refundApprove => 'Одобрить';
+
+  @override
+  String get refundReject => 'Отклонить';
+
+  @override
+  String refundRequestedBy(String name) {
+    return 'Запросил(а): $name';
+  }
+
+  @override
+  String refundsPolicyOn(String amount) {
+    return 'Согласование нужно для сумм выше $amount';
+  }
 }

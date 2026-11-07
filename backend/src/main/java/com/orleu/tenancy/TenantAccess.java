@@ -21,6 +21,11 @@ public class TenantAccess {
 
     public TenantAccess(MembershipRepository memberships, JdbcClient jdbc) { this.memberships = memberships; this.jdbc = jdbc; }
 
+    /** Non-throwing check for an active member; no suspension check (use {@link #require} first). */
+    public boolean has(UUID businessId, Permission permission) {
+        return memberships.findByUserIdAndBusinessIdAndStatus(CurrentUser.id(), businessId, "ACTIVE").map(m -> m.getRole().allows(permission)).orElse(false);
+    }
+
     public Membership require(UUID businessId, Permission permission) {
         UUID userId = CurrentUser.id();
         Membership m = memberships.findByUserIdAndBusinessIdAndStatus(userId, businessId, "ACTIVE")

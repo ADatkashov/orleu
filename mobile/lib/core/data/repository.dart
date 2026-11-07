@@ -552,3 +552,49 @@ final employeeScheduleProvider = FutureProvider.autoDispose.family<EmployeeSched
   final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/employees/$employeeId/schedule'));
   return EmployeeSchedule.fromJson(r.data);
 });
+
+/// Roles holding FINANCE_MANAGE (may record a refund) and REFUND_APPROVE (decide requests). The server enforces both; this only hides buttons.
+bool canRefund(String? role) => const {'BUSINESS_OWNER', 'BUSINESS_ADMIN', 'RECEPTIONIST', 'ACCOUNTANT'}.contains(role);
+bool canApproveRefund(String? role) => const {'BUSINESS_OWNER', 'BUSINESS_ADMIN'}.contains(role);
+
+final refundRequestsProvider = FutureProvider.autoDispose<List<RefundRequest>>((ref) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/refund-requests'));
+  return (r.data as List).map((e) => RefundRequest.fromJson(e)).toList();
+});
+
+/// Refund above this amount needs an approver; null = no approval needed.
+final refundPolicyProvider = FutureProvider.autoDispose<double?>((ref) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/refund-policy'));
+  final t = r.data['threshold'];
+  return t == null ? null : (t as num).toDouble();
+});
+
+/// Returns true when the refund was recorded now, false when it is waiting for approval (HTTP 202).
+Future<bool> refundBooking(WidgetRef ref, {required String bookingId, required String amount, required String method, required String idempotencyKey}) async {
+  final b = await ref.read(currentBusinessProvider.future);
+  final res = await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/${b!.id}/bookings/$bookingId/refunds',
+      data: {'amount': amount, 'method': method}, options: Options(headers: {'Idempotency-Key': idempotencyKey})));
+  ref.invalidate(bookingsProvider);
+  ref.invalidate(bookingsRangeProvider);
+  ref.invalidate(todaySummaryProvider);
+  ref.invalidate(summaryProvider);
+  ref.invalidate(refundRequestsProvider);
+  return res.statusCode == 201;
+}
+
+Future<void> decideRefund(WidgetRef ref, String id, {required bool approve, String? note}) async {
+  final b = await ref.read(currentBusinessProvider.future);
+  await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/${b!.id}/refund-requests/$id/${approve ? 'approve' : 'reject'}', data: {'note': ?note}));
+  ref.invalidate(refundRequestsProvider);
+  ref.invalidate(bookingsProvider);
+  ref.invalidate(bookingsRangeProvider);
+  ref.invalidate(summaryProvider);
+}
+
+Future<void> setRefundPolicy(WidgetRef ref, double? threshold) async {
+  final b = await ref.read(currentBusinessProvider.future);
+  await ref.read(apiClientProvider).run((d) => d.put('/api/v1/businesses/${b!.id}/refund-policy', data: {'threshold': threshold}));
+  ref.invalidate(refundPolicyProvider);
+}

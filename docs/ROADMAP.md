@@ -41,7 +41,7 @@ Gaps: OTP/phone login, MFA, e-mail invitations, branch-level permissions, (done:
 ### Phase 2 — Commercial core: PARTIAL
 - DONE: deposits (decimal-safe), immutable ledger, manual payments/refunds with idempotency, plans + entitlements, outbox + in-app notifications.
 - PARTIAL: CRM (basic customer records), subscription lifecycle (manual plan assignment, expiry → FREE).
-- DONE (promo codes/discounts, see IMPLEMENTATION_STATUS). TODO: partial-refund approval workflow, reconciliation, invoices/receipts, trial/grace/renewal/proration, usage metering, notification templates kk/ru/en, reminders before appointments (prepared, not delivered — see above).
+- DONE (promo codes/discounts, see IMPLEMENTATION_STATUS). DONE: refund approval workflow (threshold, four eyes). TODO: reconciliation, invoices/receipts, trial/grace/renewal/proration, usage metering, notification templates kk/ru/en, reminders before appointments (prepared, not delivered — see above).
 - BLOCKED: payment providers, SMS/e-mail/WhatsApp/push delivery.
 
 ### Phase 3 — Operations: PARTIAL
@@ -97,4 +97,5 @@ Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real 
 9. ~~Customer tags and tag filter~~ — done (manual tags only; no automatic/rule-based segments yet).
 10. ~~Manual duplicate merge for customers~~ — done.
 11. ~~Per-date schedule exceptions for specialists~~ — done (shift templates remain).
-12. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.
+12. ~~Refund approval workflow + refund UI~~ — done (no approver notifications or reason field yet).
+13. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.

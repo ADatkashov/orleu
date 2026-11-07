@@ -357,6 +357,19 @@ class _SheetState extends ConsumerState<BookingSheet> {
               },
             ),
           ),
+          if (f.paid > 0 && canRefund(ref.watch(myRoleProvider).value)) Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: OutlinedButton.icon(
+              key: const Key('refundAction'),
+              icon: const Icon(Icons.undo),
+              label: Text(l.refundAction),
+              onPressed: _busy ? null : () {
+                final nav = Navigator.of(context);
+                nav.pop();
+                showModalBottomSheet(context: nav.context, isScrollControlled: true, showDragHandle: true, builder: (_) => RefundSheet(booking: b));
+              },
+            ),
+          ),
           if (b.canReschedule) Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: OutlinedButton.icon(

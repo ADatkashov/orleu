@@ -412,5 +412,22 @@
   "exceptionsNone": "Ерекше күндер жоқ",
   "exceptionPickDate": "Күнді таңдаңыз",
   "scheduleBadRange": "Аяқталу уақыты басталудан кейін болуы керек.",
-  "close": "Жабу"
+  "close": "Жабу",
+  "refundAction": "Қайтару",
+  "refundRecorded": "Қайтару тіркелді",
+  "refundPending": "Қайтару келісуге жіберілді",
+  "validationRefundAmount": "Төленген сомадан аспайтын соманы енгізіңіз",
+  "refundsNav": "Қайтарулар",
+  "refundsNone": "Қайтару сұраныстары жоқ",
+  "refundsPolicyTitle": "Ірі қайтаруларды келісу",
+  "refundsPolicyOff": "Өшірулі: әр қайтару бірден тіркеледі.",
+  "refundsThreshold": "Келісу шегі",
+  "refundsThresholdHint": "Осы сомадан асатын қайтаруды иесі немесе әкімші растайды. Бос = өшірулі.",
+  "refundStatusPending": "Күтуде",
+  "refundStatusApproved": "Мақұлданды",
+  "refundStatusRejected": "Қабылданбады",
+  "refundApprove": "Мақұлдау",
+  "refundReject": "Қабылдамау",
+  "refundRequestedBy": "Сұраған: {name}",
+  "refundsPolicyOn": "{amount} сомасынан асатын қайтаруға келісу керек"
 }

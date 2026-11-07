@@ -1337,4 +1337,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get close => 'Close';
+
+  @override
+  String get refundAction => 'Refund';
+
+  @override
+  String get refundRecorded => 'Refund recorded';
+
+  @override
+  String get refundPending => 'Refund sent for approval';
+
+  @override
+  String get validationRefundAmount =>
+      'Enter an amount up to what has been paid';
+
+  @override
+  String get refundsNav => 'Refunds';
+
+  @override
+  String get refundsNone => 'No refund requests';
+
+  @override
+  String get refundsPolicyTitle => 'Approval of large refunds';
+
+  @override
+  String get refundsPolicyOff => 'Off: every refund is recorded immediately.';
+
+  @override
+  String get refundsThreshold => 'Approval threshold';
+
+  @override
+  String get refundsThresholdHint =>
+      'Refunds above this amount need an owner or admin. Empty = off.';
+
+  @override
+  String get refundStatusPending => 'Pending';
+
+  @override
+  String get refundStatusApproved => 'Approved';
+
+  @override
+  String get refundStatusRejected => 'Rejected';
+
+  @override
+  String get refundApprove => 'Approve';
+
+  @override
+  String get refundReject => 'Reject';
+
+  @override
+  String refundRequestedBy(String name) {
+    return 'Requested by $name';
+  }
+
+  @override
+  String refundsPolicyOn(String amount) {
+    return 'Approval required above $amount';
+  }
 }
