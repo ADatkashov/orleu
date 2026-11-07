@@ -15,6 +15,7 @@
 | `ORLEU_JWT_SECRET` | yes | ≥ 32 bytes random; the app refuses to start without it. Changing it signs everyone out |
 | `ORLEU_ALLOWED_ORIGINS` | if web apps are served from another origin | comma-separated CORS origins (empty = none) |
 | `ORLEU_MESSAGING_PROVIDER` | optional | `none` (default; prepared messages stay NOT_SENT) or `fake` (TEST mode, nothing is delivered). `fake` is **refused at startup in the prod profile**. A real SMS/e-mail provider adapter does not exist yet |
+| `ORLEU_APP_BASE_URL` | optional | web app origin for the link in password-reset e-mails (the reset code is always included as well) |
 | `ORLEU_BOOTSTRAP_ADMIN_EMAIL` | first deploy only | promotes this existing user to SUPER_ADMIN when no super admin exists |
 | `ORLEU_RATE_LIMIT_PER_MINUTE` | no (60) | per-IP limit on auth/public POST; **in-memory, per instance** |
 | `ORLEU_API_DOCS_ENABLED` | no (true) | set `false` in production to hide Swagger UI |
