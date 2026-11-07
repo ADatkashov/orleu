@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
@@ -48,6 +49,10 @@ class FinanceScreen extends ConsumerWidget {
             ]),
             const SizedBox(height: AppSpacing.md),
             Text(l.financeNote, style: t.textTheme.bodySmall),
+            if (canCloseCash(ref.watch(myRoleProvider).value)) Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.md),
+              child: OutlinedButton.icon(key: const Key('openClosing'), icon: const Icon(Icons.point_of_sale_outlined), label: Text(l.closingTitle), onPressed: () => context.push('/finance/closing')),
+            ),
             const SizedBox(height: AppSpacing.lg),
             const ReportsSection(),
           ]),

@@ -598,3 +598,27 @@ Future<void> setRefundPolicy(WidgetRef ref, double? threshold) async {
   await ref.read(apiClientProvider).run((d) => d.put('/api/v1/businesses/${b!.id}/refund-policy', data: {'threshold': threshold}));
   ref.invalidate(refundPolicyProvider);
 }
+
+/// Roles holding FINANCE_MANAGE (may close the cash register). The server enforces it; this only hides the button.
+bool canCloseCash(String? role) => const {'BUSINESS_OWNER', 'BUSINESS_ADMIN', 'RECEPTIONIST', 'ACCOUNTANT'}.contains(role);
+
+final cashPreviewProvider = FutureProvider.autoDispose<CashPreview>((ref) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/finance/closing-preview'));
+  return CashPreview.fromJson(r.data);
+});
+
+final cashClosingsProvider = FutureProvider.autoDispose<List<CashClosing>>((ref) async {
+  final b = await _biz(ref);
+  final r = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/finance/closings'));
+  return (r.data as List).map((e) => CashClosing.fromJson(e)).toList();
+});
+
+/// [expectedCash] is the figure the user saw; the server refuses (409 EXPECTED_CHANGED) if payments moved in the meantime.
+Future<void> closeCash(WidgetRef ref, {required String expectedCash, required String countedCash, String? note}) async {
+  final b = await ref.read(currentBusinessProvider.future);
+  await ref.read(apiClientProvider).run((d) => d.post('/api/v1/businesses/${b!.id}/finance/closings',
+      data: {'expectedCash': expectedCash, 'countedCash': countedCash, 'note': ?((note ?? '').trim().isEmpty ? null : note!.trim())}));
+  ref.invalidate(cashPreviewProvider);
+  ref.invalidate(cashClosingsProvider);
+}

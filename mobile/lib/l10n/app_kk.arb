@@ -429,5 +429,22 @@
   "refundApprove": "Мақұлдау",
   "refundReject": "Қабылдамау",
   "refundRequestedBy": "Сұраған: {name}",
-  "refundsPolicyOn": "{amount} сомасынан асатын қайтаруға келісу керек"
+  "refundsPolicyOn": "{amount} сомасынан асатын қайтаруға келісу керек",
+  "closingTitle": "Кассаны жабу",
+  "closingFirst": "Алғашқы жабу: бүгінгі күннің басынан есептеледі.",
+  "closingExpectedCash": "Кассада күтілетін қолма-қол ақша",
+  "closingNotCounted": "Банк пен карта сомалары бухгалтерге арналған; кассада санаулы емес.",
+  "closingCounted": "Саналған қолма-қол ақша",
+  "closingMatches": "Күтілетін сомамен сәйкес.",
+  "closingConfirm": "Кассаны жабу",
+  "closingDone": "Касса жабылды",
+  "closingHistory": "Алдыңғы жабулар",
+  "closingNone": "Әзірге жабулар жоқ",
+  "errExpectedChanged": "Санап жатқанда төлемдер өзгерді. Жаңа күтілетін соманы тексеріп, қайта растаңыз.",
+  "errRefundExceeds": "Қайтару қазір төленген сомадан артық.",
+  "errAlreadyDecided": "Бұл сұраныс бойынша шешім қабылданған.",
+  "closingPeriod": "Кезең: {from} – {to}",
+  "closingShortage": "Жетіспейді: {amount}",
+  "closingSurplus": "Артық: {amount}",
+  "closingRow": "күтілген {expected}, саналған {counted}"
 }

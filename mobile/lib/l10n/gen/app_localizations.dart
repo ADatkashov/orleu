@@ -2679,6 +2679,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Approval required above {amount}'**
   String refundsPolicyOn(String amount);
+
+  /// No description provided for @closingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close cash register'**
+  String get closingTitle;
+
+  /// No description provided for @closingFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'First closing: counted from the start of today.'**
+  String get closingFirst;
+
+  /// No description provided for @closingExpectedCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected cash in the drawer'**
+  String get closingExpectedCash;
+
+  /// No description provided for @closingNotCounted.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank and card amounts are for the accountant; they are not counted in the drawer.'**
+  String get closingNotCounted;
+
+  /// No description provided for @closingCounted.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash counted'**
+  String get closingCounted;
+
+  /// No description provided for @closingMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Matches the expected cash.'**
+  String get closingMatches;
+
+  /// No description provided for @closingConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the register'**
+  String get closingConfirm;
+
+  /// No description provided for @closingDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Register closed'**
+  String get closingDone;
+
+  /// No description provided for @closingHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous closings'**
+  String get closingHistory;
+
+  /// No description provided for @closingNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No closings yet'**
+  String get closingNone;
+
+  /// No description provided for @errExpectedChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments changed while you were counting. Check the new expected cash and confirm again.'**
+  String get errExpectedChanged;
+
+  /// No description provided for @errRefundExceeds.
+  ///
+  /// In en, this message translates to:
+  /// **'The refund is larger than what is currently paid.'**
+  String get errRefundExceeds;
+
+  /// No description provided for @errAlreadyDecided.
+  ///
+  /// In en, this message translates to:
+  /// **'This request was already decided.'**
+  String get errAlreadyDecided;
+
+  /// No description provided for @closingPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Period: {from} – {to}'**
+  String closingPeriod(String from, String to);
+
+  /// No description provided for @closingShortage.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortage: {amount}'**
+  String closingShortage(String amount);
+
+  /// No description provided for @closingSurplus.
+  ///
+  /// In en, this message translates to:
+  /// **'Surplus: {amount}'**
+  String closingSurplus(String amount);
+
+  /// No description provided for @closingRow.
+  ///
+  /// In en, this message translates to:
+  /// **'expected {expected}, counted {counted}'**
+  String closingRow(String expected, String counted);
 }
 
 class _AppLocalizationsDelegate
