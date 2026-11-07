@@ -46,7 +46,7 @@ Gaps: OTP/phone login, MFA, e-mail invitations, branch-level permissions, (done:
 
 ### Phase 3 — Operations: PARTIAL
 - DONE: calendar day view + actions, public booking page, platform admin (core), customer self-cancel.
-- DONE: week/month calendar with specialist/location filters. TODO: drag-and-drop, resource columns, analytics charts, staff performance, customer portal (history, reschedule, favourites), support tickets, review replies/moderation (replies + platform hide DONE), reconciliation views.
+- DONE: week/month calendar with specialist/location filters. TODO: drag-and-drop, resource columns, analytics charts, staff performance, customer portal (history + cancel DONE; reschedule, favourites TODO), support tickets, review replies/moderation (replies + platform hide DONE), reconciliation views.
 
 ### Phase 4 — Business growth: TODO
 Marketing campaigns, loyalty, referrals, gift cards (basic DONE), packages, memberships, QR codes, widgets, promo landing pages (consent rules apply).
@@ -103,4 +103,5 @@ Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real 
 15. ~~Gift cards (sell, redeem, void)~~ — done incl. returning value to the card (no automatic return on cancel, top-up or liability report yet); packages/memberships, referrals, loyalty remain.
 16. ~~Message delivery behind a sender interface with a TEST sender~~ — done (no real provider; e-mail channel, OTP login and customer portal build on it next).
 17. ~~Password-reset e-mail through the sender with expiry and secret wiping~~ — done (test sender only; SMS login codes and the customer portal next).
-18. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.
+18b. ~~Customer portal inside one business (SMS code sign-in, my bookings, cancel)~~ — done on the TEST sender; reschedule, cross-business login and a link in messages remain.
+19. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.

@@ -239,10 +239,31 @@ public class BookingService {
         return view(b);
     }
 
+    /** Portal: a booking of exactly this customer in exactly this business (404 otherwise), in the same view the secret link gives. */
+    @Transactional(readOnly = true)
+    public ManageView manageViewFor(UUID businessId, UUID customerId, UUID bookingId) {
+        return view(ownBooking(businessId, customerId, bookingId));
+    }
+
+    /** Portal: same rules as the secret link (free-cancellation window, idempotent). */
+    @Transactional
+    public ManageView cancelByCustomerFor(UUID businessId, UUID customerId, UUID bookingId) {
+        return cancel(ownBooking(businessId, customerId, bookingId));
+    }
+
+    private Booking ownBooking(UUID businessId, UUID customerId, UUID bookingId) {
+        Booking b = bookings.findByIdAndBusinessId(bookingId, businessId).orElseThrow(() -> ApiException.notFound("Booking"));
+        if (!b.getCustomerId().equals(customerId)) throw ApiException.notFound("Booking");
+        return b;
+    }
+
     /** The customer cancels via the secret link. Allowed until the business's cancellation deadline. */
     @Transactional
     public ManageView cancelByCustomer(String rawToken) {
-        Booking b = byToken(rawToken);
+        return cancel(byToken(rawToken));
+    }
+
+    private ManageView cancel(Booking b) {
         ManageView v = view(b);
         if (b.getStatus() == BookingStatus.CANCELLED) return v; // idempotent
         if (!v.canCancel()) {

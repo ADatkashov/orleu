@@ -29,6 +29,7 @@ public class PublicPagesController {
     private final BusinessRepository businesses;
     private final String bookingTemplate = load("templates/booking.html");
     private final String manageTemplate = load("templates/manage.html");
+    private final String portalTemplate = load("templates/portal.html");
 
     public PublicPagesController(BusinessRepository businesses) { this.businesses = businesses; }
 
@@ -46,6 +47,14 @@ public class PublicPagesController {
                 .replace("{{DESCRIPTION}}", esc(desc))
                 .replace("{{SLUG}}", esc(biz.getSlug()));
         return page(HttpStatus.OK, html, false);
+    }
+
+    /** Customer portal shell (sign-in by SMS code happens in the JS through the public API). Not indexed, never cached. */
+    @GetMapping(value = "/b/{slug}/me", produces = MediaType.TEXT_HTML_VALUE)
+    public ResponseEntity<String> portal(@PathVariable String slug) {
+        Optional<Business> b = businesses.findBySlug(slug).filter(x -> x.isPublished() && !"SUSPENDED".equals(x.getStatus()));
+        if (b.isEmpty()) return page(HttpStatus.NOT_FOUND, notFound(), false);
+        return page(HttpStatus.OK, portalTemplate.replace("{{TITLE}}", esc(b.get().getName() + " — ORLEU")).replace("{{SLUG}}", esc(b.get().getSlug())), true);
     }
 
     @GetMapping(value = "/m/{token}", produces = MediaType.TEXT_HTML_VALUE)
