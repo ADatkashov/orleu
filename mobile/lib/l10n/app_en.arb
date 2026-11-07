@@ -530,5 +530,9 @@
   "quickActions": "Quick actions",
   "performanceTitle": "Performance today",
   "sevenDays": "Last 7 days",
-  "seeAll": "See all"
+  "seeAll": "See all",
+  "groupBusiness": "Business",
+  "groupSales": "Sales & loyalty",
+  "groupAccount": "Communication & account",
+  "preferencesTitle": "Preferences"
 }

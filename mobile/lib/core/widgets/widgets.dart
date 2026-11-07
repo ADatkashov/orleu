@@ -11,5 +11,6 @@ export 'date_selector.dart';
 export 'domain_cards.dart';
 export 'pressable.dart';
 export 'search_field.dart';
+export 'settings_tiles.dart';
 export 'section_header.dart';
 export 'stat_card.dart';

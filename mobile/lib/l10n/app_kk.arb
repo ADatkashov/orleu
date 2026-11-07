@@ -482,5 +482,9 @@
   "quickActions": "Жылдам әрекеттер",
   "performanceTitle": "Бүгінгі көрсеткіштер",
   "sevenDays": "Соңғы 7 күн",
-  "seeAll": "Барлығы"
+  "seeAll": "Барлығы",
+  "groupBusiness": "Бизнес",
+  "groupSales": "Сатылым және адалдық",
+  "groupAccount": "Байланыс және аккаунт",
+  "preferencesTitle": "Қолданба параметрлері"
 }

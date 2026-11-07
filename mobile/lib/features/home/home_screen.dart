@@ -182,7 +182,7 @@ class _Performance extends StatelessWidget {
     final l = AppLocalizations.of(context);
     String pct(double v) => '${(v * 100).toStringAsFixed(1)}%';
     final p = context.palette;
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       SectionHeader(l.performanceTitle),
       const SizedBox(height: AppSpacing.sm + 4),
       StatTile(label: l.outstanding, value: money(context, summary.outstanding, currency), valueColor: summary.outstanding > 0 ? p.warningFg : null),

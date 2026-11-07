@@ -2997,6 +2997,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'See all'**
   String get seeAll;
+
+  /// No description provided for @groupBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get groupBusiness;
+
+  /// No description provided for @groupSales.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales & loyalty'**
+  String get groupSales;
+
+  /// No description provided for @groupAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication & account'**
+  String get groupAccount;
+
+  /// No description provided for @preferencesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get preferencesTitle;
 }
 
 class _AppLocalizationsDelegate

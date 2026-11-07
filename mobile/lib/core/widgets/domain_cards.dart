@@ -14,16 +14,47 @@ class BookingCard extends StatelessWidget {
   final Booking booking;
   final VoidCallback? onTap;
   final bool showPayment;
-  const BookingCard({super.key, required this.booking, this.onTap, this.showPayment = false});
+  /// Calendar layout: start/end times in a leading column instead of a trailing start time.
+  final bool timeline;
+  const BookingCard({super.key, required this.booking, this.onTap, this.showPayment = false, this.timeline = false});
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context);
     final b = booking;
-    final time = '${DateFormat.Hm().format(b.startsAt)}–${DateFormat.Hm().format(b.endsAt)}';
+    final time = DateFormat.Hm().format(b.startsAt);
     final f = b.financials;
     final payment = !showPayment ? null : f.remaining > 0 ? '${l.remaining}: ${money(context, f.remaining, b.currency)}' : l.paid;
+    if (timeline) {
+      return AppCard(
+        onTap: onTap,
+        padding: const EdgeInsets.fromLTRB(AppSpacing.md, 12, AppSpacing.md, 12),
+        semanticLabel: '${b.serviceName}, ${b.customerName}, $time–${DateFormat.Hm().format(b.endsAt)}',
+        child: ExcludeSemantics(
+          child: Row(children: [
+            SizedBox(
+              width: 48,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(time, style: t.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
+                Text(DateFormat.Hm().format(b.endsAt), style: t.textTheme.bodySmall),
+              ]),
+            ),
+            Container(width: 4, height: 44, margin: const EdgeInsets.only(right: AppSpacing.sm + 4), decoration: BoxDecoration(color: statusAccent(context, b.status), borderRadius: BorderRadius.circular(2))),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(b.serviceName, maxLines: 1, overflow: TextOverflow.ellipsis, style: t.textTheme.titleSmall?.copyWith(fontSize: 15)),
+                const SizedBox(height: 2),
+                Text('${b.customerName} · ${b.employeeName}', maxLines: 1, overflow: TextOverflow.ellipsis, style: t.textTheme.bodySmall),
+                if (payment != null) Text(payment, maxLines: 1, overflow: TextOverflow.ellipsis, style: t.textTheme.bodySmall),
+              ]),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            BookingStatusBadge(b.status),
+          ]),
+        ),
+      );
+    }
     return AppCard(
       onTap: onTap,
       padding: const EdgeInsets.fromLTRB(12, 12, AppSpacing.md, 12),
@@ -42,7 +73,7 @@ class BookingCard extends StatelessWidget {
         ),
         const SizedBox(width: AppSpacing.sm),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          Text(time, style: t.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800)),
+          Text(time, style: t.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
           const SizedBox(height: 4),
           BookingStatusBadge(b.status),
         ]),

@@ -1580,4 +1580,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get seeAll => 'See all';
+
+  @override
+  String get groupBusiness => 'Business';
+
+  @override
+  String get groupSales => 'Sales & loyalty';
+
+  @override
+  String get groupAccount => 'Communication & account';
+
+  @override
+  String get preferencesTitle => 'Preferences';
 }

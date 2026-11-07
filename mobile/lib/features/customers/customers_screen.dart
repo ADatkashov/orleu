@@ -1,12 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 
 class CustomersScreen extends ConsumerStatefulWidget {
@@ -17,13 +15,6 @@ class CustomersScreen extends ConsumerStatefulWidget {
 
 class _State extends ConsumerState<CustomersScreen> {
   String _q = '';
-  Timer? _debounce;
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,57 +22,52 @@ class _State extends ConsumerState<CustomersScreen> {
     final res = ref.watch(customersProvider(_q));
     final tags = ref.watch(customerTagsProvider).value ?? const [];
     final selected = ref.watch(customerTagFilterProvider);
+    final gutter = AppSpacing.gutter(context);
     return Scaffold(
       appBar: AppBar(title: Text(l.navCustomers), actions: [
-        IconButton(key: const Key('importCsv'), tooltip: l.importNav, icon: const Icon(Icons.upload_file_outlined), onPressed: () => context.push('/customers/import')),
+        Padding(
+          padding: EdgeInsets.only(right: gutter - 4),
+          child: AppIconButton(key: const Key('importCsv'), tooltip: l.importNav, icon: Icons.upload_file_outlined, onPressed: () => context.push('/customers/import')),
+        ),
       ]),
       body: Column(children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.sm),
-          child: TextField(
-            decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: l.searchCustomers),
-            onChanged: (v) {
-              _debounce?.cancel();
-              _debounce = Timer(const Duration(milliseconds: 350), () => setState(() => _q = v.trim()));
-            },
-          ),
+          padding: EdgeInsets.fromLTRB(gutter, AppSpacing.xs, gutter, AppSpacing.sm + 4),
+          child: SearchField(hint: l.searchCustomers, onChanged: (v) => setState(() => _q = v)),
         ),
         if (tags.isNotEmpty)
-          SizedBox(height: 48, child: ListView(
-            scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-            children: [
-              for (final t in tags) Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.sm),
-                child: FilterChip(
-                  key: Key('tagFilter-${t.tag}'), label: Text('${t.tag} · ${t.customers}'), selected: selected == t.tag,
-                  onSelected: (on) => ref.read(customerTagFilterProvider.notifier).select(on ? t.tag : null),
+          SizedBox(
+            height: 44,
+            child: ListView(
+              scrollDirection: Axis.horizontal, padding: EdgeInsets.symmetric(horizontal: gutter),
+              children: [
+                for (final t in tags) Padding(
+                  padding: const EdgeInsets.only(right: AppSpacing.sm),
+                  child: AppFilterChip(
+                    key: Key('tagFilter-${t.tag}'), label: '${t.tag} · ${t.customers}', selected: selected == t.tag,
+                    onSelected: (on) => ref.read(customerTagFilterProvider.notifier).select(on ? t.tag : null),
+                  ),
                 ),
-              ),
-            ],
-          )),
+              ],
+            ),
+          ),
         Expanded(
           child: res.when(
             loading: () => const SkeletonList(),
             error: (e, _) => ErrorRetry(error: e, onRetry: () => ref.invalidate(customersProvider)),
             data: (list) => list.isEmpty
-                ? EmptyState(icon: Icons.people_outline, text: l.noCustomers)
-                : ListView.separated(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    itemCount: list.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
-                    itemBuilder: (_, i) {
-                      final c = list[i];
-                      return Card(
-                        child: ListTile(
-                          key: Key('customer-${c.id}'),
-                          onTap: () => context.push('/customers/${c.id}'),
-                          leading: CircleAvatar(child: Text(c.fullName.isEmpty ? '?' : c.fullName[0].toUpperCase())),
-                          title: Text(c.fullName),
-                          subtitle: Text(c.tags.isEmpty ? c.phone : '${c.phone} · ${c.tags.map((t) => '#$t').join(' ')}'),
-                          trailing: c.blocked ? const Icon(Icons.block, color: AppColors.danger) : null,
-                        ),
-                      );
-                    },
+                ? EmptyState(icon: Icons.people_outline_rounded, text: l.noCustomers)
+                : RefreshIndicator(
+                    onRefresh: () async => ref.invalidate(customersProvider),
+                    child: ListView.separated(
+                      padding: EdgeInsets.fromLTRB(gutter, AppSpacing.md, gutter, AppSpacing.xl),
+                      itemCount: list.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm + 2),
+                      itemBuilder: (_, i) {
+                        final c = list[i];
+                        return Entrance(index: i, child: CustomerCard(key: Key('customer-${c.id}'), customer: c, onTap: () => context.push('/customers/${c.id}')));
+                      },
+                    ),
                   ),
           ),
         ),

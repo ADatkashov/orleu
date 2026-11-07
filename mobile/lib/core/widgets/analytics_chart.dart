@@ -70,7 +70,7 @@ class _BarsPainter extends CustomPainter {
       final v = values[i];
       final full = maxValue <= 0 || v <= 0 ? 2.0 : (v / maxValue * (size.height - 4)).clamp(4.0, size.height);
       final h = 2 + (full - 2) * progress;
-      final paint = Paint()..color = highlight == null ? color : (highlight == i ? accent : color.withValues(alpha: 0.55));
+      final paint = Paint()..color = highlight == null ? color : (highlight == i ? accent : color.withValues(alpha: 0.72));
       if (v <= 0) paint.color = muted;
       final x = i * slot + (slot - w) / 2;
       canvas.drawRRect(RRect.fromRectAndCorners(Rect.fromLTWH(x, size.height - h, w, h), topLeft: Radius.circular(w / 2.4), topRight: Radius.circular(w / 2.4), bottomLeft: const Radius.circular(2), bottomRight: const Radius.circular(2)), paint);

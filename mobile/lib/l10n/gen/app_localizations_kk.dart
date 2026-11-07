@@ -1578,4 +1578,16 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get seeAll => 'Барлығы';
+
+  @override
+  String get groupBusiness => 'Бизнес';
+
+  @override
+  String get groupSales => 'Сатылым және адалдық';
+
+  @override
+  String get groupAccount => 'Байланыс және аккаунт';
+
+  @override
+  String get preferencesTitle => 'Қолданба параметрлері';
 }

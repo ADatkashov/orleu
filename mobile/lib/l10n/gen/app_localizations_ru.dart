@@ -1579,4 +1579,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get seeAll => 'Все';
+
+  @override
+  String get groupBusiness => 'Бизнес';
+
+  @override
+  String get groupSales => 'Продажи и лояльность';
+
+  @override
+  String get groupAccount => 'Связь и аккаунт';
+
+  @override
+  String get preferencesTitle => 'Настройки приложения';
 }

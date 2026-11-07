@@ -482,5 +482,9 @@
   "quickActions": "Быстрые действия",
   "performanceTitle": "Показатели за сегодня",
   "sevenDays": "Последние 7 дней",
-  "seeAll": "Все"
+  "seeAll": "Все",
+  "groupBusiness": "Бизнес",
+  "groupSales": "Продажи и лояльность",
+  "groupAccount": "Связь и аккаунт",
+  "preferencesTitle": "Настройки приложения"
 }

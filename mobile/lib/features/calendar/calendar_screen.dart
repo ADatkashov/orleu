@@ -7,7 +7,7 @@ import '../../core/data/repository.dart';
 import '../../core/tz.dart';
 import '../../core/design/tokens.dart';
 import '../../core/errors.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'booking_forms.dart';
 
@@ -144,7 +144,7 @@ class _Filter extends StatelessWidget {
         // A PopupMenuItem whose value is null is treated as "dismissed" and never reaches onSelected, so "all" is the empty string.
         onSelected: (v) => onChanged(v.isEmpty ? null : v),
         itemBuilder: (_) => [PopupMenuItem<String>(value: '', child: Text(allLabel)), for (final e in items.entries) PopupMenuItem<String>(value: e.key, child: Text(e.value))],
-        child: Chip(avatar: Icon(icon, size: 18), label: Text(value == null ? allLabel : (items[value] ?? allLabel))),
+        child: Chip(avatar: Icon(icon, size: 18), label: Row(mainAxisSize: MainAxisSize.min, children: [Flexible(child: Text(value == null ? allLabel : (items[value] ?? allLabel), overflow: TextOverflow.ellipsis)), const SizedBox(width: 2), const Icon(Icons.expand_more_rounded, size: 18)])),
       );
 }
 
@@ -152,26 +152,10 @@ class _BookingCard extends StatelessWidget {
   final Booking b;
   const _BookingCard(this.b);
   @override
-  Widget build(BuildContext context) {
-    final t = Theme.of(context);
-    return Card(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(AppRadius.card),
+  Widget build(BuildContext context) => BookingCard(
+        booking: b, timeline: true,
         onTap: () => showModalBottomSheet(context: context, isScrollControlled: true, showDragHandle: true, builder: (_) => BookingSheet(b)),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          child: Row(children: [
-            SizedBox(width: 56, child: Text(DateFormat.Hm().format(b.startsAt), style: t.textTheme.titleMedium)),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(b.serviceName, style: t.textTheme.titleMedium),
-              Text('${b.customerName} · ${b.employeeName}', style: t.textTheme.bodySmall),
-            ])),
-            StatusChip(b.status),
-          ]),
-        ),
-      ),
-    );
-  }
+      );
 }
 
 class _BookingList extends StatelessWidget {
@@ -211,7 +195,7 @@ class _WeekView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
                 child: Row(children: [
                   Expanded(child: Text(DateFormat.MMMEd(locale).format(d),
-                      style: t.textTheme.titleSmall?.copyWith(color: d == today ? t.colorScheme.primary : null, fontWeight: d == today ? FontWeight.w700 : null))),
+                      style: t.textTheme.titleSmall?.copyWith(color: d == today ? t.colorScheme.primary : null, fontWeight: d == today ? FontWeight.w800 : null))),
                   Text(l.calBookingsCount(active), style: t.textTheme.bodySmall),
                 ]),
               ),
@@ -260,17 +244,18 @@ class _MonthView extends StatelessWidget {
           return InkWell(
             key: Key('monthDay-$n'),
             onTap: () => onOpenDay(d),
+            borderRadius: BorderRadius.circular(AppRadius.control),
             child: Container(
               height: 56,
               margin: const EdgeInsets.all(2),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: isToday ? t.colorScheme.primary : t.dividerColor),
-                color: count > 0 ? t.colorScheme.primary.withValues(alpha: (0.08 + 0.06 * count).clamp(0.08, 0.4)) : null,
+                borderRadius: BorderRadius.circular(AppRadius.control),
+                border: Border.all(color: isToday ? t.colorScheme.primary : t.colorScheme.outlineVariant, width: isToday ? 2 : 1),
+                color: count > 0 ? t.colorScheme.primaryContainer.withValues(alpha: (0.45 + 0.15 * count).clamp(0.45, 1.0)) : t.colorScheme.surface,
               ),
               child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('$n', style: t.textTheme.bodyMedium?.copyWith(fontWeight: isToday ? FontWeight.w700 : null)),
-                if (count > 0) Text('$count', key: Key('monthCount-$n'), style: t.textTheme.labelSmall?.copyWith(color: t.colorScheme.primary, fontWeight: FontWeight.w700)),
+                Text('$n', style: t.textTheme.bodyMedium?.copyWith(fontWeight: isToday ? FontWeight.w800 : FontWeight.w500)),
+                if (count > 0) Text('$count', key: Key('monthCount-$n'), style: t.textTheme.labelSmall?.copyWith(color: t.colorScheme.primary, fontWeight: FontWeight.w800)),
               ]),
             ),
           );
@@ -331,18 +316,41 @@ class _SheetState extends ConsumerState<BookingSheet> {
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
-          Row(children: [Expanded(child: Text(b.serviceName, style: t.textTheme.titleLarge)), StatusChip(b.status)]),
-          Text(DateFormat.yMMMd(Localizations.localeOf(context).toLanguageTag()).add_Hm().format(b.startsAt), style: t.textTheme.bodySmall),
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(b.serviceName, style: t.textTheme.titleLarge),
+              const SizedBox(height: 2),
+              Text(DateFormat.yMMMd(Localizations.localeOf(context).toLanguageTag()).add_Hm().format(b.startsAt), style: t.textTheme.bodySmall),
+            ])),
+            const SizedBox(width: AppSpacing.sm),
+            StatusChip(b.status),
+          ]),
           const SizedBox(height: AppSpacing.md),
-          row(l.customer, '${b.customerName}\n${b.customerPhone}'),
-          row(l.employee, b.employeeName),
-          const Divider(),
-          row(l.price, money(context, f.price, b.currency)),
-          row(l.deposit, money(context, f.deposit, b.currency)),
-          row(l.paid, money(context, f.paid, b.currency)),
-          row(l.remaining, money(context, f.remaining, b.currency)),
-          row(l.paymentStatus, _pay(l, f.paymentStatus)),
-          if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.sm), child: Text(_error!, style: TextStyle(color: t.colorScheme.error))),
+          AppCard(
+            padding: const EdgeInsets.all(12),
+            child: Row(children: [
+              AppAvatar(b.customerName),
+              const SizedBox(width: AppSpacing.sm + 4),
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(b.customerName, style: t.textTheme.titleSmall),
+                Text(b.customerPhone, style: t.textTheme.bodySmall),
+                Text('${l.employee}: ${b.employeeName}', style: t.textTheme.bodySmall),
+              ])),
+            ]),
+          ),
+          const SizedBox(height: AppSpacing.sm + 4),
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(color: t.colorScheme.surfaceContainerLow, borderRadius: BorderRadius.circular(AppRadius.card)),
+            child: Column(children: [
+              row(l.price, money(context, f.price, b.currency)),
+              row(l.deposit, money(context, f.deposit, b.currency)),
+              row(l.paid, money(context, f.paid, b.currency)),
+              row(l.remaining, money(context, f.remaining, b.currency)),
+              row(l.paymentStatus, _pay(l, f.paymentStatus)),
+            ]),
+          ),
+          if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.sm), child: Text(_error!, style: TextStyle(color: context.palette.dangerFg))),
           const SizedBox(height: AppSpacing.md),
           if (b.canTakePayment) Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -412,7 +420,7 @@ class _SheetState extends ConsumerState<BookingSheet> {
           for (final s in b.nextActions) Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: s == 'CANCELLED' || s == 'NO_SHOW'
-                ? OutlinedButton(onPressed: _busy ? null : () => _do(s), child: Text(_action(l, s)))
+                ? SecondaryButton(label: _action(l, s), destructive: true, onPressed: _busy ? null : () => _do(s))
                 : FilledButton(onPressed: _busy ? null : () => _do(s), child: Text(_action(l, s))),
           ),
         ]),
