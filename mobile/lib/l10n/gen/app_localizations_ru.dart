@@ -1314,4 +1314,26 @@ class AppLocalizationsRu extends AppLocalizations {
   String mergeWarning(String dup, String phone, String name) {
     return 'Влить $dup ($phone) в $name? Записи, теги и заметки перейдут к $name, карточка-дубликат будет удалена. Согласие на рекламу не переносится. Это нельзя отменить.';
   }
+
+  @override
+  String get exceptionsTitle => 'Особые дни';
+
+  @override
+  String get exceptionAdd => 'Добавить особый день';
+
+  @override
+  String get exceptionsNote =>
+      'Дата здесь заменяет недельный график на этот один день: выходной или другие часы.';
+
+  @override
+  String get exceptionsNone => 'Особых дней нет';
+
+  @override
+  String get exceptionPickDate => 'Выберите дату';
+
+  @override
+  String get scheduleBadRange => 'Конец должен быть позже начала.';
+
+  @override
+  String get close => 'Закрыть';
 }

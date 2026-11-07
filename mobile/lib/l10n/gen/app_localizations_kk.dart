@@ -1314,4 +1314,26 @@ class AppLocalizationsKk extends AppLocalizations {
   String mergeWarning(String dup, String phone, String name) {
     return '$dup ($phone) жазбасын $name карточкасына біріктіру керек пе? Жазбалар, тегтер мен ескертпелер $name карточкасына ауысады, қосарланған карточка жойылады. Жарнамаға келісім ауыспайды. Мұны қайтару мүмкін емес.';
   }
+
+  @override
+  String get exceptionsTitle => 'Ерекше күндер';
+
+  @override
+  String get exceptionAdd => 'Ерекше күн қосу';
+
+  @override
+  String get exceptionsNote =>
+      'Мұндағы күн сол бір күнге апталық кестені ауыстырады: демалыс немесе басқа сағаттар.';
+
+  @override
+  String get exceptionsNone => 'Ерекше күндер жоқ';
+
+  @override
+  String get exceptionPickDate => 'Күнді таңдаңыз';
+
+  @override
+  String get scheduleBadRange => 'Аяқталу уақыты басталудан кейін болуы керек.';
+
+  @override
+  String get close => 'Жабу';
 }

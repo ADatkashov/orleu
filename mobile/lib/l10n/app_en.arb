@@ -443,5 +443,12 @@
   "mergeIntro": "Find the duplicate of {name} to merge into this card.",
   "@mergeIntro": {"placeholders": {"name": {"type": "String"}}},
   "mergeWarning": "Merge {dup} ({phone}) into {name}? Its bookings, tags and notes move to {name}; the duplicate record is deleted. Marketing consent is not transferred. This cannot be undone.",
-  "@mergeWarning": {"placeholders": {"dup": {"type": "String"}, "phone": {"type": "String"}, "name": {"type": "String"}}}
+  "@mergeWarning": {"placeholders": {"dup": {"type": "String"}, "phone": {"type": "String"}, "name": {"type": "String"}}},
+  "exceptionsTitle": "Special days",
+  "exceptionAdd": "Add special day",
+  "exceptionsNote": "A date here replaces the weekly hours for that one day: a day off or different hours.",
+  "exceptionsNone": "No special days planned",
+  "exceptionPickDate": "Choose date",
+  "scheduleBadRange": "The end must be after the start.",
+  "close": "Close"
 }

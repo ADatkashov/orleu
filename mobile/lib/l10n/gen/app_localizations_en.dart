@@ -1315,4 +1315,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String mergeWarning(String dup, String phone, String name) {
     return 'Merge $dup ($phone) into $name? Its bookings, tags and notes move to $name; the duplicate record is deleted. Marketing consent is not transferred. This cannot be undone.';
   }
+
+  @override
+  String get exceptionsTitle => 'Special days';
+
+  @override
+  String get exceptionAdd => 'Add special day';
+
+  @override
+  String get exceptionsNote =>
+      'A date here replaces the weekly hours for that one day: a day off or different hours.';
+
+  @override
+  String get exceptionsNone => 'No special days planned';
+
+  @override
+  String get exceptionPickDate => 'Choose date';
+
+  @override
+  String get scheduleBadRange => 'The end must be after the start.';
+
+  @override
+  String get close => 'Close';
 }

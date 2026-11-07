@@ -11,6 +11,8 @@ import 'support/fake_api.dart';
 class Env {
   List<Map<String, Object?>> hours = [];
   List<Map<String, Object?>> timeOff = [];
+  List<Map<String, Object?>> exceptions = [];
+  int exceptionAffected = 0;
   Handler? putOverride;
   late final FakeAdapter adapter = FakeAdapter({
     ...businessRoutes(),
@@ -18,7 +20,7 @@ class Env {
     'GET /api/v1/businesses/b1/employees': (_) => ok([{'id': 'e1', 'displayName': 'Master Dana', 'active': true, 'branchIds': ['br1'], 'serviceIds': ['s1']}]),
     'GET /api/v1/businesses/b1/branches': (_) => ok([{'id': 'br1', 'name': 'Main', 'active': true, 'hours': []}]),
     'GET /api/v1/businesses/b1/services': (_) => ok([{'id': 's1', 'name': 'Haircut', 'durationMinutes': 60, 'bufferMinutes': 0, 'price': 20000, 'depositPercent': 0, 'active': true}]),
-    'GET /api/v1/businesses/b1/employees/e1/schedule': (_) => ok({'hours': hours, 'timeOff': timeOff}),
+    'GET /api/v1/businesses/b1/employees/e1/schedule': (_) => ok({'hours': hours, 'timeOff': timeOff, 'exceptions': exceptions}),
     'PUT /api/v1/businesses/b1/employees/e1/hours': (o) => putOverride?.call(o) ?? (() {
           hours = [for (final h in (o.data as Map)['hours']) {'dayOfWeek': h['dayOfWeek'], 'start': '${h['start']}:00', 'end': '${h['end']}:00'}];
           return ok({'hours': hours, 'affectedBookings': 2});
@@ -28,16 +30,22 @@ class Env {
       timeOff = [...timeOff, {'id': 't${timeOff.length + 1}', 'startsAt': d['startsAt'], 'endsAt': d['endsAt'], 'reason': d['reason'], 'affectedBookings': 0}];
       return (status: 204, body: null);
     },
+    'PUT /api/v1/businesses/b1/employees/e1/exceptions/2030-03-04': (o) {
+      final d = o.data as Map;
+      exceptions = [{'date': '2030-03-04', 'dayOff': d['dayOff'], 'ranges': [for (final r in d['ranges']) {'start': '${r['start']}:00', 'end': '${r['end']}:00'}]}];
+      return ok({'exception': exceptions.first, 'affectedBookings': exceptionAffected});
+    },
+    'DELETE /api/v1/businesses/b1/employees/e1/exceptions/2030-03-04': (_) { exceptions = []; return (status: 204, body: null); },
     'DELETE /api/v1/businesses/b1/employees/e1/time-off/t1': (_) { timeOff = []; return (status: 204, body: null); },
   });
 }
 
-Future<void> open(WidgetTester tester, Env e, {DateTimeRange? range}) async {
+Future<void> open(WidgetTester tester, Env e, {DateTimeRange? range, DateTime? date}) async {
   setPhone(tester, 390, 2000);
   final store = MemoryTokenStore()..access = 'a'..refresh = 'r';
   await tester.pumpWidget(ProviderScope(
     retry: appRetry,
-    overrides: [...overridesFor(e.adapter, store), dateRangePickerProvider.overrideWithValue((_) async => range)],
+    overrides: [...overridesFor(e.adapter, store), dateRangePickerProvider.overrideWithValue((_) async => range), datePickerProvider.overrideWithValue((_) async => date)],
     child: const OrleuApp(),
   ));
   await tester.pumpAndSettle();
@@ -140,5 +148,53 @@ void main() {
     await tester.tap(find.byKey(const Key('removeTimeOff-t1')));
     await tester.pumpAndSettle();
     expect(e.adapter.calls.any((c) => c.method == 'DELETE' && c.path.endsWith('/time-off/t1')), isTrue);
+  });
+
+  testWidgets('a special day is saved for one date (day off), listed, and can be removed', (tester) async {
+    final e = Env();
+    await open(tester, e, date: DateTime(2030, 3, 4));
+    await tester.scrollUntilVisible(find.byKey(const Key('addException')), 200, scrollable: find.byType(Scrollable).first);
+    expect(find.byKey(const Key('noExceptions')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('addException')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('confirmException')).evaluate().isNotEmpty, isTrue);
+    expect(tester.widget<FilledButton>(find.byKey(const Key('confirmException'))).onPressed, isNull, reason: 'no date picked yet');
+    await tester.tap(find.byKey(const Key('pickExceptionDate')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('confirmException')));
+    await tester.pumpAndSettle();
+    final put = e.adapter.calls.lastWhere((c) => c.method == 'PUT' && c.path.endsWith('/exceptions/2030-03-04'));
+    expect(put.data, {'dayOff': true, 'ranges': []});
+    await tester.scrollUntilVisible(find.byKey(const Key('exception-2030-03-04')), 200, scrollable: find.byType(Scrollable).first);
+    expect(find.byKey(const Key('exception-2030-03-04')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('removeException-2030-03-04')));
+    await tester.pumpAndSettle();
+    expect(e.adapter.calls.any((c) => c.method == 'DELETE' && c.path.endsWith('/exceptions/2030-03-04')), isTrue);
+    expect(find.byKey(const Key('exception-2030-03-04')), findsNothing);
+  });
+
+  testWidgets('special hours send one range, and bookings that no longer fit are shown before the dialog closes', (tester) async {
+    final e = Env()..exceptionAffected = 2;
+    await open(tester, e, date: DateTime(2030, 3, 4));
+    await tester.scrollUntilVisible(find.byKey(const Key('addException')), 200, scrollable: find.byType(Scrollable).first);
+    await tester.tap(find.byKey(const Key('addException')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('pickExceptionDate')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('exceptionDayOff')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('exceptionStart')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('12:00').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('exceptionEnd')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('15:00').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('confirmException')));
+    await tester.pumpAndSettle();
+    final put = e.adapter.calls.lastWhere((c) => c.method == 'PUT' && c.path.endsWith('/exceptions/2030-03-04'));
+    expect(put.data, {'dayOff': false, 'ranges': [{'start': '12:00', 'end': '15:00'}]});
+    expect(find.byKey(const Key('exceptionAffected')), findsOneWidget, reason: 'the warning stays visible instead of silently closing');
   });
 }

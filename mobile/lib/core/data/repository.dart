@@ -262,6 +262,25 @@ class BookingActions {
     ref.invalidate(availabilityProvider);
   }
 
+  /// One date differs from the weekly schedule. [dayOff] or a single [start]-[end] range ('HH:mm'). Returns how many bookings that day no longer fit.
+  Future<int> setDateException(String employeeId, DateTime date, {required bool dayOff, String? start, String? end}) async {
+    final biz = await _id();
+    final day = '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    final r = await ref.read(apiClientProvider).run((d) => d.put('/api/v1/businesses/$biz/employees/$employeeId/exceptions/$day',
+        data: {'dayOff': dayOff, 'ranges': dayOff ? [] : [{'start': start, 'end': end}]}));
+    ref.invalidate(employeeScheduleProvider);
+    ref.invalidate(availabilityProvider);
+    return r.data['affectedBookings'] ?? 0;
+  }
+
+  Future<void> removeDateException(String employeeId, DateTime date) async {
+    final biz = await _id();
+    final day = '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    await ref.read(apiClientProvider).run((d) => d.delete('/api/v1/businesses/$biz/employees/$employeeId/exceptions/$day'));
+    ref.invalidate(employeeScheduleProvider);
+    ref.invalidate(availabilityProvider);
+  }
+
   Future<void> removeTimeOff(String employeeId, String timeOffId) async {
     final biz = await _id();
     await ref.read(apiClientProvider).run((d) => d.delete('/api/v1/businesses/$biz/employees/$employeeId/time-off/$timeOffId'));
