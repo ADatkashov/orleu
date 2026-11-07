@@ -1456,4 +1456,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String closingRow(String expected, String counted) {
     return 'expected $expected, counted $counted';
   }
+
+  @override
+  String get reviewReply => 'Reply';
+
+  @override
+  String get reviewReplyRemove => 'Remove reply';
+
+  @override
+  String get reviewReplyNote =>
+      'Your reply is shown to the guest on their booking link. Be polite and do not share personal details.';
+
+  @override
+  String reviewHidden(String reason) {
+    return 'Hidden by the platform: $reason';
+  }
 }

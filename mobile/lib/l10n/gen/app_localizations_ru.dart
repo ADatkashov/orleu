@@ -1455,4 +1455,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String closingRow(String expected, String counted) {
     return 'ожидалось $expected, посчитано $counted';
   }
+
+  @override
+  String get reviewReply => 'Ответить';
+
+  @override
+  String get reviewReplyRemove => 'Удалить ответ';
+
+  @override
+  String get reviewReplyNote =>
+      'Ответ увидит гость на своей ссылке записи. Будьте вежливы и не называйте личных данных.';
+
+  @override
+  String reviewHidden(String reason) {
+    return 'Скрыт платформой: $reason';
+  }
 }

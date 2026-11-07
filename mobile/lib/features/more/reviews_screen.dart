@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
 import '../../core/tz.dart';
 import '../../core/widgets/common.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../setup/setup_common.dart';
 
 /// Measured average and distribution plus the reviews themselves. Reviews come only from completed visits (server-enforced).
 class ReviewsScreen extends ConsumerWidget {
@@ -18,6 +20,7 @@ class ReviewsScreen extends ConsumerWidget {
     final t = Theme.of(context);
     final zone = ref.watch(businessZoneProvider);
     final data = ref.watch(reviewsProvider);
+    final role = ref.watch(myRoleProvider).value;
     return Scaffold(
       appBar: AppBar(title: Text(l.reviewsNav)),
       body: data.when(
@@ -67,6 +70,22 @@ class ReviewsScreen extends ConsumerWidget {
                     ]),
                     Text('${r.customerName} · ${r.serviceName}', style: t.textTheme.bodySmall),
                     if (r.comment != null && r.comment!.isNotEmpty) Padding(padding: const EdgeInsets.only(top: AppSpacing.xs), child: Text(r.comment!)),
+                    if (r.hidden) Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.xs),
+                      child: Text(l.reviewHidden(r.hiddenReason ?? ''), key: Key('hidden-${r.id}'), style: TextStyle(color: AppColors.warning)),
+                    ),
+                    if (r.reply != null) Container(
+                      key: Key('reply-${r.id}'), margin: const EdgeInsets.only(top: AppSpacing.sm), padding: const EdgeInsets.all(AppSpacing.sm),
+                      decoration: BoxDecoration(border: Border(left: BorderSide(color: t.colorScheme.primary, width: 3))),
+                      child: Text(r.reply!),
+                    ),
+                    if (!r.hidden && (role == 'BUSINESS_OWNER' || role == 'BUSINESS_ADMIN')) Align(
+                      alignment: Alignment.centerRight,
+                      child: Wrap(children: [
+                        if (r.reply != null) TextButton(key: Key('removeReply-${r.id}'), onPressed: () => guarded(context, () => replyToReview(ref, r.id, null)), child: Text(l.reviewReplyRemove)),
+                        TextButton(key: Key('reply-btn-${r.id}'), onPressed: () => showDialog(context: context, builder: (_) => _ReplyDialog(review: r)), child: Text(r.reply == null ? l.reviewReply : l.edit)),
+                      ]),
+                    ),
                   ]),
                 ),
               ),
@@ -74,6 +93,48 @@ class ReviewsScreen extends ConsumerWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _ReplyDialog extends ConsumerStatefulWidget {
+  final ReviewItem review;
+  const _ReplyDialog({required this.review});
+  @override
+  ConsumerState<_ReplyDialog> createState() => _ReplyState();
+}
+
+class _ReplyState extends ConsumerState<_ReplyDialog> {
+  late final _text = TextEditingController(text: widget.review.reply ?? '');
+  bool _busy = false;
+  String? _error;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(l.reviewReply),
+      content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(l.reviewReplyNote, style: Theme.of(context).textTheme.bodySmall),
+        const SizedBox(height: AppSpacing.sm),
+        TextField(key: const Key('replyText'), controller: _text, maxLines: 4, maxLength: 1000, decoration: InputDecoration(labelText: l.reviewReply)),
+        FormError(_error),
+      ]),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
+        FilledButton(
+          key: const Key('sendReply'), style: FilledButton.styleFrom(minimumSize: const Size(96, 44)),
+          onPressed: _busy ? null : () async {
+            final text = _text.text.trim();
+            if (text.isEmpty) { setState(() => _error = l.validationRequired); return; }
+            setState(() { _busy = true; _error = null; });
+            final err = await attempt(context, () => replyToReview(ref, widget.review.id, text));
+            if (!context.mounted) return;
+            if (err == null) { Navigator.pop(context); } else { setState(() { _busy = false; _error = err; }); }
+          },
+          child: Text(l.save),
+        ),
+      ],
     );
   }
 }

@@ -18,7 +18,7 @@ window.ORLEU_I18N = {
     mTooLate: 'Free cancellation is no longer available. Please contact the business.', mCancelUntil: 'Free cancellation until', status: 'Status',
     st_PENDING: 'Pending', st_AWAITING_PAYMENT: 'Awaiting payment', st_CONFIRMED: 'Confirmed', st_CHECKED_IN: 'Checked in', st_IN_PROGRESS: 'In progress',
     st_COMPLETED: 'Completed', st_CANCELLED: 'Cancelled', st_NO_SHOW: 'No-show', st_EXPIRED: 'Expired', mNoPayNote: 'Powered by',
-    rateTitle: 'How was your visit?', rateComment: 'Comment (optional)', rateSend: 'Send review', rateThanks: 'Thank you for your review!', rateYours: 'Your rating', rateStar: 'stars', errAlreadyReviewed: 'This visit was already reviewed.', errReviewNotAllowed: 'Only completed visits can be reviewed.', reviewsCount: 'reviews'
+    rateTitle: 'How was your visit?', rateComment: 'Comment (optional)', rateSend: 'Send review', rateThanks: 'Thank you for your review!', rateYours: 'Your rating', replyFromBusiness: 'Reply from', rateStar: 'stars', errAlreadyReviewed: 'This visit was already reviewed.', errReviewNotAllowed: 'Only completed visits can be reviewed.', reviewsCount: 'reviews'
   },
   ru: {
     book: 'Онлайн-запись', step: 'Шаг', back: 'Назад', next: 'Далее', chooseService: 'Выберите услугу', chooseBranch: 'Выберите филиал',
@@ -38,7 +38,7 @@ window.ORLEU_I18N = {
     mTooLate: 'Бесплатная отмена уже недоступна. Свяжитесь с бизнесом.', mCancelUntil: 'Бесплатная отмена до', status: 'Статус',
     st_PENDING: 'Ожидает', st_AWAITING_PAYMENT: 'Ждёт оплаты', st_CONFIRMED: 'Подтверждена', st_CHECKED_IN: 'Клиент пришёл', st_IN_PROGRESS: 'В процессе',
     st_COMPLETED: 'Завершена', st_CANCELLED: 'Отменена', st_NO_SHOW: 'Не пришёл', st_EXPIRED: 'Истекла', mNoPayNote: 'Работает на',
-    rateTitle: 'Как прошёл визит?', rateComment: 'Комментарий (необязательно)', rateSend: 'Отправить отзыв', rateThanks: 'Спасибо за отзыв!', rateYours: 'Ваша оценка', rateStar: 'из 5', errAlreadyReviewed: 'Отзыв об этом визите уже оставлен.', errReviewNotAllowed: 'Отзыв можно оставить только о состоявшемся визите.', reviewsCount: 'отзывов'
+    rateTitle: 'Как прошёл визит?', rateComment: 'Комментарий (необязательно)', rateSend: 'Отправить отзыв', rateThanks: 'Спасибо за отзыв!', rateYours: 'Ваша оценка', replyFromBusiness: 'Ответ от', rateStar: 'из 5', errAlreadyReviewed: 'Отзыв об этом визите уже оставлен.', errReviewNotAllowed: 'Отзыв можно оставить только о состоявшемся визите.', reviewsCount: 'отзывов'
   },
   kk: {
     book: 'Онлайн жазылу', step: 'Қадам', back: 'Артқа', next: 'Жалғастыру', chooseService: 'Қызметті таңдаңыз', chooseBranch: 'Филиалды таңдаңыз',
@@ -58,7 +58,7 @@ window.ORLEU_I18N = {
     mTooLate: 'Тегін бас тарту мерзімі өтті. Бизнеспен байланысыңыз.', mCancelUntil: 'Тегін бас тарту мерзімі', status: 'Мәртебесі',
     st_PENDING: 'Күтуде', st_AWAITING_PAYMENT: 'Төлем күтілуде', st_CONFIRMED: 'Расталды', st_CHECKED_IN: 'Клиент келді', st_IN_PROGRESS: 'Орындалуда',
     st_COMPLETED: 'Аяқталды', st_CANCELLED: 'Бас тартылды', st_NO_SHOW: 'Келмеді', st_EXPIRED: 'Мерзімі өтті', mNoPayNote: 'Қуат көзі',
-    rateTitle: 'Келу қалай өтті?', rateComment: 'Пікір (міндетті емес)', rateSend: 'Пікір жіберу', rateThanks: 'Пікіріңізге рақмет!', rateYours: 'Сіздің бағаңыз', rateStar: '5-тен', errAlreadyReviewed: 'Бұл келу туралы пікір бұрын қалдырылған.', errReviewNotAllowed: 'Пікірді тек өткен келу бойынша қалдыруға болады.', reviewsCount: 'пікір'
+    rateTitle: 'Келу қалай өтті?', rateComment: 'Пікір (міндетті емес)', rateSend: 'Пікір жіберу', rateThanks: 'Пікіріңізге рақмет!', rateYours: 'Сіздің бағаңыз', replyFromBusiness: 'Жауап:', rateStar: '5-тен', errAlreadyReviewed: 'Бұл келу туралы пікір бұрын қалдырылған.', errReviewNotAllowed: 'Пікірді тек өткен келу бойынша қалдыруға болады.', reviewsCount: 'пікір'
   }
 };
 window.ORLEU_I18N.kk.mCancelled = 'Жазылудан бас тартылды.';

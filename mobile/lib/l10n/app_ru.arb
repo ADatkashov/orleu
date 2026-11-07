@@ -446,5 +446,9 @@
   "closingPeriod": "Период: {from} – {to}",
   "closingShortage": "Недостача: {amount}",
   "closingSurplus": "Излишек: {amount}",
-  "closingRow": "ожидалось {expected}, посчитано {counted}"
+  "closingRow": "ожидалось {expected}, посчитано {counted}",
+  "reviewReply": "Ответить",
+  "reviewReplyRemove": "Удалить ответ",
+  "reviewReplyNote": "Ответ увидит гость на своей ссылке записи. Будьте вежливы и не называйте личных данных.",
+  "reviewHidden": "Скрыт платформой: {reason}"
 }

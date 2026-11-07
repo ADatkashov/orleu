@@ -128,11 +128,13 @@ class DeviceSession {
 class ReviewItem {
   final String id, customerName, serviceName;
   final int rating;
-  final String? comment;
+  final String? comment, reply, hiddenReason;
+  final bool hidden;
   final DateTime createdAt;
-  const ReviewItem({required this.id, required this.customerName, required this.serviceName, required this.rating, this.comment, required this.createdAt});
+  const ReviewItem({required this.id, required this.customerName, required this.serviceName, required this.rating, this.comment, required this.createdAt, this.reply, this.hidden = false, this.hiddenReason});
   factory ReviewItem.fromJson(Map<String, dynamic> j) => ReviewItem(
-      id: j['id'], customerName: j['customerName'] ?? '', serviceName: j['serviceName'] ?? '', rating: j['rating'], comment: j['comment'], createdAt: DateTime.parse(j['createdAt']));
+      id: j['id'], customerName: j['customerName'] ?? '', serviceName: j['serviceName'] ?? '', rating: j['rating'], comment: j['comment'], createdAt: DateTime.parse(j['createdAt']),
+      reply: j['reply'], hidden: j['hidden'] == true, hiddenReason: j['hiddenReason']);
 }
 
 class ReviewSummary {

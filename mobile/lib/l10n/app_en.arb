@@ -490,5 +490,10 @@
   "closingSurplus": "Surplus: {amount}",
   "@closingSurplus": {"placeholders": {"amount": {"type": "String"}}},
   "closingRow": "expected {expected}, counted {counted}",
-  "@closingRow": {"placeholders": {"expected": {"type": "String"}, "counted": {"type": "String"}}}
+  "@closingRow": {"placeholders": {"expected": {"type": "String"}, "counted": {"type": "String"}}},
+  "reviewReply": "Reply",
+  "reviewReplyRemove": "Remove reply",
+  "reviewReplyNote": "Your reply is shown to the guest on their booking link. Be polite and do not share personal details.",
+  "reviewHidden": "Hidden by the platform: {reason}",
+  "@reviewHidden": {"placeholders": {"reason": {"type": "String"}}}
 }

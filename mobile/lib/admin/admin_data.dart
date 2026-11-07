@@ -19,6 +19,7 @@ class S {
   static const filterBusiness = 'Business ID (optional)', filterAction = 'Action (optional)', invalidId = 'Not a valid UUID';
   static const readOnly = 'Read-only role: changes require SUPER_ADMIN.';
   static const system = 'system';
+  static const reviews = 'Reviews', hide = 'Hide review', unhide = 'Show again', hideReason = 'Reason (required, 5-300 characters)', onlyHidden = 'Hidden only';
   static const users = 'Users', support = 'Support', disable = 'Disable user', enable = 'Enable user', reply = 'Reply', send = 'Send', closeTicket = 'Close ticket', reopen = 'Reopen ticket';
 }
 
