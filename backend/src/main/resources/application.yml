@@ -37,6 +37,8 @@ orleu:
     mfa-key: ${ORLEU_MFA_KEY:}               # encrypts TOTP secrets at rest; set a separate random value in production (falls back to a key derived from the JWT secret)
     require-mfa-for-platform-roles: ${ORLEU_REQUIRE_MFA_FOR_PLATFORM:false}  # set true in production: platform staff must have MFA enabled
   bootstrap-admin-email: ${ORLEU_BOOTSTRAP_ADMIN_EMAIL:}
+  messaging:
+    provider: ${ORLEU_MESSAGING_PROVIDER:none}   # none (default: messages stay NOT_SENT) | fake (TEST mode, delivers nothing; refused in the prod profile)
   rate-limit:
     per-minute: ${ORLEU_RATE_LIMIT_PER_MINUTE:60}
   jobs:

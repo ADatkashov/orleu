@@ -54,6 +54,8 @@ public abstract class AbstractIT {
         r.add("orleu.security.jwt-secret", () -> "test-secret-test-secret-test-secret-0123456789");
         r.add("orleu.rate-limit.per-minute", () -> "1000000");
         r.add("orleu.jobs.expiry-interval", () -> "PT24H"); // tests call the expiry service directly
+        r.add("orleu.messaging.provider", () -> "fake"); // test mode sender; the dispatcher is called directly
+        r.add("orleu.jobs.message-interval", () -> "PT24H");
         r.add("orleu.jobs.outbox-interval", () -> "PT24H"); // tests call the outbox processor directly
     }
 

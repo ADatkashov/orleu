@@ -1547,4 +1547,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String giftReturnNote(String amount, String currency) {
     return 'Up to $amount $currency can go back onto the gift card(s). It is not paid out in cash.';
   }
+
+  @override
+  String get messagesSent => 'Sent';
+
+  @override
+  String get messagesFailed => 'Failed';
+
+  @override
+  String get messagesRetry => 'Try again';
+
+  @override
+  String get messagesTestMode =>
+      'Test mode: messages are handled by a test sender and nothing is delivered to customers.';
+
+  @override
+  String messagesRetrying(int n) {
+    return 'Retrying (attempt $n)';
+  }
 }

@@ -21,7 +21,9 @@ public class NotificationController {
     private final TenantAccess access;
     private final JdbcClient jdbc;
 
-    public NotificationController(TenantAccess access, JdbcClient jdbc) { this.access = access; this.jdbc = jdbc; }
+    private final org.springframework.beans.factory.ObjectProvider<MessageSender> sender;
+
+    public NotificationController(TenantAccess access, JdbcClient jdbc, org.springframework.beans.factory.ObjectProvider<MessageSender> sender) { this.access = access; this.jdbc = jdbc; this.sender = sender; }
 
     @GetMapping
     public List<NotificationView> list(@PathVariable UUID businessId, @RequestParam(defaultValue = "false") boolean unreadOnly) {
@@ -56,17 +58,40 @@ public class NotificationController {
         if (n == 0) throw ApiException.notFound("Notification");
     }
 
-    public record MessageView(UUID id, String messageType, UUID bookingId, String locale, String recipientPhone, String body, String status, Instant createdAt) {}
+    public record MessageView(UUID id, String messageType, UUID bookingId, String locale, String recipientPhone, String body, String status, Instant createdAt,
+                              String channel, int attempts, String lastError, Instant sentAt) {}
+    public record MessagingStatus(String provider, boolean testMode) {}
 
     /** The customer messages the system has prepared. Status NOT_SENT = no delivery provider is configured yet. */
     @GetMapping("/customer-messages")
     public List<MessageView> customerMessages(@PathVariable UUID businessId) {
         access.require(businessId, Permission.CUSTOMERS_VIEW); // contains customer phone numbers
         return jdbc.sql("""
-            select id, message_type, booking_id, locale, recipient_phone, body, status, created_at from customer_messages
+            select id, message_type, booking_id, locale, recipient_phone, body, status, created_at, channel, attempts, last_error, sent_at from customer_messages
             where business_id = :b order by created_at desc limit 100
             """).param("b", businessId)
             .query((rs, i) -> new MessageView(rs.getObject(1, UUID.class), rs.getString(2), rs.getObject(3, UUID.class), rs.getString(4),
-                    rs.getString(5), rs.getString(6), rs.getString(7), rs.getTimestamp(8).toInstant())).list();
+                    rs.getString(5), rs.getString(6), rs.getString(7), rs.getTimestamp(8).toInstant(),
+                    rs.getString(9), rs.getInt(10), rs.getString(11), rs.getTimestamp(12) == null ? null : rs.getTimestamp(12).toInstant())).list();
+    }
+
+    /** NONE = nothing is delivered (messages stay NOT_SENT); FAKE = test mode, nothing real leaves the system. */
+    @GetMapping("/messaging/status")
+    public MessagingStatus messagingStatus(@PathVariable UUID businessId) {
+        access.require(businessId, Permission.BOOKINGS_VIEW);
+        var s = sender.getIfAvailable();
+        return new MessagingStatus(s == null ? "NONE" : s.name(), s != null && s.testMode());
+    }
+
+    /** Puts a FAILED message back in the queue (attempts reset). */
+    @PostMapping("/customer-messages/{id}/retry") @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void retry(@PathVariable UUID businessId, @PathVariable UUID id) {
+        access.require(businessId, Permission.CUSTOMERS_MANAGE);
+        int n = jdbc.sql("update customer_messages set status = 'NOT_SENT', attempts = 0, next_attempt_at = null, last_error = null where id = :id and business_id = :b and status = 'FAILED'")
+                .param("id", id).param("b", businessId).update();
+        if (n == 0) {
+            boolean exists = jdbc.sql("select exists(select 1 from customer_messages where id = :id and business_id = :b)").param("id", id).param("b", businessId).query(Boolean.class).single();
+            throw exists ? ApiException.conflict("NOT_FAILED", "Only a failed message can be retried") : ApiException.notFound("Message");
+        }
     }
 }

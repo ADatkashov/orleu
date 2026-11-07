@@ -25,6 +25,7 @@ class MessagesScreen extends ConsumerWidget {
     final biz = ref.watch(currentBusinessProvider).value;
     final msgs = ref.watch(customerMessagesProvider);
     final zone = ref.watch(businessZoneProvider);
+    final mode = ref.watch(messagingStatusProvider).value;
     Future<void> save({int? hours, String? lang, int? retention}) async {
       final ok = await guarded(context, () => ref.read(bookingActionsProvider).updateMessaging(reminderHours: hours, customerLocale: lang, retentionMonths: retention));
       if (ok && context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.messagesSaved)));
@@ -34,6 +35,11 @@ class MessagesScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l.messagesNav)),
       body: ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
         Text(l.messagesNote, style: t.textTheme.bodySmall),
+        if (mode != null && mode.testMode) Container(
+          key: const Key('testMode'), margin: const EdgeInsets.only(top: AppSpacing.sm), padding: const EdgeInsets.all(AppSpacing.sm),
+          decoration: BoxDecoration(border: Border.all(color: AppColors.warning), borderRadius: BorderRadius.circular(8)),
+          child: Text(l.messagesTestMode),
+        ),
         const SizedBox(height: AppSpacing.md),
         if (biz != null) ...[
           Text(l.messagesReminder, style: t.textTheme.titleSmall),
@@ -87,12 +93,12 @@ class MessagesScreen extends ConsumerWidget {
   }
 }
 
-class _MessageCard extends StatelessWidget {
+class _MessageCard extends ConsumerWidget {
   final CustomerMessage m;
   final String zone;
   const _MessageCard(this.m, this.zone);
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context);
     final when = DateFormat('dd.MM HH:mm').format(wallFromInstant(m.createdAt, zone));
@@ -102,10 +108,17 @@ class _MessageCard extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             Expanded(child: Text('${m.recipientPhone} · $when', style: t.textTheme.bodySmall)),
-            Text(m.status == 'NOT_SENT' ? l.messagesNotSent : m.status, style: t.textTheme.labelSmall?.copyWith(color: AppColors.warning)),
+            Text(
+              switch (m.status) { 'NOT_SENT' => m.attempts > 0 ? l.messagesRetrying(m.attempts) : l.messagesNotSent, 'SENT' => l.messagesSent, _ => l.messagesFailed },
+              key: Key('status-${m.id}'), style: t.textTheme.labelSmall?.copyWith(color: m.status == 'SENT' ? AppColors.success : m.status == 'FAILED' ? AppColors.danger : AppColors.warning),
+            ),
           ]),
           const SizedBox(height: AppSpacing.xs),
           Text(m.body, style: t.textTheme.bodyMedium),
+          if (m.status == 'FAILED') Row(children: [
+            Expanded(child: Text(m.lastError ?? '', style: t.textTheme.bodySmall)),
+            TextButton(key: Key('retry-${m.id}'), onPressed: () => guarded(context, () => retryMessage(ref, m.id)), child: Text(l.messagesRetry)),
+          ]),
         ]),
       ),
     );
