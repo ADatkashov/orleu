@@ -2907,6 +2907,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Void card {code}? The customer will not be able to use it. This cannot be undone.'**
   String giftVoidWarning(String code);
+
+  /// No description provided for @giftReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to gift card'**
+  String get giftReturn;
+
+  /// No description provided for @giftReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Value returned to the gift card'**
+  String get giftReturned;
+
+  /// No description provided for @giftNothingToReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing on this booking was paid with a gift card, or it was already returned.'**
+  String get giftNothingToReturn;
+
+  /// No description provided for @errGiftNothing.
+  ///
+  /// In en, this message translates to:
+  /// **'That amount cannot be returned to a gift card.'**
+  String get errGiftNothing;
+
+  /// No description provided for @giftReturnNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to {amount} {currency} can go back onto the gift card(s). It is not paid out in cash.'**
+  String giftReturnNote(String amount, String currency);
 }
 
 class _AppLocalizationsDelegate

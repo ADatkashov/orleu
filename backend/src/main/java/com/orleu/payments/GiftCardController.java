@@ -19,6 +19,7 @@ public class GiftCardController {
     public record SellRequest(@NotNull @DecimalMin("0.01") @Digits(integer = 12, fraction = 2) BigDecimal amount, @NotNull Method method,
                               @Size(max = 200) String buyerName, @Size(max = 300) String note, LocalDate expiresOn) {}
     public record CodeRequest(@NotBlank @Size(max = 40) String code) {}
+    public record RestoreRequest(@NotNull @DecimalMin("0.01") @Digits(integer = 12, fraction = 2) BigDecimal amount) {}
     public record RedeemRequest(@NotBlank @Size(max = 40) String code, @NotNull @DecimalMin("0.01") @Digits(integer = 12, fraction = 2) BigDecimal amount) {}
 
     private final GiftCardService service;
@@ -38,6 +39,15 @@ public class GiftCardController {
 
     @PostMapping("/gift-cards/{id}/void")
     public CardView voidCard(@PathVariable UUID businessId, @PathVariable UUID id) { return service.voidCard(businessId, id); }
+
+    /** How much of this booking's gift-card payments can still go back onto the cards. */
+    @GetMapping("/bookings/{bookingId}/gift-card-restorable")
+    public RestorableView restorable(@PathVariable UUID businessId, @PathVariable UUID bookingId) { return service.restorable(businessId, bookingId); }
+
+    @PostMapping("/bookings/{bookingId}/gift-card-refunds") @ResponseStatus(HttpStatus.CREATED)
+    public BookingView restore(@PathVariable UUID businessId, @PathVariable UUID bookingId, @RequestHeader("Idempotency-Key") String key, @Valid @RequestBody RestoreRequest r) {
+        return service.restore(businessId, bookingId, key, r.amount());
+    }
 
     @PostMapping("/bookings/{bookingId}/gift-card-payments") @ResponseStatus(HttpStatus.CREATED)
     public BookingView redeem(@PathVariable UUID businessId, @PathVariable UUID bookingId, @RequestHeader("Idempotency-Key") String key, @Valid @RequestBody RedeemRequest r) {

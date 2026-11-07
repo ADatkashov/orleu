@@ -35,6 +35,8 @@ public class GiftCardService {
     public record CardView(UUID id, String codeLast4, BigDecimal initialAmount, BigDecimal balance, String currency, String soldMethod, String buyerName, String note,
                            LocalDate expiresOn, boolean expired, String status, Instant createdAt) {}
     public record Sold(CardView card, String code, boolean codeShown) {}
+    public record Restorable(UUID cardId, String codeLast4, BigDecimal amount) {}
+    public record RestorableView(BigDecimal total, List<Restorable> cards) {}
 
     private static final String ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O/1/I
     private static final SecureRandom RANDOM = new SecureRandom();
@@ -189,5 +191,54 @@ public class GiftCardService {
         });
         audit.log(businessId, CurrentUser.id(), "GIFT_CARD_REDEEMED", "GIFT_CARD", cardId, "{\"booking\":\"" + bookingId + "\",\"amount\":\"" + a + "\"}");
         return view;
+    }
+
+    // ---------- returning value to the card ----------
+
+    /** Per card paid into this booking: redeemed minus already restored, newest redemption first. Void cards are excluded (their value cannot come back). */
+    private List<Restorable> restorableCards(UUID businessId, UUID bookingId, boolean lock) {
+        return jdbc.sql("""
+            select g.id, g.code_last4,
+                   sum(r.amount) - coalesce((select sum(x.amount) from gift_card_restorations x where x.booking_id = r.booking_id and x.gift_card_id = r.gift_card_id), 0) as left_amount
+            from gift_card_redemptions r join gift_cards g on g.id = r.gift_card_id and g.business_id = r.business_id
+            where r.business_id = :b and r.booking_id = :bk and g.status = 'ACTIVE'
+            group by g.id, g.code_last4, r.booking_id, r.gift_card_id
+            having sum(r.amount) - coalesce((select sum(x.amount) from gift_card_restorations x where x.booking_id = r.booking_id and x.gift_card_id = r.gift_card_id), 0) > 0
+            order by max(r.created_at) desc
+            """).param("b", businessId).param("bk", bookingId).query((rs, i) -> new Restorable(rs.getObject(1, UUID.class), rs.getString(2), rs.getBigDecimal(3))).list();
+    }
+
+    @Transactional(readOnly = true)
+    public RestorableView restorable(UUID businessId, UUID bookingId) {
+        access.require(businessId, Permission.FINANCE_VIEW);
+        boolean exists = jdbc.sql("select exists(select 1 from bookings where id = :id and business_id = :b)").param("id", bookingId).param("b", businessId).query(Boolean.class).single();
+        if (!exists) throw ApiException.notFound("Booking");
+        var cards = restorableCards(businessId, bookingId, false);
+        return new RestorableView(cards.stream().map(Restorable::amount).reduce(BigDecimal.ZERO, BigDecimal::add), cards);
+    }
+
+    /** Puts {@code amount} back on the card(s) this booking was paid with (newest redemption first) and records it in the ledger as a GIFT_CARD refund. */
+    @Transactional
+    public BookingView restore(UUID businessId, UUID bookingId, String idempotencyKey, BigDecimal amount) {
+        access.require(businessId, Permission.FINANCE_MANAGE);
+        BigDecimal a = Money.scale(amount);
+        if (a.signum() <= 0) throw ApiException.badRequest("INVALID_AMOUNT", "The amount must be positive");
+        return payments.recordGiftCardRefund(businessId, bookingId, "gift-refund-" + idempotencyKey, a, () -> {
+            BigDecimal left = a;
+            var cards = restorableCards(businessId, bookingId, true);
+            BigDecimal available = cards.stream().map(Restorable::amount).reduce(BigDecimal.ZERO, BigDecimal::add);
+            if (available.compareTo(a) < 0) throw ApiException.conflict("GIFT_CARD_NOTHING_TO_RESTORE", "At most " + available + " can be returned to gift cards for this booking");
+            for (Restorable c : cards) {
+                if (left.signum() == 0) break;
+                BigDecimal part = left.min(c.amount());
+                int n = jdbc.sql("update gift_cards set balance = balance + :a where id = :id and business_id = :b and status = 'ACTIVE' and balance + :a <= initial_amount")
+                        .param("a", part).param("id", c.cardId()).param("b", businessId).update();
+                if (n == 0) throw ApiException.conflict("GIFT_CARD_NOTHING_TO_RESTORE", "The gift card can no longer take this amount");
+                jdbc.sql("insert into gift_card_restorations (business_id, gift_card_id, booking_id, amount, idempotency_key, created_by) values (:b, :g, :bk, :a, :k, :u)")
+                        .param("b", businessId).param("g", c.cardId()).param("bk", bookingId).param("a", part).param("k", idempotencyKey).param("u", CurrentUser.id()).update();
+                left = left.subtract(part);
+            }
+            audit.log(businessId, CurrentUser.id(), "GIFT_CARD_RESTORED", "BOOKING", bookingId, "{\"amount\":\"" + a + "\"}");
+        });
     }
 }

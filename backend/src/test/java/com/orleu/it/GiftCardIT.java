@@ -171,4 +171,73 @@ class GiftCardIT extends AbstractIT {
         assertEquals(403, get(staff, "/api/v1/businesses/%s/gift-cards", f.businessId).status());
         assertEquals(401, get(null, "/api/v1/businesses/%s/gift-cards", f.businessId).status());
     }
+
+    private Res restore(Fixture f, UUID booking, Object amount, String key) {
+        return call(MockMvcRequestBuilders.post("/api/v1/businesses/" + f.businessId + "/bookings/" + booking + "/gift-card-refunds"), f.ownerToken, Map.of("amount", amount), "Idempotency-Key", key);
+    }
+
+    private BigDecimal restorable(Fixture f, UUID booking) {
+        return get(f.ownerToken, "/api/v1/businesses/%s/bookings/%s/gift-card-restorable", f.businessId, booking).body().path("total").decimalValue();
+    }
+
+    @Test void valuePaidWithAGiftCardGoesBackToTheCardNotOutAsCash() {
+        Fixture f = Fixture.create(this, 1, false);
+        String code = sell(f.ownerToken, f, 8000, "CASH", "sale-r1").body().path("code").asText();
+        UUID b = booking(f, "+77010015001", 10);
+        assertEquals(201, redeem(f.ownerToken, f, b, code, 5000, "rr-1").status());
+        assertEquals(201, call(MockMvcRequestBuilders.post("/api/v1/businesses/" + f.businessId + "/bookings/" + b + "/payments"), f.ownerToken, Map.of("amount", "1000", "method", "CASH"), "Idempotency-Key", "rp-1").status());
+        assertEquals(0, new BigDecimal("5000").compareTo(restorable(f, b)));
+        assertEquals(0, new BigDecimal("3000").compareTo(balance(code, f)));
+
+        Res r = restore(f, b, 3000, "rs-1");
+        assertEquals(201, r.status(), r.body().toString());
+        assertEquals(0, new BigDecimal("6000").compareTo(balance(code, f)), "3000 left + 3000 returned");
+        assertEquals(0, new BigDecimal("3000").compareTo(r.body().path("financials").path("netPaid").decimalValue()), "5000 gift + 1000 cash - 3000 returned");
+        assertEquals("GIFT_CARD", jdbc.queryForObject("select method from ledger_entries where booking_id = ? and entry_type = 'REFUND'", String.class, b));
+        // replay: same key, same amount, nothing returned twice
+        assertEquals(201, restore(f, b, 3000, "rs-1").status());
+        assertEquals(0, new BigDecimal("6000").compareTo(balance(code, f)));
+        assertEquals(409, restore(f, b, 2500, "rs-1").status(), "same key, different amount");
+
+        assertEquals(0, new BigDecimal("2000").compareTo(restorable(f, b)));
+        assertEquals("GIFT_CARD_NOTHING_TO_RESTORE", restore(f, b, 2001, "rs-2").body().path("code").asText());
+        assertEquals(0, new BigDecimal("6000").compareTo(balance(code, f)), "a refused restore changes nothing");
+        assertEquals(201, restore(f, b, 2000, "rs-3").status());
+        assertEquals(0, new BigDecimal("8000").compareTo(balance(code, f)), "back to the original value, never more");
+        assertEquals(409, restore(f, b, 1, "rs-4").status());
+        // the cash part is still refundable in cash, and returning gift-card value did not eat into it
+        assertEquals(201, call(MockMvcRequestBuilders.post("/api/v1/businesses/" + f.businessId + "/bookings/" + b + "/refunds"), f.ownerToken, Map.of("amount", "1000", "method", "CASH"), "Idempotency-Key", "rc-1").status());
+        assertEquals(409, call(MockMvcRequestBuilders.post("/api/v1/businesses/" + f.businessId + "/bookings/" + b + "/refunds"), f.ownerToken, Map.of("amount", "1", "method", "CASH"), "Idempotency-Key", "rc-2").status());
+        assertThrows(Exception.class, () -> jdbc.update("update gift_card_restorations set amount = 1 where business_id = ?", f.businessId));
+    }
+
+    @Test void restoringGoesToTheNewestCardFirstAndVoidCardsAreExcluded() {
+        Fixture f = Fixture.create(this, 1, false);
+        String older = sell(f.ownerToken, f, 3000, "CASH", "sale-r2").body().path("code").asText();
+        String newer = sell(f.ownerToken, f, 3000, "CASH", "sale-r3").body().path("code").asText();
+        UUID b = booking(f, "+77010015002", 10);
+        assertEquals(201, redeem(f.ownerToken, f, b, older, 3000, "rr-2").status());
+        assertEquals(201, redeem(f.ownerToken, f, b, newer, 2000, "rr-3").status());
+        assertEquals(201, restore(f, b, 2500, "rs-5").status());
+        assertEquals(0, new BigDecimal("3000").compareTo(balance(newer, f)), "newer card got its 2000 back and is full again");
+        assertEquals(0, new BigDecimal("500").compareTo(balance(older, f)), "the older card got the remaining 500");
+        // void the older card: its remaining 2500 can no longer be returned
+        UUID olderId = UUID.fromString(get(f.ownerToken, "/api/v1/businesses/%s/gift-cards", f.businessId).body().get(1).path("id").asText());
+        assertEquals(200, post(f.ownerToken, "/api/v1/businesses/%s/gift-cards/%s/void", Map.of(), f.businessId, olderId).status());
+        assertEquals(0, BigDecimal.ZERO.compareTo(restorable(f, b)));
+        assertEquals(409, restore(f, b, 100, "rs-6").status());
+    }
+
+    @Test void restorePermissionsAndIsolation() {
+        Fixture f = Fixture.create(this, 1, false), other = Fixture.create(this, 1, false);
+        String code = sell(f.ownerToken, f, 4000, "CASH", "sale-r4").body().path("code").asText();
+        UUID b = booking(f, "+77010015003", 10);
+        assertEquals(201, redeem(f.ownerToken, f, b, code, 4000, "rr-4").status());
+        String staff = newUser("staffrs");
+        post(f.ownerToken, "/api/v1/businesses/%s/members", Map.of("email", get(staff, "/api/v1/me").text("email"), "role", "STAFF"), f.businessId);
+        assertEquals(403, call(MockMvcRequestBuilders.post("/api/v1/businesses/" + f.businessId + "/bookings/" + b + "/gift-card-refunds"), staff, Map.of("amount", 100), "Idempotency-Key", "x").status());
+        assertEquals(404, call(MockMvcRequestBuilders.post("/api/v1/businesses/" + other.businessId + "/bookings/" + b + "/gift-card-refunds"), other.ownerToken, Map.of("amount", 100), "Idempotency-Key", "x").status());
+        assertEquals(404, get(other.ownerToken, "/api/v1/businesses/%s/bookings/%s/gift-card-restorable", other.businessId, b).status());
+        assertEquals(400, restore(f, b, 0, "rs-z").status());
+    }
 }

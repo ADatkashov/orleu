@@ -373,6 +373,19 @@ class _SheetState extends ConsumerState<BookingSheet> {
           if (f.paid > 0 && canRefund(ref.watch(myRoleProvider).value)) Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: OutlinedButton.icon(
+              key: const Key('giftReturnAction'),
+              icon: const Icon(Icons.card_giftcard),
+              label: Text(l.giftReturn),
+              onPressed: _busy ? null : () {
+                final nav = Navigator.of(context);
+                nav.pop();
+                showModalBottomSheet(context: nav.context, isScrollControlled: true, showDragHandle: true, builder: (_) => GiftRestoreSheet(booking: b));
+              },
+            ),
+          ),
+          if (f.paid > 0 && canRefund(ref.watch(myRoleProvider).value)) Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: OutlinedButton.icon(
               key: const Key('refundAction'),
               icon: const Icon(Icons.undo),
               label: Text(l.refundAction),

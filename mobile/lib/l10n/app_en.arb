@@ -513,5 +513,11 @@
   "errGiftInvalid": "This gift card cannot be used (unknown, void or expired).",
   "errGiftInsufficient": "The gift card balance is too low for this amount.",
   "giftVoidWarning": "Void card {code}? The customer will not be able to use it. This cannot be undone.",
-  "@giftVoidWarning": {"placeholders": {"code": {"type": "String"}}}
+  "@giftVoidWarning": {"placeholders": {"code": {"type": "String"}}},
+  "giftReturn": "Return to gift card",
+  "giftReturned": "Value returned to the gift card",
+  "giftNothingToReturn": "Nothing on this booking was paid with a gift card, or it was already returned.",
+  "errGiftNothing": "That amount cannot be returned to a gift card.",
+  "giftReturnNote": "Up to {amount} {currency} can go back onto the gift card(s). It is not paid out in cash.",
+  "@giftReturnNote": {"placeholders": {"amount": {"type": "String"}, "currency": {"type": "String"}}}
 }
