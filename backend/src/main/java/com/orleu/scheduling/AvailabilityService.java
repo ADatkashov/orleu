@@ -103,6 +103,16 @@ public class AvailabilityService {
                     }).list();
         }
 
+        // Per-date exceptions replace the weekly ranges for this date (day off = present with no ranges).
+        Map<UUID, List<LocalTime[]>> exceptionRanges = new HashMap<>();
+        jdbc.sql("select employee_id, day_off, start_time, end_time from employee_date_exceptions where employee_id in (:ids) and on_date = :d")
+                .param("ids", employees).param("d", date)
+                .query((rs, i) -> {
+                    var list = exceptionRanges.computeIfAbsent(rs.getObject(1, UUID.class), k -> new ArrayList<>());
+                    if (!rs.getBoolean(2)) list.add(new LocalTime[]{rs.getObject(3, LocalTime.class), rs.getObject(4, LocalTime.class)});
+                    return 0;
+                }).list();
+
         Instant earliest = applyOnlineRules ? now.plus(Duration.ofMinutes(rules[0])) : now;
         Instant latest = applyOnlineRules ? now.plus(Duration.ofDays(rules[1])) : Instant.MAX;
 
@@ -117,7 +127,10 @@ public class AvailabilityService {
             LocalTime slotStart = t.toLocalTime(), slotEnd = t.plus(duration).toLocalTime();
             boolean sameDay = t.plus(duration).toLocalDate().equals(date);
             for (UUID e : employees) {
-                if (hasSchedule.contains(e)) {
+                if (exceptionRanges.containsKey(e)) {
+                    boolean inside = sameDay && exceptionRanges.get(e).stream().anyMatch(r -> !slotStart.isBefore(r[0]) && !slotEnd.isAfter(r[1]));
+                    if (!inside) continue;
+                } else if (hasSchedule.contains(e)) {
                     boolean inside = sameDay && personal.getOrDefault(e, List.of()).stream().anyMatch(r -> !slotStart.isBefore(r[0]) && !slotEnd.isAfter(r[1]));
                     if (!inside) continue;
                 }

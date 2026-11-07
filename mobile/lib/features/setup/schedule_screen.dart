@@ -17,6 +17,14 @@ final dateRangePickerProvider = Provider<Future<DateTimeRange?> Function(BuildCo
       lastDate: DateTime.now().add(const Duration(days: 730)),
     ));
 
+/// Opens the platform single-date picker. Replaced in tests.
+final datePickerProvider = Provider<Future<DateTime?> Function(BuildContext)>((ref) => (context) => showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(const Duration(days: 1)),
+      lastDate: DateTime.now().add(const Duration(days: 730)),
+    ));
+
 List<String> _times() => [for (var m = 0; m < 24 * 60; m += 30) '${(m ~/ 60).toString().padLeft(2, '0')}:${(m % 60).toString().padLeft(2, '0')}'];
 
 /// Weekly working hours of one specialist (several ranges per day = breaks) and their time off.
@@ -111,9 +119,86 @@ class _State extends ConsumerState<ScheduleScreen> {
                 trailing: IconButton(key: Key('removeTimeOff-${o.id}'), tooltip: l.timeOffRemove, icon: const Icon(Icons.delete_outline), onPressed: () => guarded(context, () => ref.read(bookingActionsProvider).removeTimeOff(widget.employeeId, o.id))),
               ),
             ),
+            const SizedBox(height: AppSpacing.lg),
+            Row(children: [
+              Expanded(child: Text(l.exceptionsTitle, style: t.textTheme.titleMedium)),
+              TextButton.icon(key: const Key('addException'), icon: const Icon(Icons.add), label: Text(l.exceptionAdd), onPressed: () => showDialog<void>(context: context, builder: (_) => _ExceptionDialog(employeeId: widget.employeeId))),
+            ]),
+            Text(l.exceptionsNote, style: t.textTheme.bodySmall),
+            if (s.exceptions.isEmpty) Text(l.exceptionsNone, key: const Key('noExceptions'), style: t.textTheme.bodySmall),
+            for (final e in s.exceptions) Card(
+              child: ListTile(
+                key: Key('exception-${DateFormat('yyyy-MM-dd').format(e.date)}'),
+                title: Text(DateFormat('EEE dd.MM.yyyy', Localizations.localeOf(context).toLanguageTag()).format(e.date)),
+                subtitle: Text(e.dayOff ? l.scheduleDayOff : e.ranges.map((r) => '${r.start}–${r.end}').join(', ')),
+                trailing: IconButton(key: Key('removeException-${DateFormat('yyyy-MM-dd').format(e.date)}'), tooltip: l.timeOffRemove, icon: const Icon(Icons.delete_outline),
+                    onPressed: () => guarded(context, () => ref.read(bookingActionsProvider).removeDateException(widget.employeeId, e.date))),
+              ),
+            ),
           ]);
         },
       ),
+    );
+  }
+}
+
+class _ExceptionDialog extends ConsumerStatefulWidget {
+  final String employeeId;
+  const _ExceptionDialog({required this.employeeId});
+  @override
+  ConsumerState<_ExceptionDialog> createState() => _ExceptionState();
+}
+
+class _ExceptionState extends ConsumerState<_ExceptionDialog> {
+  DateTime? _date;
+  bool _dayOff = true;
+  String _start = '10:00', _end = '16:00';
+  bool _busy = false;
+  String? _error;
+  int? _affected;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final times = _times();
+    final ends = [...times.skip(1), '23:59'];
+    return AlertDialog(
+      title: Text(l.exceptionAdd),
+      content: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        OutlinedButton.icon(
+          key: const Key('pickExceptionDate'), icon: const Icon(Icons.event),
+          label: Text(_date == null ? l.exceptionPickDate : DateFormat('dd.MM.yyyy').format(_date!)),
+          onPressed: () async {
+            final d = await ref.read(datePickerProvider)(context);
+            if (d != null && mounted) setState(() => _date = d);
+          },
+        ),
+        SwitchListTile(key: const Key('exceptionDayOff'), contentPadding: EdgeInsets.zero, title: Text(l.scheduleDayOff), value: _dayOff, onChanged: (v) => setState(() => _dayOff = v)),
+        if (!_dayOff) ...[
+          DropdownButtonFormField<String>(key: const Key('exceptionStart'), initialValue: _start, decoration: InputDecoration(labelText: l.scheduleFrom), items: [for (final x in times) DropdownMenuItem(value: x, child: Text(x))], onChanged: (v) => setState(() => _start = v!)),
+          const SizedBox(height: AppSpacing.sm),
+          DropdownButtonFormField<String>(key: const Key('exceptionEnd'), initialValue: _end, decoration: InputDecoration(labelText: l.scheduleTo), items: [for (final x in ends) DropdownMenuItem(value: x, child: Text(x))], onChanged: (v) => setState(() => _end = v!)),
+        ],
+        FormError(_error),
+        if (_affected != null && _affected! > 0) Text(l.scheduleAffected(_affected!), key: const Key('exceptionAffected'), style: TextStyle(color: AppColors.warning)),
+      ])),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(_affected == null ? l.cancel : l.close)),
+        if (_affected == null) FilledButton(
+          key: const Key('confirmException'), style: FilledButton.styleFrom(minimumSize: const Size(96, 44)),
+          onPressed: _busy || _date == null ? null : () async {
+            if (!_dayOff && _start.compareTo(_end) >= 0) { setState(() => _error = l.scheduleBadRange); return; }
+            setState(() { _busy = true; _error = null; });
+            int? affected;
+            final err = await attempt(context, () async { affected = await ref.read(bookingActionsProvider).setDateException(widget.employeeId, _date!, dayOff: _dayOff, start: _start, end: _end); });
+            if (!context.mounted) return;
+            if (err != null) { setState(() { _busy = false; _error = err; }); return; }
+            // bookings that no longer fit are reported first, never silently dropped: keep the dialog open to show them
+            if ((affected ?? 0) > 0) { setState(() { _busy = false; _affected = affected; }); } else { Navigator.pop(context); }
+          },
+          child: Text(l.save),
+        ),
+      ],
     );
   }
 }

@@ -207,12 +207,25 @@ class TimeOffItem {
       id: j['id'], startsAt: DateTime.parse(j['startsAt']), endsAt: DateTime.parse(j['endsAt']), reason: j['reason'], affectedBookings: j['affectedBookings'] ?? 0);
 }
 
+/// One calendar date (business-local) that differs from the weekly schedule: a day off or other working ranges.
+class DateException {
+  final DateTime date; // date only
+  final bool dayOff;
+  final List<({String start, String end})> ranges; // 'HH:mm'
+  const DateException({required this.date, required this.dayOff, required this.ranges});
+  factory DateException.fromJson(Map<String, dynamic> j) => DateException(
+      date: DateTime.parse(j['date']), dayOff: j['dayOff'] == true,
+      ranges: [for (final r in (j['ranges'] as List? ?? const [])) (start: (r['start'] as String).substring(0, 5), end: (r['end'] as String).substring(0, 5))]);
+}
+
 class EmployeeSchedule {
   final List<ScheduleRange> hours;
   final List<TimeOffItem> timeOff;
-  const EmployeeSchedule(this.hours, this.timeOff);
+  final List<DateException> exceptions;
+  const EmployeeSchedule(this.hours, this.timeOff, [this.exceptions = const []]);
   factory EmployeeSchedule.fromJson(Map<String, dynamic> j) => EmployeeSchedule(
-      [for (final h in (j['hours'] as List)) ScheduleRange.fromJson(h)], [for (final t in (j['timeOff'] as List)) TimeOffItem.fromJson(t)]);
+      [for (final h in (j['hours'] as List)) ScheduleRange.fromJson(h)], [for (final t in (j['timeOff'] as List)) TimeOffItem.fromJson(t)],
+      [for (final e in (j['exceptions'] as List? ?? const [])) DateException.fromJson(e)]);
 }
 
 class PlanUsage {

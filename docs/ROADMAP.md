@@ -36,7 +36,7 @@ _Last updated: 2026-11-07._
 ## Phases (spec addendum §14)
 ### Phase 1 — Foundation: DONE (with gaps)
 Auth, multi-tenancy, onboarding (create business → setup checklist → publish), branches/hours, services, employees, scheduling, bookings: DONE.
-Gaps: OTP/phone login, MFA, e-mail invitations, branch-level permissions, (done: specialist weekly hours, breaks, time off; still missing: per-date exceptions, shift templates), service images, per-employee prices, onboarding templates per business type, branding settings.
+Gaps: OTP/phone login, MFA, e-mail invitations, branch-level permissions, (done: specialist weekly hours, breaks, time off, per-date exceptions; still missing: shift templates), service images, per-employee prices, onboarding templates per business type, branding settings.
 
 ### Phase 2 — Commercial core: PARTIAL
 - DONE: deposits (decimal-safe), immutable ledger, manual payments/refunds with idempotency, plans + entitlements, outbox + in-app notifications.
@@ -96,4 +96,5 @@ Personal-data law review (TODO, legal), KZT + other currencies (KZT DONE), real 
 8. ~~Promo codes / discounts~~ — done (percent or fixed, validity window, usage limit, per-service; no per-customer limits, stacking or automatic discounts yet).
 9. ~~Customer tags and tag filter~~ — done (manual tags only; no automatic/rule-based segments yet).
 10. ~~Manual duplicate merge for customers~~ — done.
-11. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.
+11. ~~Per-date schedule exceptions for specialists~~ — done (shift templates remain).
+12. When the owner provides accounts: payment provider adapter (sandbox first), e-mail/SMS provider, Neon/R2.

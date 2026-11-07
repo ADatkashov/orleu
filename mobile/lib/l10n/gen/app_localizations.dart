@@ -2535,6 +2535,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Merge {dup} ({phone}) into {name}? Its bookings, tags and notes move to {name}; the duplicate record is deleted. Marketing consent is not transferred. This cannot be undone.'**
   String mergeWarning(String dup, String phone, String name);
+
+  /// No description provided for @exceptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Special days'**
+  String get exceptionsTitle;
+
+  /// No description provided for @exceptionAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add special day'**
+  String get exceptionAdd;
+
+  /// No description provided for @exceptionsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A date here replaces the weekly hours for that one day: a day off or different hours.'**
+  String get exceptionsNote;
+
+  /// No description provided for @exceptionsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No special days planned'**
+  String get exceptionsNone;
+
+  /// No description provided for @exceptionPickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose date'**
+  String get exceptionPickDate;
+
+  /// No description provided for @scheduleBadRange.
+  ///
+  /// In en, this message translates to:
+  /// **'The end must be after the start.'**
+  String get scheduleBadRange;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
 }
 
 class _AppLocalizationsDelegate
