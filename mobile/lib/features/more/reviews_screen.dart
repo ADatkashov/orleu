@@ -6,7 +6,7 @@ import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
 import '../../core/tz.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../setup/setup_common.dart';
 
@@ -32,14 +32,12 @@ class ReviewsScreen extends ConsumerWidget {
           final maxCount = sum.distribution.fold<int>(1, (a, v) => v > a ? v : a);
           return RefreshIndicator(
             onRefresh: () async => ref.invalidate(reviewsProvider),
-            child: ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: ListView(padding: EdgeInsets.fromLTRB(AppSpacing.gutter(context), AppSpacing.sm, AppSpacing.gutter(context), AppSpacing.xl), children: [
+              AppCard(
+                child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(l.reviewsAverage, style: t.textTheme.bodySmall),
-                      Text(sum.average!.toStringAsFixed(1), key: const Key('avg'), style: t.textTheme.headlineMedium),
+                      Text(sum.average!.toStringAsFixed(1), key: const Key('avg'), style: t.textTheme.displaySmall),
                       Text(l.reviewsCount(sum.count), style: t.textTheme.bodySmall),
                     ]),
                     const SizedBox(width: AppSpacing.lg),
@@ -54,17 +52,16 @@ class ReviewsScreen extends ConsumerWidget {
                       ),
                     ])),
                   ]),
-                ),
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(l.reviewsNote, style: t.textTheme.bodySmall),
-              const SizedBox(height: AppSpacing.sm),
-              for (final r in items) Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
+              const SizedBox(height: AppSpacing.md),
+              for (final r in items) Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm + 2),
+                child: AppCard(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(children: [
-                      Semantics(label: '${r.rating}/5', child: Text('★' * r.rating + '☆' * (5 - r.rating), style: t.textTheme.titleMedium?.copyWith(color: context.palette.warningFg))),
+                      Semantics(label: '${r.rating}/5', child: Text('★' * r.rating + '☆' * (5 - r.rating), style: t.textTheme.titleMedium?.copyWith(color: context.palette.warning))),
                       const Spacer(),
                       Text(DateFormat('dd.MM.yyyy').format(wallFromInstant(r.createdAt, zone)), style: t.textTheme.bodySmall),
                     ]),
@@ -72,11 +69,11 @@ class ReviewsScreen extends ConsumerWidget {
                     if (r.comment != null && r.comment!.isNotEmpty) Padding(padding: const EdgeInsets.only(top: AppSpacing.xs), child: Text(r.comment!)),
                     if (r.hidden) Padding(
                       padding: const EdgeInsets.only(top: AppSpacing.xs),
-                      child: Text(l.reviewHidden(r.hiddenReason ?? ''), key: Key('hidden-${r.id}'), style: TextStyle(color: context.palette.warningFg)),
+                      child: Align(alignment: Alignment.centerLeft, child: StatusBadge(l.reviewHidden(r.hiddenReason ?? ''), key: Key('hidden-${r.id}'), tone: BadgeTone.warning)),
                     ),
                     if (r.reply != null) Container(
-                      key: Key('reply-${r.id}'), margin: const EdgeInsets.only(top: AppSpacing.sm), padding: const EdgeInsets.all(AppSpacing.sm),
-                      decoration: BoxDecoration(border: Border(left: BorderSide(color: t.colorScheme.primary, width: 3))),
+                      key: Key('reply-${r.id}'), margin: const EdgeInsets.only(top: AppSpacing.sm), padding: const EdgeInsets.all(AppSpacing.sm + 4),
+                      decoration: BoxDecoration(color: t.colorScheme.surfaceContainerLow, borderRadius: BorderRadius.circular(AppRadius.control), border: Border(left: BorderSide(color: t.colorScheme.primary, width: 3))),
                       child: Text(r.reply!),
                     ),
                     if (!r.hidden && (role == 'BUSINESS_OWNER' || role == 'BUSINESS_ADMIN')) Align(

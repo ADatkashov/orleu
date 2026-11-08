@@ -9,6 +9,7 @@ import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
 import '../../core/errors.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 
 typedef PickedCsv = ({String name, Uint8List bytes});
@@ -78,25 +79,32 @@ class _State extends ConsumerState<ImportCustomersScreen> {
     final p = _preview;
     return Scaffold(
       appBar: AppBar(title: Text(l.importNav)),
-      body: ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
-        Text(l.importIntro, style: t.textTheme.bodySmall),
+      body: ListView(padding: EdgeInsets.fromLTRB(AppSpacing.gutter(context), AppSpacing.sm, AppSpacing.gutter(context), AppSpacing.xl), children: [
+        AppCard(
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Container(
+              width: 40, height: 40,
+              decoration: BoxDecoration(color: t.colorScheme.primaryContainer, borderRadius: BorderRadius.circular(AppRadius.control)),
+              child: Icon(Icons.table_chart_outlined, size: AppIconSize.md, color: t.colorScheme.primary),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(child: Text(l.importIntro, style: t.textTheme.bodyMedium)),
+          ]),
+        ),
         const SizedBox(height: AppSpacing.md),
         OutlinedButton.icon(key: const Key('chooseFile'), icon: const Icon(Icons.upload_file), label: Text(_done == null ? l.importChoose : l.importAnother), onPressed: _busy ? null : _choose),
         if (_fileName != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.sm), child: Text(l.importFile(_fileName!), style: t.textTheme.bodySmall)),
-        if (_busy) const Padding(padding: EdgeInsets.all(AppSpacing.md), child: Center(child: CircularProgressIndicator())),
+        if (_busy) const Padding(padding: EdgeInsets.all(AppSpacing.md), child: LoadingState()),
         if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.md), child: Text(_error!, key: const Key('importError'), style: TextStyle(color: context.palette.dangerFg))),
         if (p != null) ...[
           const SizedBox(height: AppSpacing.md),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                stat(l.importNew, p.created, color: context.palette.successFg),
-                stat(l.importExisting, p.existing),
-                stat(l.importDupes, p.duplicatesInFile),
-                stat(l.importInvalid, p.invalid, color: p.invalid > 0 ? context.palette.warningFg : null),
-              ]),
-            ),
+          AppCard(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              stat(l.importNew, p.created, color: context.palette.successFg),
+              stat(l.importExisting, p.existing),
+              stat(l.importDupes, p.duplicatesInFile),
+              stat(l.importInvalid, p.invalid, color: p.invalid > 0 ? context.palette.warningFg : null),
+            ]),
           ),
           if (p.preview.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
@@ -115,7 +123,14 @@ class _State extends ConsumerState<ImportCustomersScreen> {
         ],
         if (_done != null) ...[
           const SizedBox(height: AppSpacing.md),
-          Card(color: context.palette.successFg.withValues(alpha: 0.1), child: Padding(padding: const EdgeInsets.all(AppSpacing.md), child: Text(l.importDone('${_done!.created}'), key: const Key('importDone'), style: t.textTheme.titleMedium))),
+          AppCard(
+            color: context.palette.successSoft,
+            child: Row(children: [
+              Icon(Icons.check_circle_rounded, color: context.palette.successFg),
+              const SizedBox(width: AppSpacing.sm + 4),
+              Expanded(child: Text(l.importDone('${_done!.created}'), key: const Key('importDone'), style: t.textTheme.titleMedium?.copyWith(color: context.palette.successFg))),
+            ]),
+          ),
         ],
       ]),
     );

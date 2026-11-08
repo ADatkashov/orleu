@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../finance/export_section.dart';
 import '../setup/setup_common.dart';
@@ -30,14 +30,18 @@ class CustomerProfileScreen extends ConsumerWidget {
         data: (p) {
           final s = p.stats;
           final dash = '—';
-          return ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
-            Row(children: [
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(p.customer.phone, style: t.textTheme.titleMedium),
-                if (p.customer.email != null && p.customer.email!.isNotEmpty) Text(p.customer.email!, style: t.textTheme.bodySmall),
-              ])),
-              if (p.customer.blocked) const Pill(),
-            ]),
+          return ListView(padding: EdgeInsets.fromLTRB(AppSpacing.gutter(context), AppSpacing.sm, AppSpacing.gutter(context), AppSpacing.xl), children: [
+            AppCard(
+              child: Row(children: [
+                AppAvatar(p.customer.fullName, size: 56),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(p.customer.phone, style: t.textTheme.titleMedium),
+                  if (p.customer.email != null && p.customer.email!.isNotEmpty) Text(p.customer.email!, style: t.textTheme.bodySmall),
+                ])),
+                if (p.customer.blocked) const Pill(),
+              ]),
+            ),
             const SizedBox(height: AppSpacing.md),
             Row(children: [
               Expanded(child: StatTile(label: l.statVisits, value: '${s.completedVisits}')),
@@ -130,12 +134,7 @@ class CustomerProfileScreen extends ConsumerWidget {
 class Pill extends StatelessWidget {
   const Pill({super.key});
   @override
-  Widget build(BuildContext context) => Container(
-        key: const Key('blockedBadge'),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(color: context.palette.dangerFg.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(999)),
-        child: Text(AppLocalizations.of(context).blocked, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: context.palette.dangerFg, fontWeight: FontWeight.w600)),
-      );
+  Widget build(BuildContext context) => StatusBadge(AppLocalizations.of(context).blocked, key: const Key('blockedBadge'), tone: BadgeTone.danger);
 }
 
 class _EditClientDialog extends ConsumerStatefulWidget {

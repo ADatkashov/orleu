@@ -6,7 +6,7 @@ import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
 import '../../core/tz.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../setup/setup_common.dart';
 
@@ -33,12 +33,16 @@ class MessagesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l.messagesNav)),
-      body: ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
+      body: ListView(padding: EdgeInsets.fromLTRB(AppSpacing.gutter(context), AppSpacing.sm, AppSpacing.gutter(context), AppSpacing.xl), children: [
         Text(l.messagesNote, style: t.textTheme.bodySmall),
         if (mode != null && mode.testMode) Container(
-          key: const Key('testMode'), margin: const EdgeInsets.only(top: AppSpacing.sm), padding: const EdgeInsets.all(AppSpacing.sm),
-          decoration: BoxDecoration(border: Border.all(color: context.palette.warningFg), borderRadius: BorderRadius.circular(8)),
-          child: Text(l.messagesTestMode),
+          key: const Key('testMode'), margin: const EdgeInsets.only(top: AppSpacing.sm), padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(color: context.palette.warningSoft, borderRadius: BorderRadius.circular(AppRadius.card)),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Icon(Icons.science_outlined, size: AppIconSize.md, color: context.palette.warningFg),
+            const SizedBox(width: AppSpacing.sm + 2),
+            Expanded(child: Text(l.messagesTestMode, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: context.palette.warningFg))),
+          ]),
         ),
         const SizedBox(height: AppSpacing.md),
         if (biz != null) ...[
@@ -102,15 +106,15 @@ class _MessageCard extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context);
     final when = DateFormat('dd.MM HH:mm').format(wallFromInstant(m.createdAt, zone));
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: AppCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             Expanded(child: Text('${m.recipientPhone} · $when', style: t.textTheme.bodySmall)),
-            Text(
+            StatusBadge(
               switch (m.status) { 'NOT_SENT' => m.attempts > 0 ? l.messagesRetrying(m.attempts) : l.messagesNotSent, 'SENT' => l.messagesSent, _ => l.messagesFailed },
-              key: Key('status-${m.id}'), style: t.textTheme.labelSmall?.copyWith(color: m.status == 'SENT' ? context.palette.successFg : m.status == 'FAILED' ? context.palette.dangerFg : context.palette.warningFg),
+              key: Key('status-${m.id}'), tone: m.status == 'SENT' ? BadgeTone.success : m.status == 'FAILED' ? BadgeTone.danger : BadgeTone.warning,
             ),
           ]),
           const SizedBox(height: AppSpacing.xs),

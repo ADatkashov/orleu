@@ -7,7 +7,7 @@ import '../../core/data/auth_controller.dart';
 import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../setup/setup_common.dart';
 
@@ -42,42 +42,42 @@ class _AccountState extends ConsumerState<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final t = Theme.of(context);
     final sessions = ref.watch(sessionsProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l.accountNav)),
-      body: ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
-        Text(l.changePassword, style: t.textTheme.titleMedium),
-        const SizedBox(height: AppSpacing.sm),
-        TextField(key: const Key('current'), controller: _current, obscureText: true, decoration: InputDecoration(labelText: l.currentPassword)),
-        const SizedBox(height: AppSpacing.sm),
-        TextField(key: const Key('next'), controller: _next, obscureText: true, decoration: InputDecoration(labelText: l.newPassword)),
-        const SizedBox(height: AppSpacing.sm),
-        TextField(key: const Key('repeat'), controller: _repeat, obscureText: true, decoration: InputDecoration(labelText: l.confirmPassword)),
-        FormError(_error),
-        const SizedBox(height: AppSpacing.md),
-        FilledButton(key: const Key('change'), onPressed: _busy ? null : _change, child: Text(l.changePassword)),
+      body: ListView(padding: EdgeInsets.fromLTRB(AppSpacing.gutter(context), AppSpacing.sm, AppSpacing.gutter(context), AppSpacing.xl), children: [
+        SectionHeader(l.changePassword),
+        const SizedBox(height: AppSpacing.sm + 4),
+        AppCard(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            TextField(key: const Key('current'), controller: _current, obscureText: true, decoration: InputDecoration(labelText: l.currentPassword)),
+            const SizedBox(height: AppSpacing.sm + 2),
+            TextField(key: const Key('next'), controller: _next, obscureText: true, decoration: InputDecoration(labelText: l.newPassword)),
+            const SizedBox(height: AppSpacing.sm + 2),
+            TextField(key: const Key('repeat'), controller: _repeat, obscureText: true, decoration: InputDecoration(labelText: l.confirmPassword)),
+            FormError(_error),
+            const SizedBox(height: AppSpacing.md),
+            FilledButton(key: const Key('change'), onPressed: _busy ? null : _change, child: Text(l.changePassword)),
+          ]),
+        ),
         const SizedBox(height: AppSpacing.lg),
         const _MfaCard(),
         const SizedBox(height: AppSpacing.lg),
         const _HistoryCard(),
         const SizedBox(height: AppSpacing.lg),
-        Text(l.sessionsTitle, style: t.textTheme.titleMedium),
-        const SizedBox(height: AppSpacing.xs),
-        Text(l.sessionsNote, style: t.textTheme.bodySmall),
-        const SizedBox(height: AppSpacing.sm),
+        SectionHeader(l.sessionsTitle, subtitle: l.sessionsNote),
+        const SizedBox(height: AppSpacing.sm + 4),
         sessions.when(
-          loading: () => const Padding(padding: EdgeInsets.all(AppSpacing.md), child: Center(child: CircularProgressIndicator())),
+          loading: () => const Padding(padding: EdgeInsets.all(AppSpacing.md), child: SkeletonBox(height: 72)),
           error: (e, _) => ErrorRetry(error: e, onRetry: () => ref.invalidate(sessionsProvider)),
           data: (list) => list.isEmpty
               ? Text(l.sessionsNone)
               : Column(children: [for (final s in list) _SessionTile(s)]),
         ),
         const SizedBox(height: AppSpacing.md),
-        OutlinedButton.icon(
-          key: const Key('logout-all'),
-          icon: const Icon(Icons.logout),
-          label: Text(l.signOutEverywhere),
+        SecondaryButton(
+          key: const Key('logout-all'), icon: Icons.logout_rounded, destructive: true,
+          label: l.signOutEverywhere,
           onPressed: () => guarded(context, () => ref.read(authControllerProvider.notifier).logoutEverywhere()),
         ),
       ]),
@@ -92,14 +92,15 @@ class _SessionTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final ua = s.userAgent;
-    return Card(
+    return Padding(padding: const EdgeInsets.only(bottom: AppSpacing.sm), child: AppCard(
+      padding: EdgeInsets.zero,
       child: ListTile(
         leading: const Icon(Icons.devices_outlined),
         title: Text(ua == null || ua.isEmpty ? l.sessionUnknownDevice : ua, maxLines: 2, overflow: TextOverflow.ellipsis),
         subtitle: Text(l.sessionSince(DateFormat('dd.MM.yyyy HH:mm').format(s.createdAt.toLocal()))),
         trailing: TextButton(key: Key('revoke-${s.id}'), onPressed: () => guarded(context, () => revokeSession(ref, s.id)), child: Text(l.sessionRevoke)),
       ),
-    );
+    ));
   }
 }
 
@@ -141,10 +142,8 @@ class _MfaState extends ConsumerState<_MfaCard> {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context);
     final status = ref.watch(mfaStatusProvider);
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+    return AppCard(
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(l.mfaTitle, style: t.textTheme.titleMedium),
           const SizedBox(height: AppSpacing.xs),
           Text(l.mfaIntro, style: t.textTheme.bodySmall),
@@ -178,7 +177,6 @@ class _MfaState extends ConsumerState<_MfaCard> {
               ]),
             ),
         ]),
-      ),
     );
   }
 }
@@ -244,18 +242,15 @@ class _HistoryCard extends ConsumerWidget {
       error: (e, _) => ErrorRetry(error: e, onRetry: () => ref.invalidate(loginHistoryProvider)),
       data: (h) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         if (h.failedSinceLastSuccess > 0 || h.newDeviceRecently)
-          Card(
+          AppCard(
             key: const Key('historyAlert'),
-            color: context.palette.warningFg.withValues(alpha: 0.12),
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                if (h.failedSinceLastSuccess > 0) Text(l.histAlertFailed(h.failedSinceLastSuccess)),
-                if (h.newDeviceRecently) Text(l.histAlertNewDevice),
-                const SizedBox(height: AppSpacing.xs),
-                Text(l.histAlertHint, style: t.textTheme.bodySmall),
-              ]),
-            ),
+            color: context.palette.warningSoft,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              if (h.failedSinceLastSuccess > 0) Text(l.histAlertFailed(h.failedSinceLastSuccess), style: TextStyle(color: context.palette.warningFg, fontWeight: FontWeight.w600)),
+              if (h.newDeviceRecently) Text(l.histAlertNewDevice, style: TextStyle(color: context.palette.warningFg, fontWeight: FontWeight.w600)),
+              const SizedBox(height: AppSpacing.xs),
+              Text(l.histAlertHint, style: t.textTheme.bodySmall?.copyWith(color: context.palette.warningFg)),
+            ]),
           ),
         const SizedBox(height: AppSpacing.sm),
         Text(l.histTitle, style: t.textTheme.titleMedium),

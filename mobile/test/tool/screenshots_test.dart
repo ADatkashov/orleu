@@ -132,6 +132,43 @@ Map<String, Handler> _routes() {
         ],
       },
     ]),
+    'GET /api/v1/businesses/b1/reviews/summary': (_) => ok({'count': 18, 'average': 4.6, 'distribution': [0, 1, 1, 4, 12]}),
+    'GET /api/v1/businesses/b1/reviews': (_) => ok([
+          {'id': 'r1', 'customerName': 'Amina Sadykova', 'serviceName': 'Hair styling', 'rating': 5, 'comment': 'Perfect result, very attentive master.', 'createdAt': now.subtract(const Duration(days: 1)).toIso8601String(), 'reply': 'Thank you, see you soon!', 'hidden': false},
+          {'id': 'r2', 'customerName': 'Madina Kenzhebek', 'serviceName': 'Manicure', 'rating': 3, 'comment': 'Had to wait 20 minutes.', 'createdAt': now.subtract(const Duration(days: 3)).toIso8601String(), 'hidden': false},
+          {'id': 'r3', 'customerName': 'Aliya Nurlan', 'serviceName': 'Coloring', 'rating': 1, 'comment': 'Rude comment', 'createdAt': now.subtract(const Duration(days: 5)).toIso8601String(), 'hidden': true, 'hiddenReason': 'Abusive language'},
+        ]),
+    'GET /api/v1/businesses/b1/promo-codes': (_) => ok([
+          {'id': 'p1', 'code': 'WELCOME10', 'kind': 'PERCENT', 'value': 10, 'validUntil': '2026-12-31', 'maxUses': 100, 'usedCount': 37, 'active': true},
+          {'id': 'p2', 'code': 'SPRING2000', 'kind': 'FIXED', 'value': 2000, 'validUntil': null, 'maxUses': null, 'usedCount': 4, 'active': false},
+        ]),
+    'GET /api/v1/businesses/b1/gift-cards': (_) => ok([
+          {'id': 'g1', 'codeLast4': '4821', 'currency': 'KZT', 'status': 'ACTIVE', 'initialAmount': 20000, 'balance': 12500, 'buyerName': 'Daniyar T.', 'expired': false},
+          {'id': 'g2', 'codeLast4': '1190', 'currency': 'KZT', 'status': 'VOIDED', 'initialAmount': 10000, 'balance': 0, 'buyerName': null, 'expired': false},
+        ]),
+    'GET /api/v1/businesses/b1/support/tickets': (_) => ok([
+          {'id': 't1', 'subject': 'Payment provider question', 'category': 'BILLING', 'status': 'ANSWERED', 'updatedAt': now.subtract(const Duration(hours: 5)).toIso8601String()},
+          {'id': 't2', 'subject': 'How do I import clients?', 'category': 'OTHER', 'status': 'OPEN', 'updatedAt': now.subtract(const Duration(days: 2)).toIso8601String()},
+        ]),
+    'GET /api/v1/businesses/b1/support/tickets/t1': (_) => ok({
+          'ticket': {'id': 't1', 'subject': 'Payment provider question', 'category': 'BILLING', 'status': 'ANSWERED', 'updatedAt': now.toIso8601String()},
+          'messages': [
+            {'fromPlatform': false, 'authorName': 'Aigerim', 'body': 'When will online payments be available?', 'createdAt': now.subtract(const Duration(hours: 6)).toIso8601String()},
+            {'fromPlatform': true, 'authorName': 'ORLEU team', 'body': 'We are connecting the first provider now. You will get a notification.', 'createdAt': now.subtract(const Duration(hours: 5)).toIso8601String()},
+          ],
+        }),
+    'GET /api/v1/businesses/b1/customers/c0/profile': (_) => ok({
+          'customer': {'id': 'c0', 'fullName': 'Amina Sadykova', 'phone': '+77011234560', 'email': 'amina@example.kz', 'blocked': false, 'tags': ['VIP', 'regular'], 'marketingOptIn': true, 'notes': 'Prefers morning slots.'},
+          'stats': {'totalBookings': 14, 'completedVisits': 11, 'cancelled': 2, 'noShows': 1, 'upcoming': 1, 'lastVisit': now.subtract(const Duration(days: 9)).toIso8601String(), 'totalSpent': 164000, 'averageSpendPerVisit': 14909},
+          'bookings': [
+            {'id': 'k1', 'serviceName': 'Hair styling', 'employeeName': 'Aigerim', 'status': 'COMPLETED', 'startsAt': now.subtract(const Duration(days: 9)).toIso8601String(), 'price': 15000, 'netPaid': 15000},
+            {'id': 'k2', 'serviceName': 'Coloring', 'employeeName': 'Dana', 'status': 'CANCELLED', 'startsAt': now.subtract(const Duration(days: 30)).toIso8601String(), 'price': 32000, 'netPaid': 0},
+          ],
+        }),
+    'GET /api/v1/businesses/b1/cash-closings/preview': (_) => ok({
+          'periodStart': now.subtract(const Duration(days: 1)).toIso8601String(), 'periodEnd': now.toIso8601String(), 'firstClosing': false,
+          'cash': {'payments': 90000, 'refunds': 0, 'net': 90000}, 'bank': {'payments': 60000, 'refunds': 0, 'net': 60000}, 'card': {'payments': 34500, 'refunds': 0, 'net': 34500},
+        }),
     'GET /api/v1/businesses/b1/notifications': (_) => ok([
       {
         'id': 'n1',
@@ -290,6 +327,12 @@ void main() {
       await tester.tap(find.byKey(const Key('newBooking')));
       await tester.pumpAndSettle();
       await _shot(tester, key, 'new-booking-$m');
+      await tester.tapAt(const Offset(195, 40));
+      await tester.pumpAndSettle();
+      await _tab(tester, 'Customers');
+      await tester.tap(find.byKey(const Key('customer-c0')));
+      await tester.pumpAndSettle();
+      await _shot(tester, key, 'profile-$m');
     });
     testWidgets('signed out $m', skip: skip, (tester) async {
       SharedPreferences.setMockInitialValues({'theme': dark ? 'dark' : 'light'});

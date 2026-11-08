@@ -7,7 +7,7 @@ import '../../core/data/auth_controller.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
 import '../../core/tz.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart' hide statusLabel, statusColor;
 import '../../l10n/gen/app_localizations.dart';
 import '../setup/setup_common.dart';
 
@@ -84,19 +84,20 @@ class SupportScreen extends ConsumerWidget {
       body: tickets.when(
         loading: () => const SkeletonList(),
         error: (e, _) => ErrorRetry(error: e, onRetry: () => ref.invalidate(supportTicketsProvider)),
-        data: (list) => ListView(padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, 96), children: [
+        data: (list) => ListView(padding: EdgeInsets.fromLTRB(AppSpacing.gutter(context), AppSpacing.md, AppSpacing.gutter(context), 96), children: [
           Text(l.supportIntro, style: t.textTheme.bodySmall),
           const SizedBox(height: AppSpacing.md),
           if (list.isEmpty) Text(l.supportNone, key: const Key('noTickets')),
-          for (final x in list) Card(
+          for (final x in list) Padding(padding: const EdgeInsets.only(bottom: AppSpacing.sm + 2), child: AppCard(
+            padding: EdgeInsets.zero,
             child: ListTile(
               key: Key('ticket-${x.id}'),
               title: Text(x.subject, maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text(DateFormat('dd.MM HH:mm').format(wallFromInstant(x.updatedAt, zone))),
-              trailing: Text(statusLabel(l, x.status), style: t.textTheme.labelSmall?.copyWith(color: statusColor(context, x.status))),
+              trailing: StatusBadge(statusLabel(l, x.status), tone: x.status == 'OPEN' ? BadgeTone.warning : x.status == 'ANSWERED' ? BadgeTone.success : BadgeTone.neutral),
               onTap: () => context.push('/more/support/${x.id}'),
             ),
-          ),
+          )),
         ]),
       ),
     );
@@ -193,14 +194,24 @@ class _TicketState extends ConsumerState<TicketScreen> {
             Text(ticket.subject, style: t.textTheme.titleLarge),
             Text(statusLabel(l, ticket.status), key: const Key('ticketStatus'), style: t.textTheme.labelMedium?.copyWith(color: statusColor(context, ticket.status))),
             const SizedBox(height: AppSpacing.md),
-            for (final m in messages) Card(
-              color: m.fromPlatform ? AppColors.primaryGreen.withValues(alpha: 0.08) : null,
-              child: Padding(
+            for (final m in messages) Align(
+              alignment: m.fromPlatform ? Alignment.centerLeft : Alignment.centerRight,
+              child: Container(
+                constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.82),
+                margin: const EdgeInsets.only(bottom: AppSpacing.sm + 2),
                 padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: m.fromPlatform ? t.colorScheme.surface : t.colorScheme.primaryContainer,
+                  border: m.fromPlatform ? Border.all(color: t.colorScheme.outlineVariant) : null,
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(AppRadius.card), topRight: const Radius.circular(AppRadius.card),
+                    bottomLeft: Radius.circular(m.fromPlatform ? 4 : AppRadius.card), bottomRight: Radius.circular(m.fromPlatform ? AppRadius.card : 4),
+                  ),
+                ),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('${m.fromPlatform ? l.supportTeam : l.supportYou} · ${DateFormat('dd.MM HH:mm').format(wallFromInstant(m.createdAt, zone))}', style: t.textTheme.bodySmall),
+                  Text('${m.fromPlatform ? l.supportTeam : l.supportYou} · ${DateFormat('dd.MM HH:mm').format(wallFromInstant(m.createdAt, zone))}', style: t.textTheme.bodySmall?.copyWith(color: m.fromPlatform ? null : t.colorScheme.onPrimaryContainer.withValues(alpha: 0.75))),
                   const SizedBox(height: AppSpacing.xs),
-                  Text(m.body),
+                  Text(m.body, style: t.textTheme.bodyMedium?.copyWith(color: m.fromPlatform ? null : t.colorScheme.onPrimaryContainer)),
                 ]),
               ),
             ),

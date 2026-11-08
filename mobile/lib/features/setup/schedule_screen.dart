@@ -6,7 +6,7 @@ import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
 import '../../core/tz.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'setup_common.dart';
 
@@ -75,11 +75,15 @@ class _State extends ConsumerState<ScheduleScreen> {
         data: (s) {
           _loadOnce(s);
           final follow = _ranges!.isEmpty;
-          return ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
-            SwitchListTile(
-              key: const Key('followBranch'), contentPadding: EdgeInsets.zero, title: Text(l.scheduleFollow), subtitle: Text(l.scheduleFollowNote), value: follow,
-              onChanged: (v) => setState(() => _ranges = v ? [] : [for (var d = 1; d <= 5; d++) ScheduleRange(d, '09:00', '18:00')]),
+          return ListView(padding: EdgeInsets.fromLTRB(AppSpacing.gutter(context), AppSpacing.sm, AppSpacing.gutter(context), AppSpacing.xl), children: [
+            AppCard(
+              padding: EdgeInsets.zero,
+              child: SwitchListTile(
+                key: const Key('followBranch'), title: Text(l.scheduleFollow), subtitle: Text(l.scheduleFollowNote), value: follow,
+                onChanged: (v) => setState(() => _ranges = v ? [] : [for (var d = 1; d <= 5; d++) ScheduleRange(d, '09:00', '18:00')]),
+              ),
             ),
+            const SizedBox(height: AppSpacing.md),
             if (!follow) ...[
               Text(l.scheduleBreakHint, style: t.textTheme.bodySmall),
               const SizedBox(height: AppSpacing.sm),
@@ -107,26 +111,28 @@ class _State extends ConsumerState<ScheduleScreen> {
             FilledButton(key: const Key('saveHours'), style: FilledButton.styleFrom(minimumSize: const Size(96, 44)), onPressed: _busy ? null : _save, child: Text(l.scheduleSave)),
             const SizedBox(height: AppSpacing.lg),
             Row(children: [
-              Expanded(child: Text(l.timeOffTitle, style: t.textTheme.titleMedium)),
+              Expanded(child: SectionHeader(l.timeOffTitle)),
               TextButton.icon(key: const Key('addTimeOff'), icon: const Icon(Icons.add), label: Text(l.timeOffAdd), onPressed: () => showDialog<void>(context: context, builder: (_) => _TimeOffDialog(employeeId: widget.employeeId))),
             ]),
             if (s.timeOff.isEmpty) Text(l.timeOffNone, key: const Key('noTimeOff'), style: t.textTheme.bodySmall),
-            for (final o in s.timeOff) Card(
+            for (final o in s.timeOff) Padding(padding: const EdgeInsets.only(bottom: AppSpacing.sm), child: AppCard(
+              padding: EdgeInsets.zero,
               child: ListTile(
                 key: Key('timeOff-${o.id}'),
                 title: Text('${DateFormat('dd.MM.yyyy').format(wallFromInstant(o.startsAt, zone))} – ${DateFormat('dd.MM.yyyy').format(wallFromInstant(o.endsAt.subtract(const Duration(minutes: 1)), zone))}'),
                 subtitle: Text([if (o.reason != null) o.reason!, if (o.affectedBookings > 0) l.timeOffAffected(o.affectedBookings)].join(' · ')),
                 trailing: IconButton(key: Key('removeTimeOff-${o.id}'), tooltip: l.timeOffRemove, icon: const Icon(Icons.delete_outline), onPressed: () => guarded(context, () => ref.read(bookingActionsProvider).removeTimeOff(widget.employeeId, o.id))),
               ),
-            ),
+            )),
             const SizedBox(height: AppSpacing.lg),
             Row(children: [
-              Expanded(child: Text(l.exceptionsTitle, style: t.textTheme.titleMedium)),
+              Expanded(child: SectionHeader(l.exceptionsTitle)),
               TextButton.icon(key: const Key('addException'), icon: const Icon(Icons.add), label: Text(l.exceptionAdd), onPressed: () => showDialog<void>(context: context, builder: (_) => _ExceptionDialog(employeeId: widget.employeeId))),
             ]),
             Text(l.exceptionsNote, style: t.textTheme.bodySmall),
             if (s.exceptions.isEmpty) Text(l.exceptionsNone, key: const Key('noExceptions'), style: t.textTheme.bodySmall),
-            for (final e in s.exceptions) Card(
+            for (final e in s.exceptions) Padding(padding: const EdgeInsets.only(bottom: AppSpacing.sm), child: AppCard(
+              padding: EdgeInsets.zero,
               child: ListTile(
                 key: Key('exception-${DateFormat('yyyy-MM-dd').format(e.date)}'),
                 title: Text(DateFormat('EEE dd.MM.yyyy', Localizations.localeOf(context).toLanguageTag()).format(e.date)),
@@ -134,7 +140,7 @@ class _State extends ConsumerState<ScheduleScreen> {
                 trailing: IconButton(key: Key('removeException-${DateFormat('yyyy-MM-dd').format(e.date)}'), tooltip: l.timeOffRemove, icon: const Icon(Icons.delete_outline),
                     onPressed: () => guarded(context, () => ref.read(bookingActionsProvider).removeDateException(widget.employeeId, e.date))),
               ),
-            ),
+            )),
           ]);
         },
       ),
