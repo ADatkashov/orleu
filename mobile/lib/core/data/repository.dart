@@ -453,6 +453,17 @@ final breakdownProvider = FutureProvider.autoDispose.family<List<BreakdownRow>, 
 final timeseriesProvider = FutureProvider.autoDispose<List<DayPoint>>((ref) async =>
     ((await _report(ref, 'timeseries')) as List).map((e) => DayPoint.fromJson(e)).toList());
 
+/// Net cash per day for the last 7 days (home dashboard chart); independent of the finance screen's period.
+final weekSeriesProvider = FutureProvider.autoDispose<List<DayPoint>>((ref) async {
+  final b = await _biz(ref);
+  final now = nowWall(b.timezone);
+  final res = await ref.watch(apiClientProvider).run((d) => d.get('/api/v1/businesses/${b.id}/analytics/timeseries', queryParameters: {
+        'from': instantFromWall(DateTime(now.year, now.month, now.day - 6), b.timezone).toIso8601String(),
+        'to': instantFromWall(nextDay(now), b.timezone).toIso8601String(),
+      }));
+  return (res.data as List).map((e) => DayPoint.fromJson(e)).toList();
+});
+
 final peakHoursProvider = FutureProvider.autoDispose<List<int>>((ref) async =>
     ((await _report(ref, 'peak-hours')) as List).map((e) => (e as num).toInt()).toList());
 

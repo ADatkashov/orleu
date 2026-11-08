@@ -1564,4 +1564,49 @@ class AppLocalizationsRu extends AppLocalizations {
   String messagesRetrying(int n) {
     return 'Повтор (попытка $n)';
   }
+
+  @override
+  String get loading => 'Загрузка';
+
+  @override
+  String get quickActions => 'Быстрые действия';
+
+  @override
+  String get performanceTitle => 'Показатели за сегодня';
+
+  @override
+  String get sevenDays => 'Последние 7 дней';
+
+  @override
+  String get seeAll => 'Все';
+
+  @override
+  String get groupBusiness => 'Бизнес';
+
+  @override
+  String get groupSales => 'Продажи и лояльность';
+
+  @override
+  String get groupAccount => 'Связь и аккаунт';
+
+  @override
+  String get preferencesTitle => 'Настройки приложения';
+
+  @override
+  String get notifToday => 'Сегодня';
+
+  @override
+  String get notifEarlier => 'Ранее';
+
+  @override
+  String get notifCatAll => 'Все';
+
+  @override
+  String get notifCatBookings => 'Записи';
+
+  @override
+  String get notifCatPayments => 'Платежи';
+
+  @override
+  String get notifCatSupport => 'Поддержка';
 }

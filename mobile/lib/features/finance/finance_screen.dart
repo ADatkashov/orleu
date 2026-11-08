@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'reports_section.dart';
 
@@ -25,33 +25,33 @@ class FinanceScreen extends ConsumerWidget {
         error: (e, _) => ErrorRetry(error: e, onRetry: () => ref.invalidate(summaryProvider)),
         data: (s) => RefreshIndicator(
           onRefresh: () async => ref.invalidate(summaryProvider),
-          child: ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
-            Text(l.financeTitle, style: t.textTheme.titleMedium),
-            const SizedBox(height: AppSpacing.sm),
+          child: ListView(padding: EdgeInsets.fromLTRB(AppSpacing.gutter(context), AppSpacing.sm, AppSpacing.gutter(context), AppSpacing.xl), children: [
+            SectionHeader(l.financeTitle),
+            const SizedBox(height: AppSpacing.sm + 4),
+            StatCard(icon: Icons.account_balance_wallet_outlined, label: l.netCollected, value: money(context, s.netCollected, cur), hero: true),
+            const SizedBox(height: AppSpacing.sm + 2),
             Row(children: [
-              Expanded(child: StatTile(label: l.netCollected, value: money(context, s.netCollected, cur))),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(child: StatTile(label: l.outstanding, value: money(context, s.outstanding, cur), valueColor: s.outstanding > 0 ? AppColors.warning : null)),
+              Expanded(child: StatTile(label: l.outstanding, value: money(context, s.outstanding, cur), valueColor: s.outstanding > 0 ? context.palette.warningFg : null)),
+              const SizedBox(width: AppSpacing.sm + 2),
+              Expanded(child: StatTile(label: l.bookedValue, value: money(context, s.bookedValue, cur))),
             ]),
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.sm + 2),
             Row(children: [
               Expanded(child: StatTile(label: l.collected, value: money(context, s.collected, cur))),
-              const SizedBox(width: AppSpacing.sm),
+              const SizedBox(width: AppSpacing.sm + 2),
               Expanded(child: StatTile(label: l.refunded, value: money(context, s.refunded, cur))),
             ]),
-            const SizedBox(height: AppSpacing.sm),
-            StatTile(label: l.bookedValue, value: money(context, s.bookedValue, cur)),
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.sm + 2),
             Row(children: [
               Expanded(child: StatTile(label: l.cancellationRate, value: pct(s.cancellationRate))),
-              const SizedBox(width: AppSpacing.sm),
+              const SizedBox(width: AppSpacing.sm + 2),
               Expanded(child: StatTile(label: l.noShowRate, value: pct(s.noShowRate))),
             ]),
             const SizedBox(height: AppSpacing.md),
             Text(l.financeNote, style: t.textTheme.bodySmall),
             if (canCloseCash(ref.watch(myRoleProvider).value)) Padding(
               padding: const EdgeInsets.only(top: AppSpacing.md),
-              child: OutlinedButton.icon(key: const Key('openClosing'), icon: const Icon(Icons.point_of_sale_outlined), label: Text(l.closingTitle), onPressed: () => context.push('/finance/closing')),
+              child: SecondaryButton(key: const Key('openClosing'), icon: Icons.point_of_sale_outlined, label: l.closingTitle, onPressed: () => context.push('/finance/closing')),
             ),
             const SizedBox(height: AppSpacing.lg),
             const ReportsSection(),

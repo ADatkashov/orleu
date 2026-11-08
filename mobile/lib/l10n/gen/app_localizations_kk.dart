@@ -1563,4 +1563,49 @@ class AppLocalizationsKk extends AppLocalizations {
   String messagesRetrying(int n) {
     return 'Қайталануда ($n-әрекет)';
   }
+
+  @override
+  String get loading => 'Жүктелуде';
+
+  @override
+  String get quickActions => 'Жылдам әрекеттер';
+
+  @override
+  String get performanceTitle => 'Бүгінгі көрсеткіштер';
+
+  @override
+  String get sevenDays => 'Соңғы 7 күн';
+
+  @override
+  String get seeAll => 'Барлығы';
+
+  @override
+  String get groupBusiness => 'Бизнес';
+
+  @override
+  String get groupSales => 'Сатылым және адалдық';
+
+  @override
+  String get groupAccount => 'Байланыс және аккаунт';
+
+  @override
+  String get preferencesTitle => 'Қолданба параметрлері';
+
+  @override
+  String get notifToday => 'Бүгін';
+
+  @override
+  String get notifEarlier => 'Бұрын';
+
+  @override
+  String get notifCatAll => 'Барлығы';
+
+  @override
+  String get notifCatBookings => 'Жазылулар';
+
+  @override
+  String get notifCatPayments => 'Төлемдер';
+
+  @override
+  String get notifCatSupport => 'Қолдау';
 }

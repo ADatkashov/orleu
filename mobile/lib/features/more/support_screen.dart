@@ -207,9 +207,8 @@ class _TicketState extends ConsumerState<TicketScreen> {
             if (closed) Text(l.supportClosedNote, key: const Key('closedNote'), style: t.textTheme.bodySmall)
             else ...[
               TextField(key: const Key('reply'), controller: _body, minLines: 2, maxLines: 6, maxLength: 4000, decoration: InputDecoration(labelText: l.supportReply)),
-              Row(children: [
+              Wrap(spacing: AppSpacing.sm, runSpacing: AppSpacing.sm, children: [
                 FilledButton(key: const Key('sendReply'), style: FilledButton.styleFrom(minimumSize: const Size(96, 44)), onPressed: _busy ? null : _send, child: Text(l.supportSend)),
-                const SizedBox(width: AppSpacing.sm),
                 OutlinedButton(key: const Key('closeTicket'), style: OutlinedButton.styleFrom(minimumSize: const Size(96, 44)), onPressed: () => guarded(context, () => closeTicket(ref, widget.id)), child: Text(l.supportCloseTicket)),
               ]),
             ],

@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import '../core/api/api_client.dart';
 import '../core/data/auth_controller.dart';
 import '../core/design/tokens.dart';
+import '../core/widgets/widgets.dart';
 import 'admin_data.dart';
 import 'admin_widgets.dart';
 
@@ -83,8 +84,10 @@ class _LoginState extends ConsumerState<AdminLoginScreen> {
             child: Form(
               key: _form,
               child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                Text('ORLEU', style: t.textTheme.headlineMedium?.copyWith(color: t.colorScheme.primary, letterSpacing: 4)),
-                Text(S.title, style: t.textTheme.bodyMedium),
+                const Align(alignment: Alignment.centerLeft, child: LogoMark(size: 52)),
+                const SizedBox(height: AppSpacing.md),
+                Text('ORLEU', style: t.textTheme.headlineSmall?.copyWith(color: t.colorScheme.primary, letterSpacing: 4, fontWeight: FontWeight.w800)),
+                Text(S.title, style: t.textTheme.bodyMedium?.copyWith(color: t.colorScheme.onSurfaceVariant)),
                 const SizedBox(height: AppSpacing.xl),
                 TextFormField(key: const Key('adminEmail'), controller: _email, decoration: const InputDecoration(labelText: S.email),
                     validator: (v) => v == null || v.trim().isEmpty ? S.required : null),
@@ -140,11 +143,13 @@ class AdminShell extends ConsumerWidget {
           (Icons.fact_check_outlined, S.audit, '/audit'),
         ];
         final index = items.indexWhere((i) => location.startsWith(i.$3)).clamp(0, items.length - 1);
-        final wide = MediaQuery.sizeOf(context).width >= 900;
+        final width = MediaQuery.sizeOf(context).width;
+        final wide = AppBreakpoints.isWide(context);
         final header = Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
           child: Row(children: [
-            const Expanded(child: Text(S.title, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w700))),
+            if (!wide) ...[const LogoMark(size: 32), const SizedBox(width: AppSpacing.sm + 2)],
+            Expanded(child: wide ? const SizedBox.shrink() : const Text(S.title, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 17))),
             Pill(m.role, m.canModify ? AppColors.primaryGreen : AppColors.warning, key: const Key('roleBadge')),
             const SizedBox(width: AppSpacing.sm),
             TextButton(key: const Key('signOut'), onPressed: () => ref.read(authControllerProvider.notifier).logout(), child: const Text(S.signOut)),
@@ -153,27 +158,28 @@ class AdminShell extends ConsumerWidget {
         final body = Column(children: [
           header,
           const Divider(),
-          if (!m.canModify) Container(width: double.infinity, color: AppColors.warning.withValues(alpha: 0.12), padding: const EdgeInsets.all(8), child: const Text(S.readOnly, key: Key('readOnlyBanner'))),
-          Expanded(child: child),
+          if (!m.canModify) Container(width: double.infinity, color: context.palette.warningSoft, padding: const EdgeInsets.all(10), child: Text(S.readOnly, key: const Key('readOnlyBanner'), style: TextStyle(color: context.palette.warningFg, fontWeight: FontWeight.w600))),
+          Expanded(child: Align(alignment: Alignment.topCenter, child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 1180), child: child))),
         ]);
         if (wide) {
           return Scaffold(
             body: Row(children: [
-              NavigationRail(
-                selectedIndex: index, labelType: NavigationRailLabelType.all,
-                onDestinationSelected: (i) => context.go(items[i].$3),
-                destinations: [for (final i in items) NavigationRailDestination(icon: Icon(i.$1), label: Text(i.$2))],
+              AppSidebar(
+                items: [for (final i in items) NavItem(i.$1, i.$1, i.$2)], selectedIndex: index, title: S.title,
+                extended: width >= AppBreakpoints.expanded, onSelect: (i) => context.go(items[i].$3),
               ),
-              const VerticalDivider(width: 1),
               Expanded(child: body),
             ]),
           );
         }
         return Scaffold(
           body: SafeArea(child: body),
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: index, onDestinationSelected: (i) => context.go(items[i].$3),
-            destinations: [for (final i in items) NavigationDestination(icon: Icon(i.$1), label: i.$2)],
+          bottomNavigationBar: DecoratedBox(
+            decoration: BoxDecoration(border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant))),
+            child: NavigationBar(
+              selectedIndex: index, onDestinationSelected: (i) => context.go(items[i].$3),
+              destinations: [for (final i in items) NavigationDestination(icon: Icon(i.$1), label: i.$2)],
+            ),
           ),
         );
       },

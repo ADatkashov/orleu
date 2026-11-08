@@ -6,6 +6,7 @@ import '../../core/api/api_client.dart';
 import '../../core/data/auth_controller.dart';
 import '../../core/design/tokens.dart';
 import '../../core/errors.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 
 final _emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
@@ -13,28 +14,55 @@ final _emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 class _AuthScaffold extends StatelessWidget {
   final List<Widget> children;
   const _AuthScaffold({required this.children});
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final t = Theme.of(context);
+    final wide = AppBreakpoints.isWide(context);
+    Widget wordmark({Color? color}) => Text(l.appName, style: t.textTheme.headlineSmall?.copyWith(color: color, letterSpacing: 4, fontWeight: FontWeight.w800));
+    final form = SingleChildScrollView(
+      padding: EdgeInsets.all(wide ? AppSpacing.xl : AppSpacing.lg),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          if (!wide) ...[
+            const Align(alignment: Alignment.centerLeft, child: LogoMark(size: 56)),
+            const SizedBox(height: AppSpacing.md),
+            wordmark(color: t.colorScheme.primary),
+            const SizedBox(height: AppSpacing.xs),
+            Text(l.tagline, style: t.textTheme.bodyMedium?.copyWith(color: t.colorScheme.onSurfaceVariant)),
+            const SizedBox(height: AppSpacing.xl),
+          ],
+          AppCard(
+            padding: const EdgeInsets.all(AppSpacing.lg), radius: AppRadius.hero, elevated: true,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+          ),
+        ]),
+      ),
+    );
+    if (!wide) return Scaffold(body: SafeArea(child: Center(child: form)));
+    final p = context.palette;
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                Text(l.appName, style: t.textTheme.headlineMedium?.copyWith(color: t.colorScheme.primary, letterSpacing: 4)),
-                const SizedBox(height: AppSpacing.xs),
-                Text(l.tagline, style: t.textTheme.bodyMedium?.copyWith(color: t.colorScheme.onSurfaceVariant)),
-                const SizedBox(height: AppSpacing.xl),
-                ...children,
+      body: Row(children: [
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(gradient: AppGradients.heroOf(context)),
+            padding: const EdgeInsets.all(AppSpacing.xxl),
+            child: Stack(children: [
+              Positioned(right: -120, top: -120, child: ExcludeSemantics(child: Container(width: 380, height: 380, decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: p.heroAccent.withValues(alpha: 0.1), width: 56))))),
+              Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const LogoMark(size: 64),
+                const SizedBox(height: AppSpacing.lg),
+                wordmark(color: p.onHero),
+                const SizedBox(height: AppSpacing.sm + 4),
+                Text(l.tagline, style: t.textTheme.headlineMedium?.copyWith(color: p.heroAccent, height: 1.25)),
               ]),
-            ),
+            ]),
           ),
         ),
-      ),
+        Expanded(child: SafeArea(child: Center(child: form))),
+      ]),
     );
   }
 }

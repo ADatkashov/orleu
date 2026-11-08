@@ -477,5 +477,20 @@
   "messagesFailed": "Сәтсіз",
   "messagesRetry": "Қайталау",
   "messagesTestMode": "Сынақ режимі: хабарламаларды сынақ жіберуші өңдейді, клиенттерге ештеңе жеткізілмейді.",
-  "messagesRetrying": "Қайталануда ({n}-әрекет)"
+  "messagesRetrying": "Қайталануда ({n}-әрекет)",
+  "loading": "Жүктелуде",
+  "quickActions": "Жылдам әрекеттер",
+  "performanceTitle": "Бүгінгі көрсеткіштер",
+  "sevenDays": "Соңғы 7 күн",
+  "seeAll": "Барлығы",
+  "groupBusiness": "Бизнес",
+  "groupSales": "Сатылым және адалдық",
+  "groupAccount": "Байланыс және аккаунт",
+  "preferencesTitle": "Қолданба параметрлері",
+  "notifToday": "Бүгін",
+  "notifEarlier": "Бұрын",
+  "notifCatAll": "Барлығы",
+  "notifCatBookings": "Жазылулар",
+  "notifCatPayments": "Төлемдер",
+  "notifCatSupport": "Қолдау"
 }

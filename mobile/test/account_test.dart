@@ -83,6 +83,8 @@ void main() {
       await pump(tester, a, s);
       await tester.tap(find.text('More').last);
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Account & security')); // below the fold on a phone
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Account & security'));
       await tester.pumpAndSettle();
       return (a, s);

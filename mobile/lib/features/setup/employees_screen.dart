@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'setup_common.dart';
 
@@ -34,13 +34,14 @@ class EmployeesScreen extends ConsumerWidget {
                 itemBuilder: (_, i) {
                   final e = list[i];
                   final assigned = e.branchIds.isNotEmpty && e.serviceIds.isNotEmpty;
-                  return Card(
-                    child: ListTile(
-                      key: Key('emp-${e.id}'),
-                      leading: CircleAvatar(child: Text(e.displayName.isEmpty ? '?' : e.displayName[0].toUpperCase())),
-                      title: Text(e.displayName, style: e.active ? null : TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                      subtitle: Text(e.active ? '${l.services}: ${e.serviceIds.length} · ${l.branches}: ${e.branchIds.length}' : l.inactive),
-                      trailing: e.active ? Icon(assigned ? Icons.check_circle : Icons.warning_amber_rounded, color: assigned ? AppColors.success : AppColors.warning) : const Icon(Icons.pause_circle_outline),
+                  return Entrance(
+                    index: i,
+                    child: EmployeeCard(
+                      key: Key('emp-${e.id}'), employee: e,
+                      subtitle: e.active ? '${l.services}: ${e.serviceIds.length} · ${l.branches}: ${e.branchIds.length}' : l.inactive,
+                      trailing: e.active
+                          ? Icon(assigned ? Icons.check_circle_rounded : Icons.warning_amber_rounded, color: assigned ? context.palette.success : context.palette.warning)
+                          : const Icon(Icons.pause_circle_outline),
                       onTap: () => showModalBottomSheet(context: context, isScrollControlled: true, showDragHandle: true, builder: (_) => AssignmentsSheet(employee: e)),
                     ),
                   );

@@ -2967,6 +2967,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retrying (attempt {n})'**
   String messagesRetrying(int n);
+
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get loading;
+
+  /// No description provided for @quickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick actions'**
+  String get quickActions;
+
+  /// No description provided for @performanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance today'**
+  String get performanceTitle;
+
+  /// No description provided for @sevenDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get sevenDays;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get seeAll;
+
+  /// No description provided for @groupBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get groupBusiness;
+
+  /// No description provided for @groupSales.
+  ///
+  /// In en, this message translates to:
+  /// **'Sales & loyalty'**
+  String get groupSales;
+
+  /// No description provided for @groupAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication & account'**
+  String get groupAccount;
+
+  /// No description provided for @preferencesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get preferencesTitle;
+
+  /// No description provided for @notifToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get notifToday;
+
+  /// No description provided for @notifEarlier.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier'**
+  String get notifEarlier;
+
+  /// No description provided for @notifCatAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get notifCatAll;
+
+  /// No description provided for @notifCatBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get notifCatBookings;
+
+  /// No description provided for @notifCatPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get notifCatPayments;
+
+  /// No description provided for @notifCatSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get notifCatSupport;
 }
 
 class _AppLocalizationsDelegate
