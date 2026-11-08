@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/design/tokens.dart';
 
 import '../../core/errors.dart';
 
@@ -49,6 +50,6 @@ class FormError extends StatelessWidget {
       ? const SizedBox.shrink()
       : Padding(
           padding: const EdgeInsets.only(top: 12),
-          child: Text(message!, key: const Key('formError'), style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          child: Text(message!, key: const Key('formError'), style: TextStyle(color: context.palette.dangerFg)),
         );
 }

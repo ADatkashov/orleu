@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../setup/setup_common.dart';
 
@@ -23,18 +23,17 @@ class RefundsScreen extends ConsumerWidget {
       body: res.when(
         loading: () => const SkeletonList(),
         error: (e, _) => ErrorRetry(error: e, onRetry: () => ref.invalidate(refundRequestsProvider)),
-        data: (list) => ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
+        data: (list) => ListView(padding: EdgeInsets.fromLTRB(AppSpacing.gutter(context), AppSpacing.sm, AppSpacing.gutter(context), AppSpacing.xl), children: [
           const _PolicyCard(),
           const SizedBox(height: AppSpacing.md),
           if (list.isEmpty) EmptyState(icon: Icons.undo, text: l.refundsNone, key: const Key('noRefunds')),
           for (final r in list) Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: Card(child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
+            child: AppCard(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Row(children: [
                   Expanded(child: Text(money(context, r.amount, r.currency), key: Key('refund-${r.id}'), style: Theme.of(context).textTheme.titleMedium)),
-                  Chip(label: Text(r.pending ? l.refundStatusPending : r.status == 'APPROVED' ? l.refundStatusApproved : l.refundStatusRejected)),
+                  StatusBadge(r.pending ? l.refundStatusPending : r.status == 'APPROVED' ? l.refundStatusApproved : l.refundStatusRejected, tone: r.pending ? BadgeTone.warning : r.status == 'APPROVED' ? BadgeTone.success : BadgeTone.danger),
                 ]),
                 if (r.requestedByName != null) Text(l.refundRequestedBy(r.requestedByName!), style: Theme.of(context).textTheme.bodySmall),
                 if (r.decisionNote != null) Text(r.decisionNote!, style: Theme.of(context).textTheme.bodySmall),
@@ -43,11 +42,11 @@ class RefundsScreen extends ConsumerWidget {
                   child: Row(children: [
                     FilledButton(key: Key('approve-${r.id}'), style: FilledButton.styleFrom(minimumSize: const Size(96, 44)), onPressed: () => guarded(context, () => decideRefund(ref, r.id, approve: true)), child: Text(l.refundApprove)),
                     const SizedBox(width: AppSpacing.sm),
-                    OutlinedButton(key: Key('reject-${r.id}'), style: OutlinedButton.styleFrom(minimumSize: const Size(96, 44)), onPressed: () => guarded(context, () => decideRefund(ref, r.id, approve: false)), child: Text(l.refundReject)),
+                    OutlinedButton(key: Key('reject-${r.id}'), style: OutlinedButton.styleFrom(minimumSize: const Size(96, 44), foregroundColor: context.palette.dangerFg), onPressed: () => guarded(context, () => decideRefund(ref, r.id, approve: false)), child: Text(l.refundReject)),
                   ]),
                 ),
               ]),
-            )),
+            ),
           ),
         ]),
       ),
@@ -72,8 +71,7 @@ class _PolicyState extends ConsumerState<_PolicyCard> {
     final role = ref.watch(myRoleProvider).value;
     final policy = ref.watch(refundPolicyProvider);
     final cur = ref.watch(currentBusinessProvider).value?.currency ?? 'KZT';
-    return Card(child: Padding(
-      padding: const EdgeInsets.all(AppSpacing.md),
+    return AppCard(
       child: policy.when(
         loading: () => const LinearProgressIndicator(),
         error: (e, _) => Text(l.errNetwork),
@@ -106,6 +104,6 @@ class _PolicyState extends ConsumerState<_PolicyCard> {
           ]);
         },
       ),
-    ));
+    );
   }
 }

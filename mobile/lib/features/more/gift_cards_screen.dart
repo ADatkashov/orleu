@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../setup/setup_common.dart';
 
@@ -28,22 +28,26 @@ class GiftCardsScreen extends ConsumerWidget {
         error: (e, _) => ErrorRetry(error: e, onRetry: () => ref.invalidate(giftCardsProvider)),
         data: (list) => list.isEmpty
             ? EmptyState(icon: Icons.card_giftcard, text: l.giftNone)
-            : ListView(padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, 96), children: [
+            : ListView(padding: EdgeInsets.fromLTRB(AppSpacing.gutter(context), AppSpacing.md, AppSpacing.gutter(context), 96), children: [
                 Text(l.giftNote, style: Theme.of(context).textTheme.bodySmall),
-                const SizedBox(height: AppSpacing.sm),
-                for (final c in list) Card(child: ListTile(
+                const SizedBox(height: AppSpacing.md),
+                for (final c in list) Padding(padding: const EdgeInsets.only(bottom: AppSpacing.sm + 2), child: AppCard(padding: EdgeInsets.zero, child: ListTile(
                   key: Key('card-${c.id}'),
-                  leading: const Icon(Icons.card_giftcard),
+                  leading: Container(
+                    width: 40, height: 40,
+                    decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(AppRadius.control)),
+                    child: Icon(Icons.card_giftcard_rounded, size: AppIconSize.md, color: Theme.of(context).colorScheme.primary),
+                  ),
                   title: Text('•••• ${c.codeLast4}'),
                   subtitle: Text(['${money(context, c.balance, c.currency)} / ${money(context, c.initialAmount, c.currency)}', if (c.buyerName != null) c.buyerName!].join(' · ')),
                   trailing: c.status == 'VOID'
-                      ? Chip(label: Text(l.giftVoid))
+                      ? StatusBadge(l.giftVoid, tone: BadgeTone.danger)
                       : c.expired
-                          ? Chip(label: Text(l.giftExpired))
+                          ? StatusBadge(l.giftExpired, tone: BadgeTone.warning)
                           : canApproveRefund(role)
                               ? TextButton(key: Key('void-${c.id}'), onPressed: () => showDialog(context: context, builder: (_) => _VoidDialog(card: c)), child: Text(l.giftVoidAction))
                               : null,
-                )),
+                ))),
               ]),
       ),
     );
@@ -61,7 +65,7 @@ class _VoidDialog extends ConsumerWidget {
       content: Text(l.giftVoidWarning('•••• ${card.codeLast4}')),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
-        FilledButton(key: const Key('confirmVoid'), style: FilledButton.styleFrom(backgroundColor: AppColors.danger, minimumSize: const Size(96, 44)),
+        FilledButton(key: const Key('confirmVoid'), style: FilledButton.styleFrom(backgroundColor: context.palette.dangerSolid, foregroundColor: context.palette.onDangerSolid, minimumSize: const Size(96, 44)),
             onPressed: () { Navigator.pop(context); guarded(context, () => voidGiftCard(ref, card.id)); }, child: Text(l.giftVoidAction)),
       ],
     );

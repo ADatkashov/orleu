@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
+import '../../core/widgets/widgets.dart';
 import '../../core/errors.dart';
 import '../../l10n/gen/app_localizations.dart';
 
@@ -46,10 +47,12 @@ class _State extends ConsumerState<CreateBusinessScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Form(
+          child: Center(child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 480), child: Form(
             key: _form,
             child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              Text(l.createBusinessIntro),
+              const Align(alignment: Alignment.centerLeft, child: LogoMark(size: 52)),
+              const SizedBox(height: AppSpacing.md),
+              Text(l.createBusinessIntro, style: Theme.of(context).textTheme.bodyLarge),
               const SizedBox(height: AppSpacing.lg),
               TextFormField(controller: _name, decoration: InputDecoration(labelText: l.businessName),
                   validator: (v) => v == null || v.trim().isEmpty ? l.validationRequired : null),
@@ -64,12 +67,12 @@ class _State extends ConsumerState<CreateBusinessScreen> {
               ),
               if (_error != null) Padding(
                 padding: const EdgeInsets.only(top: AppSpacing.md),
-                child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                child: Text(_error!, style: TextStyle(color: context.palette.dangerFg)),
               ),
               const SizedBox(height: AppSpacing.lg),
               FilledButton(onPressed: _busy ? null : _submit, child: Text(l.create)),
             ]),
-          ),
+          ))),
         ),
       ),
     );

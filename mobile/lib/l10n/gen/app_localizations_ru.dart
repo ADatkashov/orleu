@@ -1609,4 +1609,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get notifCatSupport => 'Поддержка';
+
+  @override
+  String setupProgress(int done, int total) {
+    return 'Выполнено шагов: $done из $total';
+  }
 }

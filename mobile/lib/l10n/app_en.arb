@@ -540,5 +540,7 @@
   "notifCatAll": "All",
   "notifCatBookings": "Bookings",
   "notifCatPayments": "Payments",
-  "notifCatSupport": "Support"
+  "notifCatSupport": "Support",
+  "setupProgress": "{done} of {total} steps done",
+  "@setupProgress": {"placeholders": {"done": {"type": "int"}, "total": {"type": "int"}}}
 }

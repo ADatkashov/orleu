@@ -1608,4 +1608,9 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get notifCatSupport => 'Қолдау';
+
+  @override
+  String setupProgress(int done, int total) {
+    return 'Орындалған қадам: $done/$total';
+  }
 }

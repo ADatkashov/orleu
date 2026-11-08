@@ -6,7 +6,7 @@ import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
 import '../../core/errors.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import '../setup/setup_common.dart';
 
@@ -32,9 +32,9 @@ class PromosScreen extends ConsumerWidget {
         data: (list) => list.isEmpty
             ? EmptyState(icon: Icons.sell_outlined, text: l.promosNone)
             : ListView.separated(
-                padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, 96),
+                padding: EdgeInsets.fromLTRB(AppSpacing.gutter(context), AppSpacing.md, AppSpacing.gutter(context), 96),
                 itemCount: list.length,
-                separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+                separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm + 2),
                 itemBuilder: (_, i) => _PromoTile(promo: list[i], currency: currency),
               ),
       ),
@@ -56,9 +56,15 @@ class _PromoTile extends ConsumerWidget {
       l.promoUsed('${promo.usedCount}', promo.maxUses == null ? '' : ' / ${promo.maxUses}'),
       if (promo.validUntil != null) l.promoValidUntilLabel(DateFormat('dd.MM.yyyy').format(DateTime.parse(promo.validUntil!))),
     ];
-    return Card(
+    return AppCard(
+      padding: EdgeInsets.zero,
       child: SwitchListTile(
         key: Key('promo-${promo.code}'),
+        secondary: Container(
+          width: 40, height: 40,
+          decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(AppRadius.control)),
+          child: Icon(Icons.sell_outlined, size: AppIconSize.md, color: Theme.of(context).colorScheme.primary),
+        ),
         title: Text(promo.code, style: const TextStyle(fontWeight: FontWeight.w600, letterSpacing: 1)),
         subtitle: Text(parts.join(' · ')),
         value: promo.active,
