@@ -1,23 +1,43 @@
-# Automated dependency update pull requests (security fixes included). Each one still has to pass CI before it is merged.
+# Automated dependency update pull requests. Each one still has to pass CI before it is merged.
+# Major-version bumps are ignored (they are done by hand, one at a time); minor/patch updates are grouped
+# into one PR per ecosystem. Security-fix PRs are not affected by "ignore" and are still opened for any version.
 version: 2
 updates:
   - package-ecosystem: gradle
     directory: /backend
     schedule: { interval: weekly }
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 3
+    ignore:
+      - { dependency-name: "*", update-types: ["version-update:semver-major"] }
+    groups:
+      gradle-minor-patch: { update-types: ["minor", "patch"] }
   - package-ecosystem: pub
     directory: /mobile
     schedule: { interval: weekly }
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 3
+    ignore:
+      - { dependency-name: "*", update-types: ["version-update:semver-major"] }
+    groups:
+      pub-minor-patch: { update-types: ["minor", "patch"] }
   - package-ecosystem: npm
     directory: /scripts
     schedule: { interval: monthly }
     open-pull-requests-limit: 2
+    ignore:
+      - { dependency-name: "*", update-types: ["version-update:semver-major"] }
+    groups:
+      npm-minor-patch: { update-types: ["minor", "patch"] }
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: monthly }
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 2
+    ignore:
+      - { dependency-name: "*", update-types: ["version-update:semver-major"] }
+    groups:
+      actions-minor-patch: { update-types: ["minor", "patch"] }
   - package-ecosystem: docker
     directory: /backend
     schedule: { interval: monthly }
-    open-pull-requests-limit: 2
+    open-pull-requests-limit: 1
+    ignore:
+      - { dependency-name: "*", update-types: ["version-update:semver-major"] }
