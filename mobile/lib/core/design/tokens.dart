@@ -41,7 +41,7 @@ class AppColors {
 class AppPalette extends ThemeExtension<AppPalette> {
   final Color success, successSoft, successFg;
   final Color warning, warningSoft, warningFg;
-  final Color danger, dangerSoft, dangerFg;
+  final Color danger, dangerSoft, dangerFg, dangerSolid, onDangerSolid;
   final Color info, infoSoft, infoFg;
   final Color neutralSoft, neutralFg;
   final Color heroStart, heroEnd, onHero, onHeroMuted, heroAccent;
@@ -57,6 +57,8 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.danger,
     required this.dangerSoft,
     required this.dangerFg,
+    required this.dangerSolid,
+    required this.onDangerSolid,
     required this.info,
     required this.infoSoft,
     required this.infoFg,
@@ -83,6 +85,8 @@ class AppPalette extends ThemeExtension<AppPalette> {
     danger: AppColors.danger,
     dangerSoft: Color(0xFFFBE4E4),
     dangerFg: Color(0xFFA83232),
+    dangerSolid: Color(0xFFB93A3A),
+    onDangerSolid: Colors.white,
     info: AppColors.info,
     infoSoft: Color(0xFFE4ECFD),
     infoFg: Color(0xFF2F58B5),
@@ -109,6 +113,8 @@ class AppPalette extends ThemeExtension<AppPalette> {
     danger: Color(0xFFF08080),
     dangerSoft: Color(0xFF402020),
     dangerFg: Color(0xFFF6A3A3),
+    dangerSolid: Color(0xFFF08080),
+    onDangerSolid: AppColors.primaryDark,
     info: Color(0xFF7BA7F5),
     infoSoft: Color(0xFF1E2C4A),
     infoFg: Color(0xFFA6C3F8),
@@ -142,6 +148,8 @@ class AppPalette extends ThemeExtension<AppPalette> {
       danger: l(danger, other.danger),
       dangerSoft: l(dangerSoft, other.dangerSoft),
       dangerFg: l(dangerFg, other.dangerFg),
+      dangerSolid: l(dangerSolid, other.dangerSolid),
+      onDangerSolid: l(onDangerSolid, other.onDangerSolid),
       info: l(info, other.info),
       infoSoft: l(infoSoft, other.infoSoft),
       infoFg: l(infoFg, other.infoFg),

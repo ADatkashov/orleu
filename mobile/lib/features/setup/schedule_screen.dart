@@ -101,7 +101,7 @@ class _State extends ConsumerState<ScheduleScreen> {
             FormError(_error),
             if (_affected != null && _affected! > 0) Padding(
               padding: const EdgeInsets.only(top: AppSpacing.sm),
-              child: Text(l.scheduleAffected(_affected!), key: const Key('affected'), style: TextStyle(color: AppColors.warning)),
+              child: Text(l.scheduleAffected(_affected!), key: const Key('affected'), style: TextStyle(color: context.palette.warningFg)),
             ),
             const SizedBox(height: AppSpacing.sm),
             FilledButton(key: const Key('saveHours'), style: FilledButton.styleFrom(minimumSize: const Size(96, 44)), onPressed: _busy ? null : _save, child: Text(l.scheduleSave)),
@@ -180,7 +180,7 @@ class _ExceptionState extends ConsumerState<_ExceptionDialog> {
           DropdownButtonFormField<String>(key: const Key('exceptionEnd'), initialValue: _end, decoration: InputDecoration(labelText: l.scheduleTo), items: [for (final x in ends) DropdownMenuItem(value: x, child: Text(x))], onChanged: (v) => setState(() => _end = v!)),
         ],
         FormError(_error),
-        if (_affected != null && _affected! > 0) Text(l.scheduleAffected(_affected!), key: const Key('exceptionAffected'), style: TextStyle(color: AppColors.warning)),
+        if (_affected != null && _affected! > 0) Text(l.scheduleAffected(_affected!), key: const Key('exceptionAffected'), style: TextStyle(color: context.palette.warningFg)),
       ])),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(_affected == null ? l.cancel : l.close)),

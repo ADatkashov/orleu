@@ -116,7 +116,7 @@ class _LoginState extends ConsumerState<LoginScreen> {
         const SizedBox(height: AppSpacing.md),
         TextField(key: const Key('mfaCode'), controller: _code, autofocus: true, keyboardType: TextInputType.text, autofillHints: const [AutofillHints.oneTimeCode],
             decoration: InputDecoration(labelText: l.mfaCode), onSubmitted: (_) => _verify()),
-        if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.md), child: Text(_error!, key: const Key('authError'), style: TextStyle(color: Theme.of(context).colorScheme.error))),
+        if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.md), child: Text(_error!, key: const Key('authError'), style: TextStyle(color: context.palette.dangerFg))),
         const SizedBox(height: AppSpacing.lg),
         FilledButton(key: const Key('mfaVerify'), onPressed: _busy ? null : _verify, child: _busy ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)) : Text(l.mfaVerify)),
         TextButton(onPressed: () => setState(() { _mfaToken = null; _error = null; }), child: Text(l.backToSignIn)),
@@ -140,7 +140,7 @@ class _LoginState extends ConsumerState<LoginScreen> {
           ),
           if (_error != null) Padding(
             padding: const EdgeInsets.only(top: AppSpacing.md),
-            child: Text(_error!, key: const Key('authError'), style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            child: Text(_error!, key: const Key('authError'), style: TextStyle(color: context.palette.dangerFg)),
           ),
           const SizedBox(height: AppSpacing.lg),
           FilledButton(onPressed: _busy ? null : _submit, child: _busy ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)) : Text(l.signIn)),
@@ -193,7 +193,7 @@ class _RegisterState extends ConsumerState<RegisterScreen> {
               validator: (v) => v == null || v.length < 10 ? l.validationPasswordShort : null),
           if (_error != null) Padding(
             padding: const EdgeInsets.only(top: AppSpacing.md),
-            child: Text(_error!, key: const Key('authError'), style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            child: Text(_error!, key: const Key('authError'), style: TextStyle(color: context.palette.dangerFg)),
           ),
           const SizedBox(height: AppSpacing.lg),
           FilledButton(onPressed: _busy ? null : _submit, child: _busy ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2)) : Text(l.createAccount)),
@@ -242,7 +242,7 @@ class _ForgotState extends ConsumerState<ForgotPasswordScreen> {
         Text(l.resetIntro),
         const SizedBox(height: AppSpacing.md),
         TextField(controller: _email, keyboardType: TextInputType.emailAddress, decoration: InputDecoration(labelText: l.email)),
-        if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.md), child: Text(_error!, key: const Key('authError'), style: TextStyle(color: Theme.of(context).colorScheme.error))),
+        if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.md), child: Text(_error!, key: const Key('authError'), style: TextStyle(color: context.palette.dangerFg))),
         const SizedBox(height: AppSpacing.lg),
         FilledButton(
           onPressed: _busy ? null : () {
@@ -258,7 +258,7 @@ class _ForgotState extends ConsumerState<ForgotPasswordScreen> {
         TextField(controller: _token, decoration: InputDecoration(labelText: l.resetCode)),
         const SizedBox(height: AppSpacing.md),
         TextField(controller: _password, obscureText: true, decoration: InputDecoration(labelText: l.newPassword)),
-        if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.md), child: Text(_error!, key: const Key('authError'), style: TextStyle(color: Theme.of(context).colorScheme.error))),
+        if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.md), child: Text(_error!, key: const Key('authError'), style: TextStyle(color: context.palette.dangerFg))),
         const SizedBox(height: AppSpacing.lg),
         FilledButton(
           onPressed: _busy ? null : () {

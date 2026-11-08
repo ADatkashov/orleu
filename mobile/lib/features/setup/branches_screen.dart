@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/data/models.dart';
 import '../../core/data/repository.dart';
 import '../../core/design/tokens.dart';
-import '../../core/widgets/common.dart';
+import '../../core/widgets/widgets.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'setup_common.dart';
 
@@ -32,17 +32,34 @@ class BranchesScreen extends ConsumerWidget {
                 separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
                 itemBuilder: (_, i) {
                   final b = list[i];
-                  return Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.storefront_outlined),
+                  return Entrance(
+                    index: i,
+                    child: AppCard(
                       key: Key('branch-${b.id}'),
-                      title: Text(b.name, style: b.active ? null : TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                      subtitle: Text(!b.active ? l.inactive : b.hours.isEmpty ? l.stepHours : (b.address ?? l.workingHours)),
-                      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                        IconButton(key: Key('editBranch-${b.id}'), tooltip: l.edit, icon: const Icon(Icons.edit_outlined), onPressed: () => showDialog(context: context, builder: (_) => _AddBranchDialog(initial: b))),
-                        Icon(b.hours.isEmpty ? Icons.warning_amber_rounded : Icons.schedule, color: b.hours.isEmpty ? AppColors.warning : null),
-                      ]),
+                      padding: const EdgeInsets.fromLTRB(AppSpacing.md, 6, 4, 6),
                       onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => HoursScreen(branch: b))),
+                      child: Opacity(
+                        opacity: b.active ? 1 : 0.6,
+                        child: Row(children: [
+                          Container(
+                            width: 44, height: 44,
+                            decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(AppRadius.control)),
+                            child: Icon(Icons.storefront_outlined, color: Theme.of(context).colorScheme.primary),
+                          ),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Text(b.name, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontSize: 15)),
+                              Text(!b.active ? l.inactive : b.hours.isEmpty ? l.stepHours : (b.address ?? l.workingHours), maxLines: 2, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodySmall),
+                            ]),
+                          ),
+                          IconButton(key: Key('editBranch-${b.id}'), tooltip: l.edit, icon: const Icon(Icons.edit_outlined), onPressed: () => showDialog(context: context, builder: (_) => _AddBranchDialog(initial: b))),
+                          Padding(
+                            padding: const EdgeInsets.only(right: AppSpacing.sm),
+                            child: Icon(b.hours.isEmpty ? Icons.warning_amber_rounded : Icons.schedule, color: b.hours.isEmpty ? context.palette.warning : null),
+                          ),
+                        ]),
+                      ),
                     ),
                   );
                 },
@@ -131,20 +148,21 @@ class _HoursState extends ConsumerState<HoursScreen> {
     final t = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(widget.branch.name)),
-      body: ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
-        Text(l.workingHours, style: t.textTheme.titleMedium),
-        const SizedBox(height: AppSpacing.sm),
+      body: ListView(padding: EdgeInsets.fromLTRB(AppSpacing.gutter(context), AppSpacing.sm, AppSpacing.gutter(context), AppSpacing.xl), children: [
+        SectionHeader(l.workingHours),
+        const SizedBox(height: AppSpacing.sm + 4),
         OutlinedButton(
           key: const Key('applyDefaultHours'),
           onPressed: () => setState(() { for (var d = 1; d <= 7; d++) { _hours[d] = ('09:00', '18:00'); } }),
           child: Text(l.applyDefaultHours),
         ),
         const SizedBox(height: AppSpacing.sm),
-        for (var d = 1; d <= 7; d++) Card(
-          child: Padding(
+        for (var d = 1; d <= 7; d++) Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+          child: AppCard(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
             child: Row(children: [
-              SizedBox(width: 40, child: Text(weekdayLabel(context, d), style: t.textTheme.titleMedium)),
+              SizedBox(width: 44, child: Text(weekdayLabel(context, d), style: t.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800, color: _hours.containsKey(d) ? null : t.colorScheme.onSurfaceVariant))),
               Expanded(child: _hours.containsKey(d)
                   // Wrap: on very narrow screens or large text sizes the times flow to a second line instead of overflowing
                   ? Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [

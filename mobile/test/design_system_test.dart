@@ -61,6 +61,7 @@ void main() {
         expect(contrast(p.onHeroMuted, p.heroStart), greaterThanOrEqualTo(4.5));
         expect(contrast(s.onPrimary, s.primary), greaterThanOrEqualTo(4.5));
         expect(contrast(AppColors.primaryDark, AppColors.accentLime), greaterThanOrEqualTo(4.5));
+        expect(contrast(p.onDangerSolid, p.dangerSolid), greaterThanOrEqualTo(4.5));
       });
     }
   });

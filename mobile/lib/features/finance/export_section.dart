@@ -68,7 +68,7 @@ class _State extends ConsumerState<ExportSection> {
           FilledButton.icon(key: const Key('exportCsv'), style: FilledButton.styleFrom(minimumSize: const Size(96, 44)), icon: const Icon(Icons.download), label: Text(l.exportButton), onPressed: _busy ? null : _export),
           if (_message != null) Padding(
             padding: const EdgeInsets.only(top: AppSpacing.sm),
-            child: Text(_message!, key: const Key('exportMessage'), style: TextStyle(color: _error ? t.colorScheme.error : null)),
+            child: Text(_message!, key: const Key('exportMessage'), style: TextStyle(color: _error ? context.palette.dangerFg : null)),
           ),
         ]),
       ),

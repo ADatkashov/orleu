@@ -37,7 +37,7 @@ class MessagesScreen extends ConsumerWidget {
         Text(l.messagesNote, style: t.textTheme.bodySmall),
         if (mode != null && mode.testMode) Container(
           key: const Key('testMode'), margin: const EdgeInsets.only(top: AppSpacing.sm), padding: const EdgeInsets.all(AppSpacing.sm),
-          decoration: BoxDecoration(border: Border.all(color: AppColors.warning), borderRadius: BorderRadius.circular(8)),
+          decoration: BoxDecoration(border: Border.all(color: context.palette.warningFg), borderRadius: BorderRadius.circular(8)),
           child: Text(l.messagesTestMode),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -110,7 +110,7 @@ class _MessageCard extends ConsumerWidget {
             Expanded(child: Text('${m.recipientPhone} · $when', style: t.textTheme.bodySmall)),
             Text(
               switch (m.status) { 'NOT_SENT' => m.attempts > 0 ? l.messagesRetrying(m.attempts) : l.messagesNotSent, 'SENT' => l.messagesSent, _ => l.messagesFailed },
-              key: Key('status-${m.id}'), style: t.textTheme.labelSmall?.copyWith(color: m.status == 'SENT' ? AppColors.success : m.status == 'FAILED' ? AppColors.danger : AppColors.warning),
+              key: Key('status-${m.id}'), style: t.textTheme.labelSmall?.copyWith(color: m.status == 'SENT' ? context.palette.successFg : m.status == 'FAILED' ? context.palette.dangerFg : context.palette.warningFg),
             ),
           ]),
           const SizedBox(height: AppSpacing.xs),

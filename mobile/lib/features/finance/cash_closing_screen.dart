@@ -66,7 +66,7 @@ class _State extends ConsumerState<CashClosingScreen> {
               padding: const EdgeInsets.only(top: AppSpacing.xs),
               child: Text(
                 diff == 0 ? l.closingMatches : diff < 0 ? l.closingShortage(money(context, -diff, cur)) : l.closingSurplus(money(context, diff, cur)),
-                key: const Key('closingDiff'), style: TextStyle(color: diff == 0 ? AppColors.success : AppColors.warning),
+                key: const Key('closingDiff'), style: TextStyle(color: diff == 0 ? context.palette.successFg : context.palette.warningFg),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -109,7 +109,7 @@ class _State extends ConsumerState<CashClosingScreen> {
                           if (c.note != null) c.note!,
                         ].join(' · ')),
                         trailing: Text(c.difference == 0 ? '0' : (c.difference > 0 ? '+' : '−') + money(context, c.difference.abs(), c.currency),
-                            style: TextStyle(color: c.difference == 0 ? AppColors.success : AppColors.warning)),
+                            style: TextStyle(color: c.difference == 0 ? context.palette.successFg : context.palette.warningFg)),
                       )),
                     ]),
             ),

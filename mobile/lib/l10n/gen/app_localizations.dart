@@ -3057,6 +3057,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Support'**
   String get notifCatSupport;
+
+  /// No description provided for @setupProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} steps done'**
+  String setupProgress(int done, int total);
 }
 
 class _AppLocalizationsDelegate

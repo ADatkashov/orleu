@@ -64,7 +64,7 @@ class ReviewsScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(AppSpacing.md),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(children: [
-                      Semantics(label: '${r.rating}/5', child: Text('★' * r.rating + '☆' * (5 - r.rating), style: t.textTheme.titleMedium?.copyWith(color: AppColors.warning))),
+                      Semantics(label: '${r.rating}/5', child: Text('★' * r.rating + '☆' * (5 - r.rating), style: t.textTheme.titleMedium?.copyWith(color: context.palette.warningFg))),
                       const Spacer(),
                       Text(DateFormat('dd.MM.yyyy').format(wallFromInstant(r.createdAt, zone)), style: t.textTheme.bodySmall),
                     ]),
@@ -72,7 +72,7 @@ class ReviewsScreen extends ConsumerWidget {
                     if (r.comment != null && r.comment!.isNotEmpty) Padding(padding: const EdgeInsets.only(top: AppSpacing.xs), child: Text(r.comment!)),
                     if (r.hidden) Padding(
                       padding: const EdgeInsets.only(top: AppSpacing.xs),
-                      child: Text(l.reviewHidden(r.hiddenReason ?? ''), key: Key('hidden-${r.id}'), style: TextStyle(color: AppColors.warning)),
+                      child: Text(l.reviewHidden(r.hiddenReason ?? ''), key: Key('hidden-${r.id}'), style: TextStyle(color: context.palette.warningFg)),
                     ),
                     if (r.reply != null) Container(
                       key: Key('reply-${r.id}'), margin: const EdgeInsets.only(top: AppSpacing.sm), padding: const EdgeInsets.all(AppSpacing.sm),

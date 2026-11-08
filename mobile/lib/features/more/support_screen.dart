@@ -64,7 +64,7 @@ Future<void> closeTicket(WidgetRef ref, String ticketId) async {
 }
 
 String statusLabel(AppLocalizations l, String s) => switch (s) { 'OPEN' => l.stOPEN, 'ANSWERED' => l.stANSWERED, _ => l.stCLOSED };
-Color statusColor(String s) => switch (s) { 'OPEN' => AppColors.warning, 'ANSWERED' => AppColors.success, _ => AppColors.textSecondary };
+Color statusColor(BuildContext context, String s) => switch (s) { 'OPEN' => context.palette.warningFg, 'ANSWERED' => context.palette.successFg, _ => Theme.of(context).colorScheme.onSurfaceVariant };
 
 class SupportScreen extends ConsumerWidget {
   const SupportScreen({super.key});
@@ -93,7 +93,7 @@ class SupportScreen extends ConsumerWidget {
               key: Key('ticket-${x.id}'),
               title: Text(x.subject, maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text(DateFormat('dd.MM HH:mm').format(wallFromInstant(x.updatedAt, zone))),
-              trailing: Text(statusLabel(l, x.status), style: t.textTheme.labelSmall?.copyWith(color: statusColor(x.status))),
+              trailing: Text(statusLabel(l, x.status), style: t.textTheme.labelSmall?.copyWith(color: statusColor(context, x.status))),
               onTap: () => context.push('/more/support/${x.id}'),
             ),
           ),
@@ -191,7 +191,7 @@ class _TicketState extends ConsumerState<TicketScreen> {
           final closed = ticket.status == 'CLOSED';
           return ListView(padding: const EdgeInsets.all(AppSpacing.md), children: [
             Text(ticket.subject, style: t.textTheme.titleLarge),
-            Text(statusLabel(l, ticket.status), key: const Key('ticketStatus'), style: t.textTheme.labelMedium?.copyWith(color: statusColor(ticket.status))),
+            Text(statusLabel(l, ticket.status), key: const Key('ticketStatus'), style: t.textTheme.labelMedium?.copyWith(color: statusColor(context, ticket.status))),
             const SizedBox(height: AppSpacing.md),
             for (final m in messages) Card(
               color: m.fromPlatform ? AppColors.primaryGreen.withValues(alpha: 0.08) : null,

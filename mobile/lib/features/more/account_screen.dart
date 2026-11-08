@@ -169,7 +169,7 @@ class _MfaState extends ConsumerState<_MfaCard> {
               loading: () => const LinearProgressIndicator(),
               error: (e, _) => ErrorRetry(error: e, onRetry: () => ref.invalidate(mfaStatusProvider)),
               data: (s) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(s.enabled ? l.mfaOn(s.recoveryCodesLeft) : l.mfaOff, key: const Key('mfaStatus'), style: t.textTheme.titleSmall?.copyWith(color: s.enabled ? AppColors.success : null)),
+                Text(s.enabled ? l.mfaOn(s.recoveryCodesLeft) : l.mfaOff, key: const Key('mfaStatus'), style: t.textTheme.titleSmall?.copyWith(color: s.enabled ? context.palette.successFg : null)),
                 FormError(_error),
                 const SizedBox(height: AppSpacing.sm),
                 s.enabled
@@ -246,7 +246,7 @@ class _HistoryCard extends ConsumerWidget {
         if (h.failedSinceLastSuccess > 0 || h.newDeviceRecently)
           Card(
             key: const Key('historyAlert'),
-            color: AppColors.warning.withValues(alpha: 0.12),
+            color: context.palette.warningFg.withValues(alpha: 0.12),
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -265,7 +265,7 @@ class _HistoryCard extends ConsumerWidget {
         for (final e in h.events.take(10)) Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Icon(e.outcome == 'SUCCESS' ? Icons.check_circle_outline : Icons.warning_amber_outlined, size: 18, color: e.outcome == 'SUCCESS' ? AppColors.success : AppColors.warning),
+            Icon(e.outcome == 'SUCCESS' ? Icons.check_circle_outline : Icons.warning_amber_outlined, size: 18, color: e.outcome == 'SUCCESS' ? context.palette.successFg : context.palette.warningFg),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

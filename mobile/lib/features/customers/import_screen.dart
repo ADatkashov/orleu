@@ -84,17 +84,17 @@ class _State extends ConsumerState<ImportCustomersScreen> {
         OutlinedButton.icon(key: const Key('chooseFile'), icon: const Icon(Icons.upload_file), label: Text(_done == null ? l.importChoose : l.importAnother), onPressed: _busy ? null : _choose),
         if (_fileName != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.sm), child: Text(l.importFile(_fileName!), style: t.textTheme.bodySmall)),
         if (_busy) const Padding(padding: EdgeInsets.all(AppSpacing.md), child: Center(child: CircularProgressIndicator())),
-        if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.md), child: Text(_error!, key: const Key('importError'), style: TextStyle(color: t.colorScheme.error))),
+        if (_error != null) Padding(padding: const EdgeInsets.only(top: AppSpacing.md), child: Text(_error!, key: const Key('importError'), style: TextStyle(color: context.palette.dangerFg))),
         if (p != null) ...[
           const SizedBox(height: AppSpacing.md),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                stat(l.importNew, p.created, color: AppColors.success),
+                stat(l.importNew, p.created, color: context.palette.successFg),
                 stat(l.importExisting, p.existing),
                 stat(l.importDupes, p.duplicatesInFile),
-                stat(l.importInvalid, p.invalid, color: p.invalid > 0 ? AppColors.warning : null),
+                stat(l.importInvalid, p.invalid, color: p.invalid > 0 ? context.palette.warningFg : null),
               ]),
             ),
           ),
@@ -115,7 +115,7 @@ class _State extends ConsumerState<ImportCustomersScreen> {
         ],
         if (_done != null) ...[
           const SizedBox(height: AppSpacing.md),
-          Card(color: AppColors.success.withValues(alpha: 0.1), child: Padding(padding: const EdgeInsets.all(AppSpacing.md), child: Text(l.importDone('${_done!.created}'), key: const Key('importDone'), style: t.textTheme.titleMedium))),
+          Card(color: context.palette.successFg.withValues(alpha: 0.1), child: Padding(padding: const EdgeInsets.all(AppSpacing.md), child: Text(l.importDone('${_done!.created}'), key: const Key('importDone'), style: t.textTheme.titleMedium))),
         ],
       ]),
     );

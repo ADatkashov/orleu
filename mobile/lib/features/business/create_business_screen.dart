@@ -64,7 +64,7 @@ class _State extends ConsumerState<CreateBusinessScreen> {
               ),
               if (_error != null) Padding(
                 padding: const EdgeInsets.only(top: AppSpacing.md),
-                child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                child: Text(_error!, style: TextStyle(color: context.palette.dangerFg)),
               ),
               const SizedBox(height: AppSpacing.lg),
               FilledButton(onPressed: _busy ? null : _submit, child: Text(l.create)),

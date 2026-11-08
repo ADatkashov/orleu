@@ -61,7 +61,7 @@ class _VoidDialog extends ConsumerWidget {
       content: Text(l.giftVoidWarning('•••• ${card.codeLast4}')),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
-        FilledButton(key: const Key('confirmVoid'), style: FilledButton.styleFrom(backgroundColor: AppColors.danger, minimumSize: const Size(96, 44)),
+        FilledButton(key: const Key('confirmVoid'), style: FilledButton.styleFrom(backgroundColor: context.palette.dangerSolid, foregroundColor: context.palette.onDangerSolid, minimumSize: const Size(96, 44)),
             onPressed: () { Navigator.pop(context); guarded(context, () => voidGiftCard(ref, card.id)); }, child: Text(l.giftVoidAction)),
       ],
     );

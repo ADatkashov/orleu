@@ -46,9 +46,9 @@ class CustomerProfileScreen extends ConsumerWidget {
             ]),
             const SizedBox(height: AppSpacing.sm),
             Row(children: [
-              Expanded(child: StatTile(label: l.statCancelled, value: '${s.cancelled}', valueColor: s.cancelled > 0 ? AppColors.warning : null)),
+              Expanded(child: StatTile(label: l.statCancelled, value: '${s.cancelled}', valueColor: s.cancelled > 0 ? context.palette.warningFg : null)),
               const SizedBox(width: AppSpacing.sm),
-              Expanded(child: StatTile(label: l.statNoShows, value: '${s.noShows}', valueColor: s.noShows > 0 ? AppColors.danger : null)),
+              Expanded(child: StatTile(label: l.statNoShows, value: '${s.noShows}', valueColor: s.noShows > 0 ? context.palette.dangerFg : null)),
             ]),
             const SizedBox(height: AppSpacing.sm),
             Row(children: [
@@ -85,7 +85,7 @@ class CustomerProfileScreen extends ConsumerWidget {
             p.customer.blocked
                 ? OutlinedButton(key: const Key('unblock'), onPressed: () => guarded(context, () => ref.read(bookingActionsProvider).setCustomerBlocked(customerId, false)), child: Text(l.unblockClient))
                 : OutlinedButton(
-                    key: const Key('block'), style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
+                    key: const Key('block'), style: OutlinedButton.styleFrom(foregroundColor: context.palette.dangerFg),
                     onPressed: () => showDialog(context: context, builder: (_) => _BlockDialog(customerId: customerId)), child: Text(l.blockClient)),
             const SizedBox(height: AppSpacing.sm),
             OutlinedButton.icon(key: const Key('mergeClient'), icon: const Icon(Icons.merge_outlined), label: Text(l.mergeClient),
@@ -99,7 +99,7 @@ class CustomerProfileScreen extends ConsumerWidget {
             if (canErase(ref.watch(myRoleProvider).value)) ...[
               const SizedBox(height: AppSpacing.sm),
               OutlinedButton.icon(
-                key: const Key('eraseClient'), style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger), icon: const Icon(Icons.delete_forever_outlined),
+                key: const Key('eraseClient'), style: OutlinedButton.styleFrom(foregroundColor: context.palette.dangerFg), icon: const Icon(Icons.delete_forever_outlined),
                 label: Text(l.privacyDelete), onPressed: () => showDialog(context: context, builder: (_) => _EraseDialog(customerId: customerId)),
               ),
             ],
@@ -133,8 +133,8 @@ class Pill extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         key: const Key('blockedBadge'),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(color: AppColors.danger.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(999)),
-        child: Text(AppLocalizations.of(context).blocked, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: AppColors.danger, fontWeight: FontWeight.w600)),
+        decoration: BoxDecoration(color: context.palette.dangerFg.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(999)),
+        child: Text(AppLocalizations.of(context).blocked, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: context.palette.dangerFg, fontWeight: FontWeight.w600)),
       );
 }
 
@@ -213,7 +213,7 @@ class _BlockState extends ConsumerState<_BlockDialog> {
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
         FilledButton(
           key: const Key('confirmBlock'),
-          style: FilledButton.styleFrom(backgroundColor: AppColors.danger, foregroundColor: Colors.white, minimumSize: const Size(96, 44)),
+          style: FilledButton.styleFrom(backgroundColor: context.palette.dangerSolid, foregroundColor: context.palette.onDangerSolid, minimumSize: const Size(96, 44)),
           onPressed: _busy ? null : () async {
             setState(() { _busy = true; _error = null; });
             final err = await attempt(context, () => ref.read(bookingActionsProvider).setCustomerBlocked(widget.customerId, true));
@@ -251,7 +251,7 @@ class _EraseState extends ConsumerState<_EraseDialog> {
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
         FilledButton(
           key: const Key('confirmErase'),
-          style: FilledButton.styleFrom(backgroundColor: AppColors.danger, foregroundColor: Colors.white, minimumSize: const Size(96, 44)),
+          style: FilledButton.styleFrom(backgroundColor: context.palette.dangerSolid, foregroundColor: context.palette.onDangerSolid, minimumSize: const Size(96, 44)),
           onPressed: _busy ? null : () async {
             setState(() { _busy = true; _error = null; });
             final err = await attempt(context, () => ref.read(bookingActionsProvider).anonymizeCustomer(widget.customerId));
@@ -346,7 +346,7 @@ class _MergeState extends ConsumerState<_MergeDialog> {
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l.cancel)),
         if (picked != null) FilledButton(
-          key: const Key('confirmMerge'), style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
+          key: const Key('confirmMerge'), style: FilledButton.styleFrom(backgroundColor: context.palette.dangerFg),
           onPressed: _busy ? null : () async {
             setState(() { _busy = true; _error = null; });
             final err = await attempt(context, () => ref.read(bookingActionsProvider).mergeCustomer(widget.target.id, picked.id));
